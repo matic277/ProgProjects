@@ -20,7 +20,6 @@ public class Main{
 	}
 	
 	public static void initThreads () {
-
 		barrier = new CyclicBarrier(nthreads, new Barrier(ref));
 		
 		int chunk = Painter.n / nthreads ;
