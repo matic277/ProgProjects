@@ -59,6 +59,24 @@ public class Program {
 		id = MPI.COMM_WORLD.Rank();
 		size = MPI.COMM_WORLD.Size();
 		
+		/*
+	 	WORKFLOW:
+	 	Master has 2d grid. Converts it to 1d array and broadcasts to all slaves.
+	 	Slaves all convert received 1d array to 2d grid and process it.
+	 	Slaves then convert the processed 2d grid to 1d array, which is then
+	 	gathered by master() - by chunks.
+	 	Master converts the received 1d array to 2d grid and displays it.
+	 	
+	 	sendBuf			- 1d - the initial broadcasted array, slaves and master get this via broadcast
+	 	recBuf			- 1d - gets gathered by master only, this is processed data that should be shown each iteration
+	 	localGrid		- 2d - this is unprocessed grid, transformed by master and slaves from sendBuf
+	 	processedGrid	- 2d - this is a processed grid, calculated from localGrid by slaves and master
+	 	processedSendBuf- 1d - this is processed array, converted from processedGrid, ready to be sent by everyone
+	 							and gathered by master
+	 	recGrid			- 2d - grid converted from processedSendBuf, only master gets it - end of iteration
+	 							convert this to 1d array = sendBuf, repeat this process
+		*/
+		
 		int sendBuf[] = to1DArray(g);							 // 1d array, send this to other threads
 		int recBuf[] = new int[sendBuf.length];			 		 // 1d array, this get received BY MASTER id=0 ONLY, this is a processed grid, gets converted to recGrid
 		int localGrid[][] = new int[g.length][g[0].length];		 // 2d grid, this is converted from recBuf (1d array), ready to process

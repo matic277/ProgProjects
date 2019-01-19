@@ -1,5 +1,7 @@
 # ProgProjects
 
+MPI program je v razredu Program2.
+
 ## Installing MPJ and Eclipse configuration
 Download MPJ Express Software: http://mpj-express.org/download.php
 Extract archive to (example): *C:/MPJ*
