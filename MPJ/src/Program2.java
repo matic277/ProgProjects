@@ -2,18 +2,6 @@ import mpi.MPI;
 
 public class Program2 {
 	
-	/*
-
-
-
-	private static int id;
-	private static int size;
-	
-	
-	private static int s, e, chunk;
-	
-	*/
-	
 	public static void main(String[] args) {
 
 		int g[][] = new int [][]{
