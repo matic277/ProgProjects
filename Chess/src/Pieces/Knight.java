@@ -16,5 +16,8 @@ public class Knight extends Piece {
 	public ArrayList<ISquare> getAvalibleMoves(PieceMoveHandler moveHandler) {
 		return moveHandler.getAvalibleMovesKnight(this);
 	}
-
+	
+	public String getCharValue() {
+		return (color)? "wN " : "bN ";
+	}
 }

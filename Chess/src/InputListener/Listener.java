@@ -1,15 +1,19 @@
 package InputListener;
 import java.awt.event.MouseEvent;
 import Main.Board;
+import Main.Painter;
+
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class Listener implements MouseListener, MouseMotionListener{
 	
 	InputHandler inputHandler;
+	Painter painter;
 	
-	public Listener(Board _board) {
+	public Listener(Board _board, Painter _painter) {
 		inputHandler = new InputHandler(_board);
+		painter = _painter;
 	}
 
 
@@ -19,6 +23,8 @@ public class Listener implements MouseListener, MouseMotionListener{
 		int my = e.getY();
 		
 		inputHandler.mouseClicked(mx, my);
+		
+		painter.repaint();
 	}
 
 	@Override

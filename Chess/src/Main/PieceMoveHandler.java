@@ -25,24 +25,30 @@ public class PieceMoveHandler {
 		ArrayList<ISquare> moves = new ArrayList<ISquare>(20);
 		
 		// down
-		for (int i=piece.coords.i, j=piece.coords.j; i<Board.SQUARES; i++) {
-			if (board.pieces[i][j] == null) {
-				moves.add(board.squares[i][j]);
-			} else if (board.pieces[i][j].color == piece.color) {
-				break;
-			} else {
-				moves.add(board.squares[i][j]);
+		if (piece.coords.getI() != Board.SQUARES-1) {
+			for (int i=piece.coords.getI()+1, j=piece.coords.getJ(); i<Board.SQUARES; i++) {
+				if (board.pieces[i][j] == null) {
+					moves.add(board.squares[i][j]);
+				} else if (board.pieces[i][j].color == piece.color) {
+					break;
+				} else {
+					moves.add(board.squares[i][j]);
+					break;
+				}
 			}
 		}
 		
 		// up
-		for (int i=piece.coords.i, j=piece.coords.j; i>=0; i--) {
-			if (board.pieces[i][j] == null) {
-				moves.add(board.squares[i][j]);
-			} else if (board.pieces[i][j].color == piece.color) {
-				break;
-			} else {
-				moves.add(board.squares[i][j]);
+		if (piece.coords.getI() != 0) {
+			for (int i=piece.coords.getI()-1, j=piece.coords.getJ(); i>=0; i--) {
+				if (board.pieces[i][j] == null) {
+					moves.add(board.squares[i][j]);
+				} else if (board.pieces[i][j].color == piece.color) {
+					break;
+				} else {
+					moves.add(board.squares[i][j]);
+					break;
+				}
 			}
 		}
 		
@@ -53,24 +59,30 @@ public class PieceMoveHandler {
 		ArrayList<ISquare> moves = new ArrayList<ISquare>(20);
 		
 		// right
-		for (int i=piece.coords.i, j=piece.coords.j; j<Board.SQUARES; j++) {
-			if (board.pieces[i][j] == null) {
-				moves.add(board.squares[i][j]);
-			} else if (board.pieces[i][j].color == piece.color) {
-				break;
-			} else {
-				moves.add(board.squares[i][j]);
+		if (piece.coords.getJ() != Board.SQUARES-1) {
+			for (int i=piece.coords.getI(), j=piece.coords.getJ()+1; j<Board.SQUARES; j++) {
+				if (board.pieces[i][j] == null) {
+					moves.add(board.squares[i][j]);
+				} else if (board.pieces[i][j].color == piece.color) {
+					break;
+				} else {
+					moves.add(board.squares[i][j]);
+					break;
+				}
 			}
 		}
 		
 		// left
-		for (int i=piece.coords.i, j=piece.coords.j; j>=0; j--) {
-			if (board.pieces[i][j] == null) {
-				moves.add(board.squares[i][j]);
-			} else if (board.pieces[i][j].color == piece.color) {
-				break;
-			} else {
-				moves.add(board.squares[i][j]);
+		if (piece.coords.getJ() != 0) {
+			for (int i=piece.coords.getI(), j=piece.coords.getJ()-1; j>=0; j--) {
+				if (board.pieces[i][j] == null) {
+					moves.add(board.squares[i][j]);
+				} else if (board.pieces[i][j].color == piece.color) {
+					break;
+				} else {
+					moves.add(board.squares[i][j]);
+					break;
+				}
 			}
 		}
 		
@@ -81,47 +93,60 @@ public class PieceMoveHandler {
 		ArrayList<ISquare> moves = new ArrayList<ISquare>(20);
 		
 		// top left
-		for (int i=piece.coords.i, j=piece.coords.j; i>=0 && j>=0; i--, j--) {
-			if (board.pieces[i][j] == null) {
-				moves.add(board.squares[i][j]);
-			} else if (board.pieces[i][j].color == piece.color) {
-				break;
-			} else {
-				moves.add(board.squares[i][j]);
-			}			
+		if (piece.coords.getJ() != 0 && piece.coords.getI() != 0) {
+			for (int i=piece.coords.getI()-1, j=piece.coords.getJ()-1; i>=0 && j>=0; i--, j--) {
+				if (board.pieces[i][j] == null) {
+					moves.add(board.squares[i][j]);
+					break;
+				} else if (board.pieces[i][j].color == piece.color) {
+					break;
+				} else {
+					moves.add(board.squares[i][j]);
+					break;
+				}			
+			}
 		}
 		
 		// top right
-		for (int i=piece.coords.i, j=piece.coords.j; i>=0 && j<Board.SQUARES; i--, j++) {
-			if (board.pieces[i][j] == null) {
-				moves.add(board.squares[i][j]);
-			} else if (board.pieces[i][j].color == piece.color) {
-				break;
-			} else {
-				moves.add(board.squares[i][j]);
-			}			
+		if (piece.coords.getJ() != Board.SQUARES-1 && piece.coords.getI() != 0) {
+			for (int i=piece.coords.getI()-1, j=piece.coords.getJ()+1; i>=0 && j<Board.SQUARES; i--, j++) {
+				if (board.pieces[i][j] == null) {
+					moves.add(board.squares[i][j]);
+				} else if (board.pieces[i][j].color == piece.color) {
+					break;
+				} else {
+					moves.add(board.squares[i][j]);
+					break;
+				}			
+			}
 		}
 		
 		// bottom left
-		for (int i=piece.coords.i, j=piece.coords.j; i<Board.SQUARES && j>=0; i++, j--) {
-			if (board.pieces[i][j] == null) {
-				moves.add(board.squares[i][j]);
-			} else if (board.pieces[i][j].color == piece.color) {
-				break;
-			} else {
-				moves.add(board.squares[i][j]);
-			}			
+		if (piece.coords.getJ() != 0 && piece.coords.getI() != Board.SQUARES-1) {
+			for (int i=piece.coords.getI()+1, j=piece.coords.getJ()-1; i<Board.SQUARES && j>=0; i++, j--) {
+				if (board.pieces[i][j] == null) {
+					moves.add(board.squares[i][j]);
+				} else if (board.pieces[i][j].color == piece.color) {
+					break;
+				} else {
+					moves.add(board.squares[i][j]);
+					break;
+				}			
+			}
 		}
 		
 		// bottom right
-		for (int i=piece.coords.i, j=piece.coords.j; i<Board.SQUARES && j<Board.SQUARES; i++, j++) {
-			if (board.pieces[i][j] == null) {
-				moves.add(board.squares[i][j]);
-			} else if (board.pieces[i][j].color == piece.color) {
-				break;
-			} else {
-				moves.add(board.squares[i][j]);
-			}			
+		if (piece.coords.getJ() != Board.SQUARES-1 && piece.coords.getI() != Board.SQUARES-1) {
+			for (int i=piece.coords.getI()+1, j=piece.coords.getJ()+1; i<Board.SQUARES && j<Board.SQUARES; i++, j++) {
+				if (board.pieces[i][j] == null) {
+					moves.add(board.squares[i][j]);
+				} else if (board.pieces[i][j].color == piece.color) {
+					break;
+				} else {
+					moves.add(board.squares[i][j]);
+					break;
+				}			
+			}
 		}
 		
 		return moves;
@@ -131,8 +156,8 @@ public class PieceMoveHandler {
 		ArrayList<ISquare> moves = new ArrayList<ISquare>(20);
 		
 		// can i capture any pieces?
-		int i = piece.coords.i,
-			j = piece.coords.j;
+		int i = piece.coords.getI(),
+			j = piece.coords.getJ();
 		int ni, nj;
 		boolean color = piece.color;
 		int offset = (piece.color)? -1 : 1;
@@ -173,6 +198,7 @@ public class PieceMoveHandler {
 			nj = j;
 			if (!blocked && board.pieces[ni][nj] == null) {
 				moves.add(board.squares[ni][nj]);
+				System.out.println("ADDED TWO");
 			}
 		}
 		
@@ -194,8 +220,8 @@ public class PieceMoveHandler {
 			{-2, -2, -1, -1,  1,  1,  2,  2},
 			{-1,  1, -2,  2, -2,  2, -1,  1}
 		};
-		int i = piece.coords.i,
-			j = piece.coords.j;
+		int i = piece.coords.getI(),
+			j = piece.coords.getJ();
 		int ni, nj;
 		boolean color = piece.color;
 		Piece possiblePiece;
@@ -219,16 +245,18 @@ public class PieceMoveHandler {
 		
 		int offsets[] = { -1, 0, 1 };
 		int ni, nj;
-		int i = piece.coords.i;
-		int j = piece.coords.j;
+		int i = piece.coords.getI();
+		int j = piece.coords.getJ();
 		boolean color = piece.color;
 		Piece possiblePiece;
 		
 		for (int n=0; n<offsets.length; n++) {
 			for (int m=0; m<offsets.length; m++) {
-				if (offsets[n] != 0 && offsets[m] != 0) {
+				if (offsets[n] != 0 || offsets[m] != 0) {
+					System.out.println("Considering: "+offsets[n]+", "+offsets[m]);
 					ni = i + offsets[n];
 					nj = j + offsets[m];
+					System.out.println("Considering: "+ni+", "+nj);
 					if (stillInBounds(ni, nj)) {
 						possiblePiece = board.pieces[ni][nj];
 						if (possiblePiece == null || possiblePiece.color != color) {

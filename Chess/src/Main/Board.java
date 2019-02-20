@@ -16,12 +16,21 @@ public class Board {
 	History history;
 	Player player1, player2;
 	
+	public boolean colorToPlay;
+	int totalMoves;
+	
 	public ArrayList<ISquare> possibleMoves;
 	
 	public static int SQUARES = 8;
 	
 	public Board() {
+		history = new History();
 		moveHandler = new PieceMoveHandler(this);
+		player1 = new Player(true/*white*/, "Player1");
+		player2 = new Player(false/*black*/, "Player2");
+		
+		colorToPlay = true; // white to move first
+		totalMoves = 0;
 	}
 	
 	// UNUSED METHOD
@@ -31,34 +40,59 @@ public class Board {
 	}
 	
 	public void movePieceToSquare(ISquare source, ISquare target) {
-		int si = source.getCoords().i,
-			sj = source.getCoords().j,
-			ti = target.getCoords().i,
-			tj = target.getCoords().j;
+		int si = source.getCoords().getI(),
+			sj = source.getCoords().getJ(),
+			ti = target.getCoords().getI(),
+			tj = target.getCoords().getJ();
+		
+		totalMoves++;
+		
+		// record a move before switching those indexes
+		// TODO: measure timeSpent
+		if (colorToPlay) player1.recordMove(source, target, this, -1);
+		else player2.recordMove(source, target, this, -1);
+		
+		history.recordMove(new Move(
+				source,
+				target,
+				pieces[tj][ti],
+				-1,
+				totalMoves,
+				colorToPlay
+		));
 		
 		pieces[si][sj].movePiece(target.getCoords());
 		pieces[ti][tj] = pieces[si][sj];
 		pieces[si][sj] = null;
 		
-		printBoardState();
+		//printBoardState();
+		//System.out.println("Piece moved: "+si+", "+sj+" -> "+ti+", "+tj);
 		
-		System.out.println("Piece moved: "+si+", "+sj+" -> "+ti+", "+tj);
+		
+		colorToPlay = !colorToPlay;
 	}
 	
 	
 	public void highlightPossibleMoveSquares(Piece piece) {
 		possibleMoves = piece.getAvalibleMoves(moveHandler);
+		int i, j;
 		for (ISquare s : possibleMoves) {
-			s.setColorAsMovable();
+			i = s.getCoords().getI();
+			j = s.getCoords().getJ();
+			if (pieces[i][j] != null) {
+				s.setColorAsAttacked();
+			} else {
+				s.setColorAsMovable();
+			}
 		}
 	}
+	
 	public void resetPossibleMoveSquares() {
 		for (int i=0; i<Board.SQUARES; i++)
 		for (int j=0; j<Board.SQUARES; j++) {
 			squares[i][j].setDefaultSquareColor();
 		}
 	}
-	
 	
 	public void highlightSelectedSquare(ISquare square) {
 		square.setColorAsSelected();
@@ -67,7 +101,6 @@ public class Board {
 	public void highlightHoveredSquare(ISquare square) {
 		hlSquare = new HLSquare(square.getCoords());
 	}
-	
 	
 	public void resetSelectedPiece() {
 		
@@ -183,42 +216,24 @@ public class Board {
 					continue;
 				}
 				
-				color = (pieces[i][j].color)? "w" : "b";
-
-				switch (pieces[i][j].getClass().getName()) {
-					case "Pieces.King":
-						System.out.print(color+"K ");
-					break;
-					case "Pieces.Queen":
-						System.out.print(color+"Q ");
-					break;
-					case "Pieces.Bishop":
-						System.out.print(color+"B ");
-					break;
-					case "Pieces.Knight":
-						System.out.print(color+"N ");
-					break;
-					case "Pieces.Rook":
-						System.out.print(color+"R ");
-					break;
-					case "Pieces.Pawn":
-						System.out.print(color+"P ");
-					break;
-				}
+				System.out.print(pieces[i][j].getCharValue());
 			}
 			System.out.println("");
 		}
+		/*
+		
 		System.out.println("Coords");
 		for (int i=0; i<SQUARES; i++) {
 			for (int j=0; j<SQUARES; j++) {
 				if (pieces[i][j] == null) {
-					System.out.print(" ______ ");
+					System.out.print(" __________ ");
 					continue;
 				}
-				System.out.print(" " + pieces[i][j].coords.toStringCompact() + " ");
+				System.out.print(" " + pieces[i][j].coords.toStringDrawingCoords() + " ");
 			}
 			System.out.println("");
 		}
+		*/
 	}
 	
 	

@@ -16,5 +16,9 @@ public class Pawn extends Piece {
 	public ArrayList<ISquare> getAvalibleMoves(PieceMoveHandler moveHandler) {
 		return moveHandler.getAvalibleMovesPawn(this);
 	}
+	
+	public String getCharValue() {
+		return (color)? "wP " : "bP ";
+	}
 
 }

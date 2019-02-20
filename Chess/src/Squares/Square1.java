@@ -39,7 +39,7 @@ public class Square1 implements ISquare{
 		// debug
 		g.setFont(new Font("Arial Unicode MS", Font.BOLD, 10));
 		g.setColor(Color.black);
-		g.drawString(coords.toString(), coords.x+5, coords.y+10);
+		g.drawString(coords.toStringCompact(), coords.x+5, coords.y+20);
 	}
 
 	public void updateDrawingPosition() {

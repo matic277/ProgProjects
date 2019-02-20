@@ -19,5 +19,9 @@ public class Queen extends Piece {
 		moves.addAll(moveHandler.getAvalibleMovesDiagonal(this));
 		return moves;
 	}
+	
+	public String getCharValue() {
+		return (color)? "wQ " : "bQ ";
+	}
 
 }

@@ -32,15 +32,15 @@ public class Painter extends JPanel{
 	static int fontSize;
 	
 	// edges (space between board and frame, on all 4 sides)
-	public static final int EDGE = 15;
-	public static final int BOARD_EDGE = 10; // edge of the board itself
+	public static int EDGE = 15;
+	public static int BOARD_EDGE = 10; // edge of the board itself
 	
 	Color background;
 	Color boardEdge;
 	
 	public Painter(Board _board) {
 		board = _board;
-		listener = new Listener(_board);
+		listener = new Listener(_board, this);
 		init();
 	}
 	
@@ -91,23 +91,29 @@ public class Painter extends JPanel{
 		
 		// pieces
 		board.drawPieces(g);
-		board.resizeSquaresAndPieces();
+		//board.resizeSquaresAndPieces();
 		
 		// highlighted square, if set
 		if (board.hlSquare != null) board.hlSquare.drawSquare(g);
 		
-		super.repaint();
+		//super.repaint();
 	}
 	
 	public void resize(Graphics2D g) {
-		height = this.getHeight();
-		width = this.getWidth();
-		boardSize = height - (2 * EDGE);
-		squareSize = (boardSize - 2*BOARD_EDGE) / SQUARES;
-		pieceSize = squareSize;
-		fontSize = (int) (squareSize * 0.8);
-		
-		g.setFont(new Font("Arial Unicode MS", Font.PLAIN, fontSize));
+		if (this.getHeight() != height) {
+			height = this.getHeight();
+			width = this.getWidth();
+			BOARD_EDGE = height / 50;
+			boardSize = height - (2 * EDGE);
+			squareSize = (boardSize - 2*BOARD_EDGE) / SQUARES;
+			pieceSize = squareSize;
+			fontSize = (int) (squareSize * 0.8);
+			
+			g.setFont(new Font("Arial Unicode MS", Font.PLAIN, fontSize));
+			
+			board.resizeSquaresAndPieces();
+			super.repaint();
+		}
 	}
 
 }

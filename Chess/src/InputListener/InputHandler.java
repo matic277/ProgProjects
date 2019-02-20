@@ -27,9 +27,11 @@ public class InputHandler {
 			for (int i=0; i<Board.SQUARES; i++)
 			for (int j=0; j<Board.SQUARES; j++) {
 				if (board.squares[i][j].getRect().contains(mx, my) && board.pieces[i][j] != null) {
-					clickedSquare = board.squares[i][j];
-					clickedPiece = board.pieces[i][j];
-					break loop;
+					if (board.colorToPlay == board.pieces[i][j].color) {
+						clickedSquare = board.squares[i][j];
+						clickedPiece = board.pieces[i][j];
+						break loop;
+					}
 				}
 			}
 			
@@ -37,7 +39,7 @@ public class InputHandler {
 				board.highlightSelectedSquare(clickedSquare);
 				board.highlightPossibleMoveSquares(clickedPiece);
 				
-				System.out.println("clicked square: "+clickedSquare.getCoords().toString());
+				//System.out.println("clicked square: "+clickedSquare.getCoords().toString());
 			}
 		}
 		
@@ -60,7 +62,7 @@ public class InputHandler {
 			
 				if (clickedSquare2 != null) {
 					// a square has been clicked. is it in possible moves?
-					System.out.println("Clicked2 square: " + clickedSquare.getCoords().toString());
+					//System.out.println("Clicked2 square: " + clickedSquare.getCoords().toString());
 					for (ISquare s : moves) {
 						if (clickedSquare2.getCoords().compare(s.getCoords())) {
 							board.movePieceToSquare(clickedSquare, clickedSquare2);

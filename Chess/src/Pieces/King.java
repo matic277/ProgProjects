@@ -15,5 +15,8 @@ public class King extends Piece {
 	public ArrayList<ISquare> getAvalibleMoves(PieceMoveHandler moveHandler) {
 		return moveHandler.getAvalibleMovesKing(this);
 	}
-
+	
+	public String getCharValue() {
+		return (color)? "wK " : "bK ";
+	}
 }

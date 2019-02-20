@@ -1,6 +1,8 @@
 package Squares;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 
 public interface SquarePainter {
 	
@@ -19,6 +21,9 @@ public interface SquarePainter {
 	Color attackedColor = new Color(255, 68, 68);
 	Color hoveredColor = new Color(255, 255, 255, 50);
 	Color hoveredEdgesColor = new Color(255, 255, 255, 200);
+	
+	// size of circle of possible move compared to square size
+	double scale = 0.5;
 
 	void paintSquare(Graphics2D g);
 }
@@ -38,7 +43,6 @@ class Hovered implements SquarePainter {
 		g.setColor(hoveredEdgesColor);
 		g.drawRect(square.getRect().x, square.getRect().y, square.getSize()-1, square.getSize()-1);
 	}
-	
 }
 
 class Selected implements SquarePainter {
@@ -108,7 +112,7 @@ class HighLighted1 implements SquarePainter {
 		g.setColor(defaultColor1);
 		g.fill(square.square);
 		g.setColor(highLightedColor1);
-		g.fillOval(square.square.x, square.square.y, 30, 30);
+		g.drawOval(square.getRect().x, square.getRect().y, square.size, square.size);
 	}
 }
 
@@ -124,15 +128,22 @@ class HighLighted2 implements SquarePainter {
 		g.setColor(defaultColor2);
 		g.fill(square.square);
 		g.setColor(highLightedColor2);
-		g.fillOval(square.square.x, square.square.y, 30, 30);
+		g.drawOval(square.getRect().x, square.getRect().y, square.size, square.size);
 	}
 }
 
 class Attacked1 implements SquarePainter {
 	Square1 square;
 	
+	int size;
+	int x, y;
+	
 	public Attacked1(Square1 _square) {
 		square = _square;
+		size = (int)(square.getSize() * scale);
+		
+		x = square.getRect().x + size;
+		y = square.getRect().y + size;
 	}
 	
 	@Override
@@ -140,15 +151,22 @@ class Attacked1 implements SquarePainter {
 		g.setColor(defaultColor1);
 		g.fill(square.square);
 		g.setColor(attackedColor);
-		g.fillOval(square.square.x, square.square.y, 30, 30);
+		g.drawOval(square.getRect().x, square.getRect().y, square.size, square.size);
 	}
 }
 
 class Attacked2 implements SquarePainter {
 	Square2 square;
 	
+	int size;
+	int x, y;
+	
 	public Attacked2(Square2 _square) {
 		square = _square;
+		size = (int)(square.getSize() * scale);
+		
+		x = square.getRect().x + size;
+		y = square.getRect().y + size;
 	}
 	
 	@Override
@@ -156,7 +174,7 @@ class Attacked2 implements SquarePainter {
 		g.setColor(defaultColor2);
 		g.fill(square.square);
 		g.setColor(attackedColor);
-		g.fillOval(square.square.x, square.square.y, 30, 30);
+		g.drawOval(square.getRect().x, square.getRect().y, square.size, square.size);
 	}
 }
 

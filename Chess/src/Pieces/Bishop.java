@@ -16,5 +16,9 @@ public class Bishop extends Piece {
 	public ArrayList<ISquare> getAvalibleMoves(PieceMoveHandler moveHandler) {
 		return moveHandler.getAvalibleMovesDiagonal(this);
 	}
+	
+	public String getCharValue() {
+		return (color)? "wB " : "bB ";
+	}
 
 }

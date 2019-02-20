@@ -18,5 +18,9 @@ public class Rook extends Piece {
 		moves.addAll(moveHandler.getAvalibleMovesHorizontal(this));
 		return moves;
 	}
+	
+	public String getCharValue() {
+		return (color)? "wR " : "bR ";
+	}
 
 }
