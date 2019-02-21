@@ -198,7 +198,6 @@ public class PieceMoveHandler {
 			nj = j;
 			if (!blocked && board.pieces[ni][nj] == null) {
 				moves.add(board.squares[ni][nj]);
-				System.out.println("ADDED TWO");
 			}
 		}
 		
@@ -207,6 +206,7 @@ public class PieceMoveHandler {
 	
 	public ArrayList<ISquare> getAvalibleMovesKnight(Piece piece) {
 		ArrayList<ISquare> moves = new ArrayList<ISquare>(20);
+		Piece possiblePiece;
 		
 		/*
 		 	i-2, j-1		i-2, j+1
@@ -224,7 +224,6 @@ public class PieceMoveHandler {
 			j = piece.coords.getJ();
 		int ni, nj;
 		boolean color = piece.color;
-		Piece possiblePiece;
 		
 		for (int k=0; k<offsets[0].length; k++) {
 			ni = i + offsets[0][k];
@@ -242,21 +241,19 @@ public class PieceMoveHandler {
 	
 	public ArrayList<ISquare> getAvalibleMovesKing(Piece piece) {
 		ArrayList<ISquare> moves = new ArrayList<ISquare>(20);
+		Piece possiblePiece;
 		
 		int offsets[] = { -1, 0, 1 };
 		int ni, nj;
 		int i = piece.coords.getI();
 		int j = piece.coords.getJ();
 		boolean color = piece.color;
-		Piece possiblePiece;
 		
 		for (int n=0; n<offsets.length; n++) {
 			for (int m=0; m<offsets.length; m++) {
 				if (offsets[n] != 0 || offsets[m] != 0) {
-					System.out.println("Considering: "+offsets[n]+", "+offsets[m]);
 					ni = i + offsets[n];
 					nj = j + offsets[m];
-					System.out.println("Considering: "+ni+", "+nj);
 					if (stillInBounds(ni, nj)) {
 						possiblePiece = board.pieces[ni][nj];
 						if (possiblePiece == null || possiblePiece.color != color) {
@@ -287,9 +284,7 @@ public class PieceMoveHandler {
 	}
 	
 	public void print(String piece, ArrayList<ISquare> moves) {
-		System.out.println("Avalible moves for " + piece + ":");
 		if (moves.size() == 0) {
-			System.out.println("No moves");
 			return;
 		}
 		for (ISquare s : moves) System.out.println(s.getCoords().toString());

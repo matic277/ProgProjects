@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -38,6 +40,10 @@ public class Painter extends JPanel{
 	Color background;
 	Color boardEdge;
 	
+	public JButton undo, redo;
+	Rectangle undoRect, redoRect;
+	int btnHeight, btnWidth;
+	
 	public Painter(Board _board) {
 		board = _board;
 		listener = new Listener(_board, this);
@@ -56,6 +62,10 @@ public class Painter extends JPanel{
 		board.initPieces();
 		board.initSquares();
 		
+		initButtons();
+		
+		this.add(undo);
+		this.add(redo);
 		this.addMouseListener(listener);
 		this.addMouseMotionListener(listener);
 		this.setLayout(null);
@@ -112,8 +122,33 @@ public class Painter extends JPanel{
 			g.setFont(new Font("Arial Unicode MS", Font.PLAIN, fontSize));
 			
 			board.resizeSquaresAndPieces();
+			setButtonLocations();
 			super.repaint();
 		}
+	}
+	
+	public void initButtons() {
+		undo = new JButton("<--");
+		redo = new JButton("-->");
+		
+		undoRect = new Rectangle(0, 0, 0, 0);
+		redoRect = new Rectangle(0, 0, 0, 0);
+		
+		btnWidth = 60;
+		btnHeight = 30;
+		
+		setButtonLocations();
+		
+		undo.addActionListener(listener);
+		redo.addActionListener(listener);
+	}
+	
+	private void setButtonLocations() {
+		undoRect.setBounds(width-EDGE-btnWidth, EDGE, btnWidth, btnHeight);
+		redoRect.setBounds(width-EDGE-btnWidth, EDGE+btnHeight+10, btnWidth, btnHeight);
+		
+		undo.setBounds(undoRect);
+		redo.setBounds(redoRect);
 	}
 
 }

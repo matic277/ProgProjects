@@ -3,6 +3,7 @@ package InputListener;
 import java.util.ArrayList;
 
 import Main.Board;
+import Main.Painter;
 import Pieces.Piece;
 import Squares.ISquare;
 import Squares.Square;
@@ -49,7 +50,7 @@ public class InputHandler {
 			ISquare clickedSquare2 = null;
 			
 			if (moves.size() != 0) {
-				System.out.println("Move size is not 0");
+				//System.out.println("Move size is not 0");
 				
 				loop:
 				for (int i=0; i<Board.SQUARES; i++)
@@ -80,45 +81,27 @@ public class InputHandler {
 		
 	}
 
-	public void mouseMoved(int mx, int my) {
+	public void mouseMoved(int mx, int my, Painter painter) {
 		loop:
 		for (int i=0; i<Board.SQUARES; i++)
 		for (int j=0; j<Board.SQUARES; j++) {
-			/*
-			if (clickedSquare == null) {
-				if (board.squares[i][j].getRect().contains(mx, my)) board.highlightHoveredSquare(board.squares[i][j]);
-				else board.squares[i][j].setDefaultSquareColor();
-			}
-			else {
-				if(!clickedSquare.getCoords().compare(board.squares[i][j].getCoords()) && board.squares[i][j].isHighlightedAsMovable)
-					board.squares[i][j].setDefaultSquareColor();
-			}
-			*/
 			if (board.squares[i][j].getRect().contains(mx, my)) {
 				board.highlightHoveredSquare(board.squares[i][j]);
+				painter.repaint();
 				break loop;
 			}
 		}
-			
-			
-			
-			/*
-			if (board.squares[i][j].square.contains(mx, my) && clickedSquare.coords.compare(board.squares[i][j].coords)) board.highlightHoveredSquare(board.squares[i][j]);
-			else {
-				if (clickedSquare == null) {
-					board.squares[i][j].setDefaultSquareColor();
-				}
-				else {
-					if (!board.squares[i][j].coords.compare(clickedSquare.coords)) board.squares[i][j].setDefaultSquareColor();
-					else {
-						System.out.println("not resetting: "+board.squares[i][j].coords.toString());
-					}
-				}
-			}
-			*/
-			
+	}
+
+	public void undoButtonClicked() {
+		System.out.println("undo clicked");
+		board.undoOneMove();
 	}
 	
-	
+	public void redoButtonClicked() {
+		System.out.println("redo clicked");
+		
+	}
+
 
 }

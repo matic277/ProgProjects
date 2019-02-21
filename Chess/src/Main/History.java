@@ -18,7 +18,7 @@ public class History {
 		moves.remove(lastMove);
 	}
 	
-	private Move getLastMove() {
+	public Move getLastMove() {
 		int max = 0;
 		Move last = null;
 		for (Move m : moves) {

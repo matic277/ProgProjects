@@ -8,6 +8,7 @@ import Squares.*;
 public class Board {
 	
 	public Piece pieces[][];
+	public Piece latestState[][];
 	public ISquare squares[][];
 	public HLSquare hlSquare;
 	
@@ -65,6 +66,8 @@ public class Board {
 		pieces[ti][tj] = pieces[si][sj];
 		pieces[si][sj] = null;
 		
+		latestState = pieces;
+		
 		//printBoardState();
 		//System.out.println("Piece moved: "+si+", "+sj+" -> "+ti+", "+tj);
 		
@@ -117,13 +120,47 @@ public class Board {
 	
 
 	public void undoOneMove() {
+		if (totalMoves == 0) return;
 		
+		System.out.println("Trying to undo");
+		
+		totalMoves--;
+		
+		// if whites turn, undo blacks move and make his turn to play
+		// same for white
+		if (colorToPlay) {
+			player2.undoLastMove();
+		} else {
+			player1.undoLastMove();
+		}
+		colorToPlay = !colorToPlay;
+		
+		Move latestMove = history.getLastMove();
+		
+		// put piece that moved back to original square
+		int di = latestMove.getDest().getCoords().getI(),
+			dj = latestMove.getDest().getCoords().getJ(),
+			si = latestMove.getSource().getCoords().getI(),
+			sj = latestMove.getSource().getCoords().getJ();
+		
+		pieces[si][sj] = pieces[di][dj];
+		
+		// if a piece was captured, restore it
+		if (latestMove.pieceCaptured != null) {
+			System.out.println("Piece was captured");
+			int i = latestMove.getPieceCaptured().getCoords().getI();
+			int j = latestMove.getPieceCaptured().getCoords().getJ();
+			pieces[i][j] = latestMove.pieceCaptured;
+		}
 	}
+	
 	public void redoOneMove() {
 		
 	}
+	
+	
 	public void jumpToCurrentState() {
-		
+		// pieces = latestState; ??
 	}
 	public void resetMatch() {
 		

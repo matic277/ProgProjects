@@ -63,4 +63,8 @@ public class Piece {
 	public String getCharValue() {
 		return " _ ";
 	}
+	
+	public Coordinates getCoords() {
+		return coords;
+	}
 }

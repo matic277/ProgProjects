@@ -1,4 +1,6 @@
 package InputListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import Main.Board;
 import Main.Painter;
@@ -6,7 +8,7 @@ import Main.Painter;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public class Listener implements MouseListener, MouseMotionListener{
+public class Listener implements MouseListener, MouseMotionListener, ActionListener{
 	
 	InputHandler inputHandler;
 	Painter painter;
@@ -32,7 +34,16 @@ public class Listener implements MouseListener, MouseMotionListener{
 		int mx = e.getX();
 		int my = e.getY();
 		
-		inputHandler.mouseMoved(mx, my);
+		inputHandler.mouseMoved(mx, my, painter);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource().equals(painter.undo)) {
+			inputHandler.undoButtonClicked();
+		} else {
+			inputHandler.redoButtonClicked();
+		}
 	}
 	
 	
@@ -44,4 +55,7 @@ public class Listener implements MouseListener, MouseMotionListener{
 	public void mousePressed(MouseEvent e) {}
 	public void mouseReleased(MouseEvent e) {}
 	public void mouseDragged(MouseEvent e) {}
+
+
+
 }

@@ -21,9 +21,6 @@ public class Coordinates {
 		x = Painter.BOARD_EDGE + Painter.EDGE + j * Painter.squareSize;
 		y = Painter.BOARD_EDGE + Painter.EDGE + i * Painter.squareSize;
 		
-		if ((i == 1 && j == 1) || (i == 2 && j == 1))
-		if (x1 != x || y1 != y) System.out.println("CHANGED: "+x1+"->"+x+" "+y1+"->"+y);
-		
 		// some drawing adjustments
 		y += Painter.squareSize - Painter.squareSize / 11 ;
 	}
@@ -31,7 +28,6 @@ public class Coordinates {
 	public void setNewCoords(Coordinates coords) {
 		i = coords.i;
 		j = coords.j;
-		//System.out.println("Setting new coords");
 	}
 	
 	public String toString() {
