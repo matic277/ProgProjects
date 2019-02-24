@@ -50,8 +50,6 @@ public class InputHandler {
 			ISquare clickedSquare2 = null;
 			
 			if (moves.size() != 0) {
-				//System.out.println("Move size is not 0");
-				
 				loop:
 				for (int i=0; i<Board.SQUARES; i++)
 				for (int j=0; j<Board.SQUARES; j++) {
@@ -93,14 +91,14 @@ public class InputHandler {
 		}
 	}
 
-	public void undoButtonClicked() {
+	public void undoButtonClicked(Painter painter) {
 		System.out.println("undo clicked");
-		board.undoOneMove();
+		board.undoOneMove(painter);
 	}
 	
-	public void redoButtonClicked() {
+	public void redoButtonClicked(Painter painter) {
 		System.out.println("redo clicked");
-		
+		board.redoOneMove(painter);
 	}
 
 

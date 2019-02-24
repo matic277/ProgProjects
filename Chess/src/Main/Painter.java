@@ -20,6 +20,7 @@ public class Painter extends JPanel{
 	
 	Board board;
 	JFrame frame;
+	public Interface interFace;
 	
 	// height and width of frame
 	int height, width;
@@ -40,9 +41,7 @@ public class Painter extends JPanel{
 	Color background;
 	Color boardEdge;
 	
-	public JButton undo, redo;
-	Rectangle undoRect, redoRect;
-	int btnHeight, btnWidth;
+
 	
 	public Painter(Board _board) {
 		board = _board;
@@ -51,7 +50,8 @@ public class Painter extends JPanel{
 	}
 	
 	public void init() {
-		height = width = 800;
+		height = 800;
+		width = height + height / 2;
 		boardSize = height - (2 * EDGE);
 		squareSize = (boardSize - 2*BOARD_EDGE) / SQUARES;
 		pieceSize = squareSize;
@@ -62,10 +62,8 @@ public class Painter extends JPanel{
 		board.initPieces();
 		board.initSquares();
 		
-		initButtons();
+		interFace = new Interface(this);
 		
-		this.add(undo);
-		this.add(redo);
 		this.addMouseListener(listener);
 		this.addMouseMotionListener(listener);
 		this.setLayout(null);
@@ -106,49 +104,31 @@ public class Painter extends JPanel{
 		// highlighted square, if set
 		if (board.hlSquare != null) board.hlSquare.drawSquare(g);
 		
+		interFace.draw(g);
+		
 		//super.repaint();
 	}
 	
 	public void resize(Graphics2D g) {
 		if (this.getHeight() != height) {
+			board.hlSquare = null;
 			height = this.getHeight();
-			width = this.getWidth();
+			width = width = height + height / 2;;
 			BOARD_EDGE = height / 50;
 			boardSize = height - (2 * EDGE);
 			squareSize = (boardSize - 2*BOARD_EDGE) / SQUARES;
 			pieceSize = squareSize;
 			fontSize = (int) (squareSize * 0.8);
 			
+			interFace.resizeInterface();
+			
 			g.setFont(new Font("Arial Unicode MS", Font.PLAIN, fontSize));
 			
 			board.resizeSquaresAndPieces();
-			setButtonLocations();
 			super.repaint();
 		}
 	}
 	
-	public void initButtons() {
-		undo = new JButton("<--");
-		redo = new JButton("-->");
-		
-		undoRect = new Rectangle(0, 0, 0, 0);
-		redoRect = new Rectangle(0, 0, 0, 0);
-		
-		btnWidth = 60;
-		btnHeight = 30;
-		
-		setButtonLocations();
-		
-		undo.addActionListener(listener);
-		redo.addActionListener(listener);
-	}
-	
-	private void setButtonLocations() {
-		undoRect.setBounds(width-EDGE-btnWidth, EDGE, btnWidth, btnHeight);
-		redoRect.setBounds(width-EDGE-btnWidth, EDGE+btnHeight+10, btnWidth, btnHeight);
-		
-		undo.setBounds(undoRect);
-		redo.setBounds(redoRect);
-	}
+
 
 }

@@ -38,8 +38,8 @@ public class Player {
 		));
 	}
 	
-	public void undoLastMove() {
-		history.undoLastMove();
+	public void removeLastMoveFromHistory() {
+		history.removeLastMoveFromHistory();
 	}
 	
 	public void setName(String newName) {

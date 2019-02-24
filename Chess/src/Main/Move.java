@@ -41,6 +41,15 @@ public class Move {
 	public int getMoveNumber() {
 		return moveNumber;
 	}
+	
+	public String toString() {
+		String s = "\nMove stats:\n";
+		s += "source: " + source.getCoords().getI() + ", "+source.getCoords().getJ() + "\n";
+		s += "destin: " + dest.getCoords().getI() + ", "+dest.getCoords().getJ()+ "\n";
+		s += "captur: " + ((pieceCaptured != null)? pieceCaptured.getClass().getName()+" @ "+
+				pieceCaptured.getCoords().getI()+", " +pieceCaptured.getCoords().getJ() : "null") + "\n";
+		return s;
+	}
 
 }
 

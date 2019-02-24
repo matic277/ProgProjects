@@ -39,10 +39,10 @@ public class Listener implements MouseListener, MouseMotionListener, ActionListe
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(painter.undo)) {
-			inputHandler.undoButtonClicked();
+		if (e.getSource().equals(painter.interFace.undo)) {
+			inputHandler.undoButtonClicked(painter);
 		} else {
-			inputHandler.redoButtonClicked();
+			inputHandler.redoButtonClicked(painter);
 		}
 	}
 	

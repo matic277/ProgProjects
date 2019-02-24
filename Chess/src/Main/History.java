@@ -13,7 +13,7 @@ public class History {
 		moves.add(move);
 	}
 	
-	public void undoLastMove() {
+	public void removeLastMoveFromHistory() {
 		Move lastMove = getLastMove();
 		moves.remove(lastMove);
 	}

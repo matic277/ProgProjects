@@ -16,9 +16,11 @@ public class Board {
 	
 	History history;
 	Player player1, player2;
+	Clock clock;
 	
 	public boolean colorToPlay;
 	int totalMoves;
+	int currentMove;
 	
 	public ArrayList<ISquare> possibleMoves;
 	
@@ -32,12 +34,7 @@ public class Board {
 		
 		colorToPlay = true; // white to move first
 		totalMoves = 0;
-	}
-	
-	// UNUSED METHOD
-	// returns true if piece was moved (by calling movePiece method)
-	public boolean tryMovingPieceToSquare() {
-		return false;
+		currentMove = 0;
 	}
 	
 	public void movePieceToSquare(ISquare source, ISquare target) {
@@ -47,6 +44,7 @@ public class Board {
 			tj = target.getCoords().getJ();
 		
 		totalMoves++;
+		currentMove++;
 		
 		// record a move before switching those indexes
 		// TODO: measure timeSpent
@@ -56,7 +54,7 @@ public class Board {
 		history.recordMove(new Move(
 				source,
 				target,
-				pieces[tj][ti],
+				pieces[ti][tj],
 				-1,
 				totalMoves,
 				colorToPlay
@@ -67,11 +65,6 @@ public class Board {
 		pieces[si][sj] = null;
 		
 		latestState = pieces;
-		
-		//printBoardState();
-		//System.out.println("Piece moved: "+si+", "+sj+" -> "+ti+", "+tj);
-		
-		
 		colorToPlay = !colorToPlay;
 	}
 	
@@ -113,57 +106,64 @@ public class Board {
 	
 
 	
-	
-	
 
-	
-	
-
-	public void undoOneMove() {
+	public void undoOneMove(Painter painter) {
 		if (totalMoves == 0) return;
-		
-		System.out.println("Trying to undo");
-		
 		totalMoves--;
 		
 		// if whites turn, undo blacks move and make his turn to play
 		// same for white
 		if (colorToPlay) {
-			player2.undoLastMove();
+			player2.removeLastMoveFromHistory();
 		} else {
-			player1.undoLastMove();
+			player1.removeLastMoveFromHistory();
 		}
 		colorToPlay = !colorToPlay;
-		
+
 		Move latestMove = history.getLastMove();
-		
-		// put piece that moved back to original square
 		int di = latestMove.getDest().getCoords().getI(),
 			dj = latestMove.getDest().getCoords().getJ(),
 			si = latestMove.getSource().getCoords().getI(),
 			sj = latestMove.getSource().getCoords().getJ();
 		
+		System.out.println(latestMove.toString());
+		
+		// put piece that moved back to original square		
 		pieces[si][sj] = pieces[di][dj];
+		pieces[si][sj].movePiece(new Coordinates(si, sj));
+		pieces[di][dj] = null;
 		
 		// if a piece was captured, restore it
-		if (latestMove.pieceCaptured != null) {
-			System.out.println("Piece was captured");
+		if (latestMove.getPieceCaptured() != null) {
+			System.out.println("Piece was captured: "+latestMove.getPieceCaptured().getClass().getName());
+			// could also use coordinates from int di, dj ?
 			int i = latestMove.getPieceCaptured().getCoords().getI();
 			int j = latestMove.getPieceCaptured().getCoords().getJ();
 			pieces[i][j] = latestMove.pieceCaptured;
 		}
+		
+		history.removeLastMoveFromHistory();
+		painter.repaint();
 	}
 	
-	public void redoOneMove() {
-		
+	public void redoOneMove(Painter painter) {
+		System.out.println("Redo not yet implemented.");
+		// TODO:
+		// problems with histories from board and players
+		// remove this (useless?) feature?
 	}
 	
 	
 	public void jumpToCurrentState() {
 		// pieces = latestState; ??
+		// TODO:
+		// problem with histories again.
+		// remove with redoOneMove() function?
 	}
 	public void resetMatch() {
-		
+		// just initPieces() again?
+		// also, clear histories and reset totalMoves & currentMoves?
+		// currentMoves var is useless?
 	}
 	
 	
