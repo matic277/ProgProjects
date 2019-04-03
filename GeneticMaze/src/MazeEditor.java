@@ -20,23 +20,19 @@ public class MazeEditor {
 		painter = new Painter(this, listener);
 		
 		// DEBUG
-//		new Thread() {
-//			@Override
-//			public void run() {
-//				while (true) {
-//					System.out.print("Obs: ");
-//					for (int i=0; i<obstacles.size(); i++) System.out.print(obstacles.get(i).getClass().getName()+ " ");
-//					System.out.println();System.out.println();
-//					
-//					System.out.print("tmp: ");
-//					for (int i=0; i<tmpObs.size(); i++) System.out.print(tmpObs.get(i).getClass().getName()+ " ");
-//					System.out.println(" ");System.out.println();
-//					
-//					try { Thread.sleep(2000); } 
-//					catch (InterruptedException e) { e.printStackTrace(); }
-//				}
-//			}
-//		}.start();
+		new Thread() {
+			@Override
+			public void run() {
+				while (true) {
+					
+					for (int i=0; i<obstacles.size(); i++) System.out.print(obstacles.get(i).toString());
+					System.out.println();System.out.println();
+					
+					try { Thread.sleep(2000); } 
+					catch (InterruptedException e) { e.printStackTrace(); }
+				}
+			}
+		}.start();
 	}
 
 	public void printMaze() {
