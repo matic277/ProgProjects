@@ -4,6 +4,8 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import javax.swing.SwingUtilities;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -12,10 +14,18 @@ import Obstacle.*;
 public class Listener implements MouseListener, ChangeListener, MouseMotionListener {
 
 	MazeEditor editor;
-	Environment env; // handle this differently, singleton maybe?
+	Environment env;
 	
-	Point p1;
-	Point p2;
+	// points for drawing lines
+	Point lp1;
+	Point lp2;
+	
+	// points for drawing rectangles
+	Point rp1, rp2;
+	
+	// state, indicating is start/end have been selected
+	boolean startSelected = false;
+	boolean endSelected = false;
 	
 	public Listener(MazeEditor editor_) {
 		editor = editor_;
@@ -23,15 +33,20 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("Clicked @ ("+e.getX()+", "+e.getY()+")");
+		System.out.println("Clicked -> ("+e.getX()+", "+e.getY()+")");
 		
 		// Switch button
 		if (e.getSource().equals(editor.painter.switchButton)) {
 			onClickSwitchButton();
 		}
 		
+		// Undo button
+		else if (e.getSource().equals(editor.painter.undoButton)) {
+			onClickUndoButton();
+		}
+		
 		// Clear button
-		if (e.getSource().equals(editor.painter.clearButton)) {
+		else if (e.getSource().equals(editor.painter.clearButton)) {
 			onClickClearButton();
 		}
 		
@@ -55,16 +70,114 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 			onClickResetButton();
 		}
 		
-		// drawing maze
+		// remove rectangle if it was clicked
 		else {
 			if (Var.editType == EditingType.MAZE) { 
-				editingMazeAction(e, true);
+				editingRectangleObstacleAction(e);
 			}
 		}
 		
 		System.out.println(editor.obstacles.size());
 	}
 	
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// moving start or end
+		if (startSelected) {
+			int x = (int) e.getPoint().getX()-Var.start.width/2;
+			int y = (int) e.getPoint().getY()-Var.start.height/2;
+			Var.start.setLocation(x, y);
+		}
+		else if (endSelected) {
+			int x = (int) e.getPoint().getX() - Var.end.width / 2;
+			int y = (int) e.getPoint().getY() - Var.end.height / 2;
+			Var.end.setLocation(x, y);
+		}
+		// drawing lines or rectangles
+		else if (Var.editType == EditingType.MAZE) {
+			rp2 = e.getPoint();
+			editor.tmpObs = new RectangleObstacle(rp1, rp2);
+
+		} else {
+			// when dragging with right click,
+			// draw a straight line, then add
+			// it when mouse is released.
+			// if its left click, just add it immediately
+			lp2 = e.getPoint();
+
+			if (SwingUtilities.isRightMouseButton(e)) {
+				lp2 = e.getPoint();
+				editor.tmpObs = new LineObstacle(lp1, lp2);
+			} else {
+				editor.obstacles.add(new LineObstacle(lp1, lp2));
+				
+				lp1 = lp2;
+				lp2 = null;
+			}
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (Var.start != null && Var.start.contains(e.getPoint())) {
+			startSelected = true;
+		} else if (Var.end != null && Var.end.contains(e.getPoint())) {
+			endSelected = true;
+		}
+		else if (Var.editType == EditingType.MAZE) {
+			rp1 = e.getPoint();
+		} else {
+			lp1 = e.getPoint();
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (Var.editType == EditingType.MAZE) {
+			// don't add rectangles that have a diagonal
+			// smaller that what's defined in Var.minRectSize
+			rp2 = e.getPoint();
+			if (rp1 != null && rp1.distance(rp2) > Var.minRectSize) {
+				editor.addTmpObstacleToObstacles();
+			}
+			editor.tmpObs = new NoObstacle();
+		} else {
+			// if right click was released, then there should
+			// be a straight line waiting to be added to
+			// obstacles. The add method worries if there
+			// is actually anything to add, so no checking here
+			if (SwingUtilities.isRightMouseButton(e)) {
+				editor.addTmpObstacleToObstacles();
+			}
+		}
+		
+		rp1 = null; rp2 = null;
+		lp1 = null; lp2 = null;
+		endSelected = false;
+		startSelected = false;
+	}
+	
+	private void editingRectangleObstacleAction(MouseEvent e) {
+		// if an obstacle of type RectangleObstacle
+		// has been clicked, remove it from obstacles
+		for (int i=0; i<editor.obstacles.size(); i++) {
+			IObstacle obs = editor.obstacles.get(i);
+			if (obs instanceof RectangleObstacle) {
+				RectangleObstacle rectObs = (RectangleObstacle) obs;
+				if (rectObs.getRect().contains(e.getPoint())) {
+					editor.obstacles.remove(editor.obstacles.get(i));
+					return;
+				}
+			}
+		}
+	}
+
+	
+	
+	private void onClickUndoButton() {
+		editor.removeLastObstacle();
+	}
+
 	private void onClickResetButton() {
 		env.resetPopulation();
 	}
@@ -84,38 +197,9 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		Var.iterationSleep = editor.painter.speedSlider.getValue();
 	}
 	
-	private void editingMazeAction(MouseEvent e, boolean wasClicked) {
-		// if mouse dragged, then add rectangles if there
-		// is no  intersection with current obstacles
-		// if mouse was clicked, see if it was on any
-		// current obstacle and remove it if true
-		if (wasClicked) {
-			for (int i=0; i<editor.obstacles.size(); i++) {
-				RectangleObstacle ro = (RectangleObstacle) editor.obstacles.get(i);
-				if (ro.getRect().contains(e.getPoint())) {
-					editor.obstacles.remove(ro);
-					return;
-				}
-			}
-		}
-		
-		RectangleObstacle newObs = new RectangleObstacle(new Rectangle(e.getX(), e.getY(), Var.squareSize, Var.squareSize));
-		
-		// exit function if any intersection happens
-		for (int i=0; i<editor.obstacles.size(); i++) {
-			RectangleObstacle ro = (RectangleObstacle) editor.obstacles.get(i);
-			if (ro.intersects(newObs)) return;
-		}
-		
-		// no intersection, add this obstacle
-		editor.obstacles.add(newObs);
-	}
-	
 	private void onClickSwitchButton() {
 		System.out.println("Switch");
-		
-		editor.switchObstacles();
-		
+
 		if (Var.editType == EditingType.FREEHAND) {
 			Var.editType = EditingType.MAZE;
 		}
@@ -123,16 +207,19 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 			Var.editType = EditingType.FREEHAND;
 		}
 		
-		p1 = null;
-		p2 = null;
+		lp1 = null; lp2 = null;
+		rp1 = null; rp2 = null;
+		endSelected = false;
+		startSelected = false;
 	}
 	
 	private void onClickClearButton() {
 		System.out.println("Clear");
 		
 		editor.clearObstacles();
-		p1 = null;
-		p2 = null;
+		
+		lp1 = null; lp2 = null;
+		rp1 = null; rp2 = null;
 	}
 	
 	private void onClickDoneButton() {
@@ -146,84 +233,13 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		env.getPainter().hideDoneButton();
 		editor.painter.enableResetButton();
 	}
-	
+
 	private void checkStartAndEndCoords() throws Error {
 		if (Var.start == null || Var.end == null) throw new Error(" --> Start or end not set! <-- ");
 	}
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		if (Var.editType == EditingType.FREEHAND) {
-			drawLineOrMove_StartOrEnd_Action(e);
-		} else {
-			addRectangleObstacleOrMoveRectangleAction(e);
-		}
-	}
-	
-	private void drawLineOrMove_StartOrEnd_Action(MouseEvent e) {
-		if (checkAndMove_StartOrEnd(e)) return;
-		
-		if (p1 == null) {
-			p1 = e.getPoint();
-		} else {
-			p2 = e.getPoint();
-			editor.obstacles.add(new LineObstacle(p1, p2));
-			
-			p1 = p2;
-		}
-	}
-	
-	private void addRectangleObstacleOrMoveRectangleAction(MouseEvent e) {
-		// TODO:
-		// if dragging too fast, the cursor will "outrun"
-		// the Rect, due of this functions "sample rate"
-		// being too low.
-		
-		// check if start or end have been selected first
-		if (checkAndMove_StartOrEnd(e)) return;
-		
-		// check if empty square has been dragged across
-		editingMazeAction(e, false);
-	}
-	
-	// returns if start or end have been clicked and moved
-	public boolean checkAndMove_StartOrEnd(MouseEvent e) {
-		// moving Rect to a Point isn't good, because
-		// the center of Rect won't match the point, but 
-		// rather the top-left corner of the Rect
-		if (Var.end != null) {
-			Point cursorLocation = e.getPoint();
-			if (Var.end.contains(cursorLocation)) {
-				cursorLocation.x -= Var.endWidth / 2;
-				cursorLocation.y -= Var.endHeight / 2;
-				Var.end.setLocation(cursorLocation);
-				return true;
-			}
-		}
-		if (Var.start != null) {
-			Point cursorLocation = e.getPoint();
-			if (Var.start.contains(cursorLocation)) {
-				cursorLocation.x -= Var.startWidth / 2;
-				cursorLocation.y -= Var.startHeight / 2;
-				Var.start.setLocation(cursorLocation);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		p1 = null;
-		p2 = null;
-	}
-
-	// not needed for now
-	//private boolean leftClick(MouseEvent e) { return e.getButton() == MouseEvent.BUTTON1; }
-	//private boolean rightClick(MouseEvent e) { return e.getButton() == MouseEvent.BUTTON3; }
-	
 	// not needed
 	public void mouseMoved(MouseEvent arg0) {}
 	public void mouseEntered(MouseEvent arg0) {}
 	public void mouseExited(MouseEvent arg0) {}
-	public void mousePressed(MouseEvent arg0) {}
 }

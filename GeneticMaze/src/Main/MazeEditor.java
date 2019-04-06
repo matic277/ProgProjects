@@ -2,6 +2,8 @@ package Main;
 
 import java.util.ArrayList;
 import Obstacle.IObstacle;
+import Obstacle.NoObstacle;
+import Obstacle.RectangleObstacle;
 import Renderer.Painter;
 
 public class MazeEditor {
@@ -12,11 +14,11 @@ public class MazeEditor {
 	Listener listener;
 	
 	ArrayList<IObstacle> obstacles;
-	ArrayList<IObstacle> tmpObs;
+	IObstacle tmpObs;
 	
 	public MazeEditor() {
 		obstacles = new ArrayList<IObstacle>(500); // when drawing, objects add up pretty quick, so 500 is fine
-		tmpObs = new ArrayList<IObstacle>(500);
+		tmpObs = new NoObstacle();
 		
 		listener = new Listener(this);
 		painter = new Painter(this, listener);
@@ -44,17 +46,33 @@ public class MazeEditor {
 
 	public void clearObstacles() {
 		obstacles.clear();
-		tmpObs.clear();
+		tmpObs = new NoObstacle();
 	}
 
 	public ArrayList<IObstacle> getObstacles() {
 		return obstacles;
 	}
 
-	public void switchObstacles() {
-		ArrayList<IObstacle> tmp = obstacles;
-		obstacles = tmpObs;
-		tmpObs = tmp;
+//	public void switchObstacles() {
+//		ArrayList<IObstacle> tmp = obstacles;
+//		obstacles = tmpObs;
+//		tmpObs = tmp;
+//	}
+
+	public void removeLastObstacle() {
+		if (obstacles.size() == 0) return;
+		obstacles.remove(obstacles.size() - 1);
+	}
+
+	public IObstacle getTmpObstacle() {
+		return tmpObs;
+	}
+
+	public void addTmpObstacleToObstacles() {
+		if (tmpObs != null && !(tmpObs instanceof NoObstacle)) {
+			obstacles.add(tmpObs);
+			tmpObs = new NoObstacle();
+		}
 	}
 
 }

@@ -42,7 +42,7 @@ public class LineObstacle implements IObstacle {
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(Color.black);
+		g.setColor(obstacleClr);
 		g.drawLine((int)x1, (int)y1, (int)x2, (int)y2);
 	}
 	

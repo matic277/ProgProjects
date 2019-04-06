@@ -33,7 +33,8 @@ public class Var {
 		
 		mazeHeight = 30,
 		mazeWidth = 30,
-		squareSize = (int)(Math.sqrt(vectorMaxValue*vectorMaxValue + vectorMinValue*vectorMinValue))  + 2 //height / mazeHeight
+		squareSize = (int)(Math.sqrt(vectorMaxValue*vectorMaxValue + vectorMinValue*vectorMinValue))  + 2, //height / mazeHeight
+		minRectSize = 10
 	;
 	
 	public static Rectangle end;

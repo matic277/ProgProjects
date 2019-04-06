@@ -32,6 +32,8 @@ public class Painter extends JPanel {
 	public JButton spawnStartButton;
 	public JButton spawnEndButton;
 	
+	public JButton undoButton;
+	
 	public JSlider speedSlider;
 	
 	public Painter(MazeEditor editor_, Listener listener_) {
@@ -60,18 +62,9 @@ public class Painter extends JPanel {
 		// renderer, type MazeEditor or SimulationEditor(wraps MazeEditor)
 		renderer.draw(g);
 		
-		
 		try { Thread.sleep(1000/60); }
 		catch (InterruptedException e) { e.printStackTrace(); }
 		super.repaint();
-	}
-
-	public void repaint() {
-		super.repaint();
-	}
-	
-	public void setRenderer(IRenderer renderer_) {
-		renderer = renderer_;
 	}
 	
 	public void enableResetButton() {
@@ -85,6 +78,7 @@ public class Painter extends JPanel {
 	}
 	
 	public void initControlPanel(Listener listener_) {
+		// finishes editing process, spawns population
 		doneButton = new JButton("Done");
 		doneButton.addMouseListener(listener_);
 		doneButton.setBounds(new Rectangle(10, 10, 100, 30));
@@ -95,10 +89,6 @@ public class Painter extends JPanel {
 		resetButton.setBounds(doneButton.getBounds());
 		resetButton.setEnabled(false);
 		resetButton.setVisible(false);
-		
-		doneButton = new JButton("Done");
-		doneButton.addMouseListener(listener_);
-		doneButton.setBounds(new Rectangle(10, 10, 100, 30));
 		
 		// switches between painting a maze or free-hand drawing, switches renderer
 		switchButton = new JButton("Switch");
@@ -112,10 +102,12 @@ public class Painter extends JPanel {
 		
 		// controls sleeping time when moving population
 		speedSlider = new JSlider();
+		speedSlider.setBackground(IRenderer.controlPanelClr);
+		speedSlider.setToolTipText("Simulation speed slider");
 		speedSlider.addChangeListener(listener_);
 		speedSlider.setBounds(new Rectangle(10 + 100 + 10 + 100 + 10 + 100 + 10, 10, 100, 40));
 		
-		// spawns a rectangle (Rect) object on panel that can be dragged around, acts as a starting/end box for population
+		// spawns a rectangle object on panel that can be dragged around, acts as a starting/end box for population
 		spawnStartButton = new JButton("Spawn start");
 		spawnStartButton.addMouseListener(listener_);
 		spawnStartButton.setBounds(new Rectangle(10 + 100 + 10 + 100 + 10 + 100 + 10 + 100 + 10, 10, 110, 30));
@@ -124,20 +116,39 @@ public class Painter extends JPanel {
 		spawnEndButton.addMouseListener(listener_);
 		spawnEndButton.setBounds(new Rectangle(10 + 100 + 10 + 100 + 10 + 100 + 10 + 100 + 10 + 100 + 20, 10, 100, 30));
 		
+		undoButton = new JButton("<--");
+		undoButton.setToolTipText("Undo last obstacle placed");
+		undoButton.addMouseListener(listener_);
+		undoButton.setBounds(new Rectangle(Var.width - 50 - 10, 10, 50, 30));
+		
 		this.add(doneButton);
 		this.add(switchButton);
 		this.add(clearButton);
 		this.add(speedSlider);
 		this.add(spawnStartButton);
 		this.add(spawnEndButton);
+		this.add(undoButton);
 	}
 
 	public void hideDoneButton() {
 		doneButton.setEnabled(false);
 		doneButton.setVisible(false);
 	}
+	
+	public void hideUndoButton() {
+		undoButton.setEnabled(false);
+		undoButton.setVisible(false);
+	}
 
 	public IRenderer getCurrentRenderer() {
 		return renderer;
+	}
+	
+	public void repaint() {
+		super.repaint();
+	}
+	
+	public void setRenderer(IRenderer renderer_) {
+		renderer = renderer_;
 	}
 }

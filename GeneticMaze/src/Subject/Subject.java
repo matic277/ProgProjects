@@ -16,8 +16,6 @@ public class Subject {
 	Vector position;
 	DNA dna;
 	
-	LineFunction lf;
-	
 	Color clr;
 	
 	// coordinates of center of this subject
@@ -31,8 +29,7 @@ public class Subject {
 		// set starting position - same as resetting position
 		position = new Vector(0, 1);
 		resetPosition();
-		
-		lf = new LineFunction();
+
 		
 //		Random rn = new Random();
 //		int r = rn.nextInt(256);
@@ -54,16 +51,6 @@ public class Subject {
 	public void move() {
 		if (colided) return;
 		
-		lf.refresh(
-			new Point(
-				(int)position.x,
-				(int)position.y
-			),
-			new Point(
-				(int)dna.seq[Var.dnaIndex].x,
-				(int)dna.seq[Var.dnaIndex].y
-			)
-		);
 		position.add(dna.seq[Var.dnaIndex]);
 		
 		checkCollision();

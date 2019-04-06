@@ -8,16 +8,18 @@ import Renderer.SimulationRenderer;
 public class Environment extends Thread {
 	
 	ArrayList<IObstacle> obstacles;
+	//ArrayList<IObstacle> tmpObs;
 	
 	Population pop;
 	Painter painter;
 
-	public Environment(ArrayList<IObstacle> obstacles, Painter painter) {
+	public Environment(ArrayList<IObstacle> obstacles, /*ArrayList<IObstacle> tmpObs,*/ Painter painter) {
 		this.obstacles = obstacles;
+		//this.tmpObs = tmpObs;
 		this.painter = painter;
 		this.pop = new Population();
 		
-		Var.environment = this; // making this class statically available is not that great? make it a singleton?
+		Var.environment = this;
 		
 		painter.setRenderer(new SimulationRenderer(this, painter.getCurrentRenderer()));
 	}
@@ -56,5 +58,16 @@ public class Environment extends Thread {
 	public Population getPopulation() {
 		return pop;
 	}
+
+//	public void switchObstacles() {
+//		ArrayList<IObstacle> tmp = obstacles;
+//		obstacles = tmpObs;
+//		tmpObs = tmp;
+//	}
+
+//	public void removeLastObstacle() {
+//		// TODO Auto-generated method stub
+//		
+//	}
 	
 }

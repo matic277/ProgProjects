@@ -10,27 +10,32 @@ import Subject.Subject;
 public class RectangleObstacle implements IObstacle {
 	
 	Rectangle rect;
-	Color clr;
 	
 	public RectangleObstacle(Point p) {
 		rect = new Rectangle(p.x, p.y, Var.squareSize, Var.squareSize);
-		setColor();
+	}
+	public RectangleObstacle(Point p1, Point p2) {
+		// which has the smaller Y coordinate?
+		// that one is the upper one, similar for x
+		int x = 0, y = 0;
+		
+		if (p1.y < p2.y) y = p1.y;
+		else y = p2.y;
+		if (p1.x < p2.x) x = p1.x;
+		else x = p2.x;
+
+		rect = new Rectangle(x, y, Math.abs(p1.x-p2.x), Math.abs(p1.y-p2.y));
 	}
 	public RectangleObstacle(int x, int y) {
 		rect = new Rectangle(x, y, Var.squareSize, Var.squareSize);
-		setColor();
 	}
 	public RectangleObstacle(Rectangle rect_) {
 		rect = rect_;
-		setColor();
-	}
-	public void setColor() {
-		clr = Color.DARK_GRAY;
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(clr);
+		g.setColor(obstacleClr);
 		g.fill(rect);
 	}
 
@@ -49,6 +54,10 @@ public class RectangleObstacle implements IObstacle {
 		if (dist < (Var.squareSize / 2)) return true;
 		return false;
 	}
+	
+//	public boolean intersects(RectangleObstacle r) {
+//		return rect.intersects(r.rect);
+//	}
 	
 	private double getDistance(double x1, double y1, double x2, double y2) {
 		double dx = x1 - x2, dy = y1 - y2;

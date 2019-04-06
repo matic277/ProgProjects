@@ -11,9 +11,6 @@ public class EditorRenderer implements IRenderer {
 	
 	MazeEditor editor;
 	
-	Color startClr = Color.green;
-	Color endClr = Color.red;
-	
 	public EditorRenderer(MazeEditor editor_) {
 		editor = editor_;
 	}
@@ -25,27 +22,32 @@ public class EditorRenderer implements IRenderer {
 		drawEnd(g);
 		drawStart(g);
 		drawObstacles(g);
+		drawTmpObstacle(g);
 		drawInfo(g);
 	}
 	
+	private void drawTmpObstacle(Graphics2D g) {
+		editor.getTmpObstacle().draw(g);
+	}
+
 	private void drawObstacles(Graphics2D g) {
 		for (IObstacle lo : editor.getObstacles()) lo.draw(g);
 	}
 	
 	private void drawControlPanel(Graphics2D g) {
-		g.setColor(Color.PINK);
+		g.setColor(controlPanelClr);
 		g.fillRect(0, 0, Var.width, Var.buttonSpaceHeight);
 	}
 
 	private void drawBackground(Graphics2D g) {
-		g.setColor(Color.LIGHT_GRAY);
+		g.setColor(bgClr);
 		g.fillRect(0, 0, Var.width, Var.height);
 	}
 	
 	public void drawInfo(Graphics2D g) {
 		Font current = g.getFont();
 		
-		g.setColor(Color.black);
+		g.setColor(infoClr);
 		g.setFont(new Font("Consolas", Font.BOLD, 14)); 
 		
 		g.drawString(this.getClass().getName(), 15 , Var.height-15);
