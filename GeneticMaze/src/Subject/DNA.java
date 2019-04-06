@@ -12,37 +12,35 @@ public class DNA {
 		
 		seq = new Vector[size];
 		
-		seq[0] = new Vector(Var.vectorMinValue, Var.vectorMaxValue);
+		seq[0] = new Vector();
 		for (int i=1; i<size; i++) {
 			seq[i] = new Vector(seq[i-1]);
 			seq[i].rotate();
 		}
-	}
-	
+	}	
 	public DNA(Vector seq[]) {
 		this.seq = seq;
 	}
 	
-	public static DNA combineDNA(Vector seq1[], Vector seq2[]) {
+	public static DNA combineDNA(DNA dna1, DNA dna2) {
+		Vector seq1[] = dna1.getSeq();
+		Vector seq2[] = dna2.getSeq();
 		Vector newSeq[] = new Vector[seq1.length];
 		
-		for (int i=0, j=seq2.length/2; i<seq1.length/2; i++, j++) {
+		for (int i=0, j=seq1.length/2; i<seq2.length/2; i++, j++) {
 			newSeq[i] = seq1[i];
-			newSeq[j] = seq1[j];
+			newSeq[j] = seq2[j];
 		}
-	
-		DNA newDna = new DNA(newSeq);
 		
-		if (Var.mutation) newDna.mutate();
-		
-		return newDna;
+		return new DNA(newSeq);
 	}
 	
-	private void mutate() {
+	public void mutate() {
 		Random r = new Random();
-		for (int i=0; i<seq.length; i++) {
+		for (int i=1; i<seq.length; i++) {
 			if (r.nextDouble() < Var.mutationRate) {
-				seq[i] = new Vector(Var.vectorMinValue, Var.vectorMaxValue);
+				seq[i] = new Vector(seq[i-1]);
+				seq[i].rotate();
 			}
 		}
 	}

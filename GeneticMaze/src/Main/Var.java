@@ -24,9 +24,10 @@ public class Var {
 		
 		populationSize = 20,
 		DnaLength = 200,
+		vectorLength = 5,
 		vectorMaxValue = 5,
 		vectorMinValue = -5,
-		vectorAngle = 10,
+		vectorAngle = 30,
 		
 		generationNumber = 0,
 		dnaIndex = 0,

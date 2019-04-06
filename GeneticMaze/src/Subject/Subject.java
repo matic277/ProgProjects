@@ -27,9 +27,10 @@ public class Subject {
 		id = id_;
 		
 		// set starting position - same as resetting position
-		position = new Vector(0, 1);
+		position = new Vector();
 		resetPosition();
-
+		
+//		this.printDna();
 		
 //		Random rn = new Random();
 //		int r = rn.nextInt(256);
@@ -87,7 +88,7 @@ public class Subject {
 	}
 
 	public void resetPosition() {
-		position.set(Var.start.x, Var.start.y);
+		position.set(Var.start.getCenterX(), Var.start.getCenterY());
 		colided = false;
 	}
 	
@@ -97,8 +98,12 @@ public class Subject {
 
 	public static Subject mateSubjects(Subject p1, Subject p2, int childId) {
 		Subject child = new Subject(childId);
-		child.dna = DNA.combineDNA(p1.dna.seq, p2.dna.seq);
+		child.dna = DNA.combineDNA(p1.dna, p2.dna);
 		return child;
+	}
+	
+	public void mutateSubject() {
+		if (Var.mutation) dna.mutate();
 	}
 
 	public double getFitness() {

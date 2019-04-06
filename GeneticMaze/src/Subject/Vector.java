@@ -2,6 +2,8 @@ package Subject;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.text.DecimalFormat;
 import java.util.Random;
 import Main.Var;
 
@@ -10,20 +12,26 @@ public class Vector {
 	public double x;
 	public double y;
 	
+	DecimalFormat rounder = new DecimalFormat("#.#");
+	
+	public Vector() {
+		Random r = new Random();
+		x = (r.nextBoolean())? r.nextDouble() : -r.nextDouble();
+		y = (r.nextBoolean())? r.nextDouble() : -r.nextDouble();
+		
+		this.norm();
+		this.multi(Var.vectorLength);
+	}
 	public Vector(double x_, double y_) {
 		x = x_;
 		y = y_;
-	}
-	public Vector(int min, int max) {
-		Random r = new Random();
-		x = r.nextInt(max - min) + min;
-		y = r.nextInt(max - min) + min;
 	}
 	public Vector(Vector v) {
 		x = v.x; y = v.y;
 	}
 	
 	public void set(Vector v) { x = v.x; y = v.y; }
+	public void set(Point p) { x = p.x; y = p.y; }
 	public void set(int x_, int y_) { x = x_; y = y_; }
 	public void set(double x_, double y_) { x = x_; y = y_; }
 	
@@ -46,6 +54,15 @@ public class Vector {
 		
 		x = x * Math.cos(Math.toRadians(angle)) - y * Math.sin(Math.toRadians(angle));
 		y = x * Math.sin(Math.toRadians(angle)) + y * Math.cos(Math.toRadians(angle));
+		
+		// we have a vector of wanted size
+		// (has already been normalized and scaled(multiplied))
+		// but if we don't scale it again after rotation, the
+		// margin of errors (because of type double) start
+		// adding up, and vectors get shorter and shorter
+		// as sequence progresses
+		this.norm();
+		this.multi(Var.vectorLength);
 	}
 	
 	public void add(Vector v) {
@@ -58,7 +75,7 @@ public class Vector {
 		y -= v.y;
 	}
 	
-	public void multi(float n) {
+	public void multi(double n) {
 		x *= n;
 		y *= n;
 	}
@@ -78,7 +95,7 @@ public class Vector {
 			div(v_mag);
 		}
 	}
-	
+
 	public static void draw(Graphics2D g, Vector v, Color c) {
 		g.setColor(c);
 		g.drawLine(300, 300, (int)v.x+300, (int)v.y+300);
@@ -90,6 +107,6 @@ public class Vector {
 	}
 	
 	public String toString() {
-		return "(" + (int)x + ", " + (int)y + ")";
+		return "(" + rounder.format(x) + ", " + rounder.format(y) + ")";
 	}
 }

@@ -3,6 +3,7 @@ package Main;
 import java.awt.Graphics2D;
 import java.util.Random;
 import Subject.Subject;
+import Subject.Vector;
 
 public class Population {
 	
@@ -44,6 +45,7 @@ public class Population {
 			p1 = pop[r1];
 			p2 = pop[r2];
 			pop[i] = Subject.mateSubjects(p1, p2, i);
+			pop[i].mutateSubject();
 			
 			r1 = r.nextInt(popsize / 2);
 			r2 = r.nextInt(popsize / 2);
