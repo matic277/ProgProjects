@@ -3,7 +3,6 @@ package Main;
 import java.util.ArrayList;
 import Obstacle.IObstacle;
 import Obstacle.NoObstacle;
-import Obstacle.RectangleObstacle;
 import Renderer.Painter;
 
 public class MazeEditor {

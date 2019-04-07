@@ -10,7 +10,8 @@ public interface IRenderer {
 	
 	Color infoClr = Color.black;
 	Color bgClr = new Color(230, 230, 230);
-	Color controlPanelClr = Color.LIGHT_GRAY;
+	Color upperControlPanelClr = Color.LIGHT_GRAY;
+	Color rightControlPanelClr = Color.LIGHT_GRAY;
 	
 	void draw(Graphics2D g);
 	

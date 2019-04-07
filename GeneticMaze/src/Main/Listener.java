@@ -1,6 +1,8 @@
 package Main;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -11,7 +13,7 @@ import javax.swing.event.ChangeListener;
 
 import Obstacle.*;
 
-public class Listener implements MouseListener, ChangeListener, MouseMotionListener {
+public class Listener implements MouseListener, ChangeListener, MouseMotionListener, ActionListener {
 
 	MazeEditor editor;
 	Environment env;
@@ -29,6 +31,16 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 	
 	public Listener(MazeEditor editor_) {
 		editor = editor_;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource().equals(editor.painter.populationSizeInput)) {
+			System.out.println("change in pop size: " + editor.painter.populationSizeInput.getText());
+			Var.populationSize = Integer.parseInt(editor.painter.populationSizeInput.getText());
+			
+			// TODO: reset population when this is changed, or something....
+		}
 	}
 
 	@Override

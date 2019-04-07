@@ -3,7 +3,6 @@ package Main;
 import java.awt.Graphics2D;
 import java.util.Random;
 import Subject.Subject;
-import Subject.Vector;
 
 public class Population {
 	

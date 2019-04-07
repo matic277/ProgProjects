@@ -1,6 +1,5 @@
 package Renderer;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import Main.MazeEditor;
@@ -18,14 +17,15 @@ public class EditorRenderer implements IRenderer {
 	@Override
 	public void draw(Graphics2D g) {
 		drawBackground(g);
-		drawControlPanel(g);
+		drawUpperControlPanel(g);
+		drawRightControlPanel(g);
 		drawEnd(g);
 		drawStart(g);
 		drawObstacles(g);
 		drawTmpObstacle(g);
 		drawInfo(g);
 	}
-	
+
 	private void drawTmpObstacle(Graphics2D g) {
 		editor.getTmpObstacle().draw(g);
 	}
@@ -34,9 +34,14 @@ public class EditorRenderer implements IRenderer {
 		for (IObstacle lo : editor.getObstacles()) lo.draw(g);
 	}
 	
-	private void drawControlPanel(Graphics2D g) {
-		g.setColor(controlPanelClr);
+	private void drawUpperControlPanel(Graphics2D g) {
+		g.setColor(upperControlPanelClr);
 		g.fillRect(0, 0, Var.width, Var.buttonSpaceHeight);
+	}
+	
+	private void drawRightControlPanel(Graphics2D g) {
+		g.setColor(rightControlPanelClr);
+		g.fillRect(Var.drawingWidth, 0, Var.rightPanelWidth, Var.height);
 	}
 
 	private void drawBackground(Graphics2D g) {

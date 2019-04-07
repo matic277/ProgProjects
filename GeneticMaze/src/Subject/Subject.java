@@ -2,7 +2,7 @@ package Subject;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import Main.Var;
 import Obstacle.IObstacle;
@@ -116,6 +116,17 @@ public class Subject {
 
 	public double getPositionY() {
 		return position.y;
+	}
+	
+	public Point2D.Double getPosition() {
+		return new Point2D.Double(position.x, position.y);
+	}
+	
+	public Point2D.Double getNextPosition() {
+		return new Point2D.Double(
+			position.x + dna.seq[Var.dnaIndex].x,
+			position.y + dna.seq[Var.dnaIndex].y
+		);
 	}
 
 	public DNA getDNA() {

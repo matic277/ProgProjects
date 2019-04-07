@@ -19,8 +19,15 @@ public class Var {
 	
 	public static int
 		buttonSpaceHeight = 50,
-		width = 800,
-		height = buttonSpaceHeight + 800,
+		rightPanelWidth = 400,
+		
+		drawingWidth = 800,
+		drawingHeight = 800,
+		
+		width = drawingWidth + rightPanelWidth,
+		height = drawingHeight + buttonSpaceHeight,
+		
+		
 		
 		populationSize = 20,
 		DnaLength = 200,
@@ -32,9 +39,9 @@ public class Var {
 		generationNumber = 0,
 		dnaIndex = 0,
 		
-		mazeHeight = 30,
-		mazeWidth = 30,
-		squareSize = (int)(Math.sqrt(vectorMaxValue*vectorMaxValue + vectorMinValue*vectorMinValue))  + 2, //height / mazeHeight
+		mazeHeight = 30, //__ not used
+		mazeWidth = 30,  //
+		squareSize = (int)(Math.sqrt(vectorMaxValue*vectorMaxValue + vectorMinValue*vectorMinValue))  + 2, //height / mazeHeight - NOT USED ANYMORE
 		minRectSize = 10
 	;
 	
