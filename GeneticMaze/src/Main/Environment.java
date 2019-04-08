@@ -2,40 +2,74 @@ package Main;
 
 import java.util.ArrayList;
 import Obstacle.IObstacle;
+import Obstacle.NoObstacle;
+import Renderer.EditorRenderer;
 import Renderer.Painter;
 import Renderer.SimulationRenderer;
 
 public class Environment extends Thread {
 	
 	ArrayList<IObstacle> obstacles;
-	//ArrayList<IObstacle> tmpObs;
+	IObstacle tmpObs;
 	
 	Population pop;
 	Painter painter;
+	
+	Object lock;
+	
+	boolean isSimulationRunning;
 
-	public Environment(ArrayList<IObstacle> obstacles, /*ArrayList<IObstacle> tmpObs,*/ Painter painter) {
-		this.obstacles = obstacles;
-		//this.tmpObs = tmpObs;
-		this.painter = painter;
-		this.pop = new Population();
-		
+	public Environment() {
 		Var.environment = this;
 		
-		painter.setRenderer(new SimulationRenderer(this, painter.getCurrentRenderer()));
+		isSimulationRunning = true;
+		
+		obstacles = new ArrayList<IObstacle>(500); // when drawing, objects add up pretty quick, so 500 is fine
+		tmpObs = new NoObstacle();
+		
+		painter = new Painter(this, new Listener(this));
+		painter.setRenderer(new EditorRenderer(this));
 	}
 
 	@Override
 	public void run() {
 		while (true) {
-			pop.move();
-			sleep();
-			
-			if (Var.dnaIndex == Var.DnaLength) {
-				pop.calculateFitness();
-				pop.createNewGeneration();
-				pop.resetPositions();
+			synchronized (lock)
+			{
+				System.out.println("im here");
+	//			try {
+	//				lock.wait();
+	//			} catch (InterruptedException e) {
+	//				e.printStackTrace();
+	//			}
+				
+				while (isSimulationRunning) {
+					pop.move();
+					sleep();
+					
+					// all genes have been expressed,
+					// do selection and all that stuff
+					if (Var.dnaIndex == Var.DnaLength) {
+						pop.calculateFitness();
+						pop.createNewGeneration();
+						pop.resetPositions();
+						
+						Var.dnaIndex = 0;
+					}
+				}
+				
+				
 			}
+			System.out.println("loop");
 		}
+	}
+	
+	public void pauseSimulation() {
+		
+	}
+	
+	public void initPopulation() {
+		pop = new Population();
 	}
 
 	private void sleep() {
@@ -59,15 +93,25 @@ public class Environment extends Thread {
 		return pop;
 	}
 
-//	public void switchObstacles() {
-//		ArrayList<IObstacle> tmp = obstacles;
-//		obstacles = tmpObs;
-//		tmpObs = tmp;
-//	}
+	public void clearObstacles() {
+		obstacles.clear();
+		tmpObs = new NoObstacle();
+	}
 
-//	public void removeLastObstacle() {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	public void removeLastObstacle() {
+		if (obstacles.size() == 0) return;
+		obstacles.remove(obstacles.size() - 1);
+	}
+
+	public IObstacle getTmpObstacle() {
+		return tmpObs;
+	}
+
+	public void addTmpObstacleToObstacles() {
+		if (tmpObs != null && !(tmpObs instanceof NoObstacle)) {
+			obstacles.add(tmpObs);
+			tmpObs = new NoObstacle();
+		}
+	}
 	
 }

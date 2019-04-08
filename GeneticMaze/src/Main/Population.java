@@ -70,7 +70,6 @@ public class Population {
 	
 	public void resetPositions() {
 		for (Subject s : pop) s.resetPosition();
-		Var.dnaIndex = 0;
 	}
 
 }

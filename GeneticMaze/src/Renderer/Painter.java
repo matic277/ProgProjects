@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+import Main.Environment;
 import Main.Listener;
-import Main.MazeEditor;
 import Main.Var;
 
 public class Painter extends JPanel {
@@ -23,7 +23,7 @@ public class Painter extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	MazeEditor editor;
+	Environment env;
 	IRenderer renderer;
 	JFrame f;
 	
@@ -53,11 +53,19 @@ public class Painter extends JPanel {
 	public JSlider angleSlider;
 	int angleSliderWidth = 150;
 	
+	public JButton refreshButton;
+	int refreshButtonWidth = 100;
+	int refreshButtonHeight = 50;
 	
-	public Painter(MazeEditor editor_, Listener listener_) {
-		editor = editor_;
+	public JButton pauseButton;
+	int pauseButtonWidth = 100;
+	int pauseButtonHeight = 50;
+	
+	
+	public Painter(Environment env_, Listener listener_) {
+		env = env_;
 
-		renderer = new EditorRenderer(editor);
+		renderer = new EditorRenderer(env);
 		
 		initUpperControlPanel(listener_);
 		initRightControlPanel(listener_);
@@ -180,6 +188,25 @@ public class Painter extends JPanel {
 
 		this.add(populationSizeInput);
 		this.add(populationSizeText);
+		
+		// refresh button
+		Rectangle refreshButtonBounds = new Rectangle(Var.width - refreshButtonWidth - 10, Var.height - refreshButtonHeight - 10, refreshButtonWidth, refreshButtonHeight);
+		refreshButton = new JButton("Refresh");
+		refreshButton.setBounds(refreshButtonBounds);
+		refreshButton.addMouseListener(listener_);
+		refreshButton.setToolTipText("Apply the newly set parameters");
+		
+		this.add(refreshButton);
+		
+		// pause button
+		Rectangle pauseButtonBounds = new Rectangle((int)(refreshButtonBounds.getX() - pauseButtonWidth - 100), (int)(refreshButtonBounds.getY()), pauseButtonWidth, pauseButtonHeight);
+		pauseButton = new JButton("Pause");
+		pauseButton.setBounds(pauseButtonBounds);
+		pauseButton.addMouseListener(listener_);
+		pauseButton.setToolTipText("Pause/Unpause simulation");
+		
+		this.add(pauseButton);
+		
 	}
 	
 	// TODO:

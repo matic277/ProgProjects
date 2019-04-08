@@ -2,16 +2,17 @@ package Renderer;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
-import Main.MazeEditor;
+
+import Main.Environment;
 import Main.Var;
 import Obstacle.IObstacle;
 
 public class EditorRenderer implements IRenderer {
 	
-	MazeEditor editor;
+	Environment env;
 	
-	public EditorRenderer(MazeEditor editor_) {
-		editor = editor_;
+	public EditorRenderer(Environment env_) {
+		env = env_;
 	}
 	
 	@Override
@@ -27,11 +28,11 @@ public class EditorRenderer implements IRenderer {
 	}
 
 	private void drawTmpObstacle(Graphics2D g) {
-		editor.getTmpObstacle().draw(g);
+		env.getTmpObstacle().draw(g);
 	}
 
 	private void drawObstacles(Graphics2D g) {
-		for (IObstacle lo : editor.getObstacles()) lo.draw(g);
+		for (IObstacle lo : env.getObstacles()) lo.draw(g);
 	}
 	
 	private void drawUpperControlPanel(Graphics2D g) {
@@ -57,7 +58,7 @@ public class EditorRenderer implements IRenderer {
 		
 		g.drawString(this.getClass().getName(), 15 , Var.height-15);
 		
-		String obstClassName = (editor.getObstacles().size() != 0)? editor.getObstacles().get(0).getClass().getName() : "Empty";
+		String obstClassName = (env.getObstacles().size() != 0)? env.getObstacles().get(0).getClass().getName() : "Empty";
 		g.drawString(obstClassName, 15 , Var.height-30);
 		g.setFont(current);
 	}

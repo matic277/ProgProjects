@@ -8,8 +8,26 @@ import Subject.Vector;
 
 public class Main {
 	
-	public static void main(String[] args) {		
-		new MazeEditor();
+	public static void main(String[] args) {
+		Environment e = new Environment();
+		
+		Thread t = new Thread() {
+			public void run() {
+				while(true) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					System.out.println("running");
+				}
+			}
+		};
+		t.start();
+		
+		//e.start();
 		
 //		Point2D.Double p1 = new Point2D.Double(5.1, 5.0009);
 //		Point2D.Double p2 = new Point2D.Double(5.1, 5.00098);
@@ -38,5 +56,10 @@ public class Main {
 //		}
 		
 
+	}
+	
+	// debugging purpose
+	public static void ThreadCount() {
+		System.out.println("# of threads: " + Thread.activeCount());
 	}
 }

@@ -12,11 +12,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import Obstacle.*;
+import Renderer.SimulationRenderer;
 
 public class Listener implements MouseListener, ChangeListener, MouseMotionListener, ActionListener {
 
-	MazeEditor editor;
 	Environment env;
+	
+	Object lock = new Object();
 	
 	// points for drawing lines
 	Point lp1;
@@ -29,15 +31,15 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 	boolean startSelected = false;
 	boolean endSelected = false;
 	
-	public Listener(MazeEditor editor_) {
-		editor = editor_;
+	public Listener(Environment env_) {
+		env = env_;
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(editor.painter.populationSizeInput)) {
-			System.out.println("change in pop size: " + editor.painter.populationSizeInput.getText());
-			Var.populationSize = Integer.parseInt(editor.painter.populationSizeInput.getText());
+		if (e.getSource().equals(env.painter.populationSizeInput)) {
+			System.out.println("change in pop size: " + env.painter.populationSizeInput.getText());
+			Var.populationSize = Integer.parseInt(env.painter.populationSizeInput.getText());
 			
 			// TODO: reset population when this is changed, or something....
 		}
@@ -47,38 +49,48 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 	public void mouseClicked(MouseEvent e) {
 		System.out.println("Clicked -> ("+e.getX()+", "+e.getY()+")");
 		
+		// Pause button
+		if (e.getSource().equals(env.painter.pauseButton)) {
+			onClickPauseButton();
+		}
+		
+		// Refresh button
+		if (e.getSource().equals(env.painter.refreshButton)) {
+			onClickRefreshButton();
+		}
+		
 		// Switch button
-		if (e.getSource().equals(editor.painter.switchButton)) {
+		if (e.getSource().equals(env.painter.switchButton)) {
 			onClickSwitchButton();
 		}
 		
 		// Undo button
-		else if (e.getSource().equals(editor.painter.undoButton)) {
+		else if (e.getSource().equals(env.painter.undoButton)) {
 			onClickUndoButton();
 		}
 		
 		// Clear button
-		else if (e.getSource().equals(editor.painter.clearButton)) {
+		else if (e.getSource().equals(env.painter.clearButton)) {
 			onClickClearButton();
 		}
 		
 		// Spawn start button
-		else if (e.getSource().equals(editor.painter.spawnStartButton)) {
+		else if (e.getSource().equals(env.painter.spawnStartButton)) {
 			onClickSpawnStartButton();
 		}
 
 		// Spawn end button
-		else if (e.getSource().equals(editor.painter.spawnEndButton)) {
+		else if (e.getSource().equals(env.painter.spawnEndButton)) {
 			onClickSpawnEndButton();
 		}
 		
 		// Done button
-		else if (e.getSource().equals(editor.painter.doneButton)) {
+		else if (e.getSource().equals(env.painter.doneButton)) {
 			onClickDoneButton();
 		}
 		
 		// Reset population button
-		else if (e.getSource().equals(editor.painter.resetButton)) {
+		else if (e.getSource().equals(env.painter.resetButton)) {
 			onClickResetButton();
 		}
 		
@@ -89,9 +101,37 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 			}
 		}
 		
-		System.out.println(editor.obstacles.size());
+		System.out.println(env.obstacles.size());
 	}
 	
+	private void onClickRefreshButton() {
+		System.out.println("Refresh");
+		
+		env.pop = new Population();
+	}
+
+	private synchronized void onClickPauseButton() {
+		System.out.println("Pause/Unpause");
+		
+		synchronized (lock)
+		{
+			
+			if (env.isSimulationRunning) {
+				try {
+					lock.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				env.isSimulationRunning = false;
+			} else {
+				lock.notify();
+				env.isSimulationRunning = true;
+			}
+			
+		}
+	}
+
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// moving start or end
@@ -108,7 +148,7 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		// drawing lines or rectangles
 		else if (Var.editType == EditingType.MAZE) {
 			rp2 = e.getPoint();
-			editor.tmpObs = new RectangleObstacle(rp1, rp2);
+			env.tmpObs = new RectangleObstacle(rp1, rp2);
 
 		} else {
 			// when dragging with right click,
@@ -119,9 +159,9 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 
 			if (SwingUtilities.isRightMouseButton(e)) {
 				lp2 = e.getPoint();
-				editor.tmpObs = new LineObstacle(lp1, lp2);
+				env.tmpObs = new LineObstacle(lp1, lp2);
 			} else {
-				editor.obstacles.add(new LineObstacle(lp1, lp2));
+				env.obstacles.add(new LineObstacle(lp1, lp2));
 				
 				lp1 = lp2;
 				lp2 = null;
@@ -150,16 +190,16 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 			// smaller that what's defined in Var.minRectSize
 			rp2 = e.getPoint();
 			if (rp1 != null && rp1.distance(rp2) > Var.minRectSize) {
-				editor.addTmpObstacleToObstacles();
+				env.addTmpObstacleToObstacles();
 			}
-			editor.tmpObs = new NoObstacle();
+			env.tmpObs = new NoObstacle();
 		} else {
 			// if right click was released, then there should
 			// be a straight line waiting to be added to
 			// obstacles. The add method worries if there
 			// is actually anything to add, so no checking here
 			if (SwingUtilities.isRightMouseButton(e)) {
-				editor.addTmpObstacleToObstacles();
+				env.addTmpObstacleToObstacles();
 			}
 		}
 		
@@ -172,12 +212,12 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 	private void editingRectangleObstacleAction(MouseEvent e) {
 		// if an obstacle of type RectangleObstacle
 		// has been clicked, remove it from obstacles
-		for (int i=0; i<editor.obstacles.size(); i++) {
-			IObstacle obs = editor.obstacles.get(i);
+		for (int i=0; i<env.obstacles.size(); i++) {
+			IObstacle obs = env.obstacles.get(i);
 			if (obs instanceof RectangleObstacle) {
 				RectangleObstacle rectObs = (RectangleObstacle) obs;
 				if (rectObs.getRect().contains(e.getPoint())) {
-					editor.obstacles.remove(editor.obstacles.get(i));
+					env.obstacles.remove(env.obstacles.get(i));
 					return;
 				}
 			}
@@ -187,7 +227,7 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 	
 	
 	private void onClickUndoButton() {
-		editor.removeLastObstacle();
+		env.removeLastObstacle();
 	}
 
 	private void onClickResetButton() {
@@ -206,7 +246,7 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		Var.iterationSleep = editor.painter.speedSlider.getValue();
+		Var.iterationSleep = env.painter.speedSlider.getValue();
 	}
 	
 	private void onClickSwitchButton() {
@@ -228,7 +268,7 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 	private void onClickClearButton() {
 		System.out.println("Clear");
 		
-		editor.clearObstacles();
+		env.clearObstacles();
 		
 		lp1 = null; lp2 = null;
 		rp1 = null; rp2 = null;
@@ -239,11 +279,13 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		
 		checkStartAndEndCoords(); // TODO: re-implement this method ??
 		
-		env = new Environment(editor.obstacles, editor.painter);
-		env.start();
-		
+		env.getPainter().setRenderer(new SimulationRenderer(env, env.getPainter().getCurrentRenderer()));
 		env.getPainter().hideDoneButton();
-		editor.painter.enableResetButton();
+		env.painter.enableResetButton();
+		
+		env.lock = lock;
+		env.initPopulation();
+		env.start();
 	}
 
 	private void checkStartAndEndCoords() throws Error {

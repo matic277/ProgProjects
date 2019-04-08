@@ -14,10 +14,9 @@ public class SimulationRenderer implements IRenderer {
 	
 	DecimalFormat rounder;
 	
-	// this class wraps EditorRenderer
-	// and adds functionality of also
-	// drawing population, and some
-	// simulation information in the
+	// this class wraps EditorRenderer and adds
+	// functionality of also drawing population, 
+	// and some simulation information in the
 	// drawStatus method
 	public SimulationRenderer(Environment env_, IRenderer editorRenderer_) {
 		env = env_;
@@ -40,10 +39,12 @@ public class SimulationRenderer implements IRenderer {
 		Font current = g.getFont();
 		g.setFont(new Font("Consolas", Font.PLAIN, 14));
 		
+		int drawXcoord = Var.drawingWidth - 220;
+		
 		g.setColor(Color.BLACK);
-		g.drawString("Population size:   " + Var.populationSize, Var.width-220, Var.height-50);
-		g.drawString("Generation number: " + Var.generationNumber, Var.width-220, Var.height-35);
-		g.drawString("Avgerage fitness:  " + rounder.format(Var.averageFitness), Var.width-220, Var.height-20);
+		g.drawString("Population size:   " + Var.populationSize, drawXcoord, Var.height-50);
+		g.drawString("Generation number: " + Var.generationNumber, drawXcoord, Var.height-35);
+		g.drawString("Avgerage fitness:  " + rounder.format(Var.averageFitness), drawXcoord, Var.height-20);
 		
 		g.setFont(current);
 	}
