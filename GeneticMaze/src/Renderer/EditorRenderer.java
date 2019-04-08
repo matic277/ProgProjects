@@ -67,11 +67,15 @@ public class EditorRenderer implements IRenderer {
 		if (Var.start == null) return;
 		g.setColor(startClr);
 		g.fillRect(Var.start.x, Var.start.y, Var.start.width, Var.start.height);
+		g.setColor(startClr.darker());
+		g.drawString("start", Var.start.x, Var.start.y + Var.startHeight + 9);
 	}
 
 	private void drawEnd(Graphics2D g) {
 		if (Var.end == null) return;
 		g.setColor(endClr);
 		g.fillRect(Var.end.x, Var.end.y, Var.end.width, Var.end.height);
+		g.setColor(endClr.darker());
+		g.drawString("end", Var.end.x, Var.end.y + Var.startHeight + 9);
 	}
 }

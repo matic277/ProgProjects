@@ -5,7 +5,6 @@ import Obstacle.IObstacle;
 import Obstacle.NoObstacle;
 import Renderer.EditorRenderer;
 import Renderer.Painter;
-import Renderer.SimulationRenderer;
 
 public class Environment extends Thread {
 	

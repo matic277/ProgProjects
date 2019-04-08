@@ -1,4 +1,5 @@
 package Main;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -6,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
 import javax.swing.SwingUtilities;
 
 import javax.swing.event.ChangeEvent;
@@ -41,7 +43,7 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 			System.out.println("change in pop size: " + env.painter.populationSizeInput.getText());
 			Var.populationSize = Integer.parseInt(env.painter.populationSizeInput.getText());
 			
-			// TODO: reset population when this is changed, or something....
+			onClickResetButton();
 		}
 	}
 
@@ -57,6 +59,9 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		// Refresh button
 		if (e.getSource().equals(env.painter.refreshButton)) {
 			onClickRefreshButton();
+			// TODO: this button isn't needed anymore,
+			// since all inputs are immediately applied
+			// change it or not??
 		}
 		
 		// Switch button
@@ -246,9 +251,40 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		Var.iterationSleep = env.painter.speedSlider.getValue();
+		System.out.println("Slider changed");
+		
+		// Angle slider
+		if (e.getSource().equals(env.painter.angleSlider)) {
+			onAngleSliderChange(e);
+		}
+		// Mutation slider
+		else if (e.getSource().equals(env.painter.mutationSlider)) {
+			onMutationSliderChange(e);
+		}
+		// Speed slider
+		else if (e.getSource().equals(env.painter.speedSlider)) {
+			onSpeedSliderChange(e);
+		}
+		
 	}
 	
+	private void onSpeedSliderChange(ChangeEvent e) {
+		Var.iterationSleep = env.painter.speedSlider.getValue();
+		
+	}
+
+	private void onMutationSliderChange(ChangeEvent e) {
+//		JSlider s = (JSlider) e.getSource();
+		
+		Var.mutationRate = (double)(env.painter.mutationSlider.getValue()) / 100;
+		env.painter.mutationSliderValueText.setText((int)(Var.mutationRate * 100) + "%");
+	}
+
+	private void onAngleSliderChange(ChangeEvent e) {
+		Var.vectorAngle = env.painter.angleSlider.getValue();
+		env.painter.angleSliderValueText.setText(Var.vectorAngle + "°");
+	}
+
 	private void onClickSwitchButton() {
 		System.out.println("Switch");
 
@@ -286,6 +322,8 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		env.lock = lock;
 		env.initPopulation();
 		env.start();
+		
+		env.getPainter().pauseButton.setEnabled(true);
 	}
 
 	private void checkStartAndEndCoords() throws Error {

@@ -52,9 +52,12 @@ public class Subject {
 	public void move() {
 		if (colided) return;
 		
+		checkCollision();
+		
+		if (colided) return;
+		
 		position.add(dna.seq[Var.dnaIndex]);
 		
-		checkCollision();
 		updateDrawingCoordinates();
 	}
 	
@@ -63,7 +66,7 @@ public class Subject {
 		cx = (int)(position.x - (Var.subjectSize / 2));
 		cy = (int)(position.y - (Var.subjectSize / 2));
 	}
-
+	
 	public void checkCollision() {
 		ArrayList<IObstacle> obstacles = Var.environment.getObstacles();
 		for (int i=0; i<obstacles.size(); i++) {

@@ -38,6 +38,8 @@ public class Vector {
 	// rotates for a random value from [0, Var.vectorAngle]
 	// in both directions (clockwise or counter-clockwise)
 	public void rotate() {
+		if (Var.vectorAngle == 0) return;
+		
 		Random r = new Random();
 		int da = 0;
 		double angle = Var.vectorAngle;
