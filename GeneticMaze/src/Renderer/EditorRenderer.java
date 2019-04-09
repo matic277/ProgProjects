@@ -60,6 +60,8 @@ public class EditorRenderer implements IRenderer {
 		
 		String obstClassName = (env.getObstacles().size() != 0)? env.getObstacles().get(0).getClass().getName() : "Empty";
 		g.drawString(obstClassName, 15 , Var.height-30);
+		
+		g.drawString("Status: " + env.getState(), 15 , Var.height-45);
 		g.setFont(current);
 	}
 	

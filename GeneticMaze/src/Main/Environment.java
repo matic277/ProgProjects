@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import Obstacle.IObstacle;
 import Obstacle.NoObstacle;
 import Renderer.EditorRenderer;
+import Renderer.GraphicsRenderer;
 import Renderer.Painter;
 
 public class Environment extends Thread {
@@ -12,7 +13,7 @@ public class Environment extends Thread {
 	IObstacle tmpObs;
 	
 	Population pop;
-	Painter painter;
+	GraphicsRenderer graphics;
 	
 	Object lock;
 	
@@ -26,40 +27,39 @@ public class Environment extends Thread {
 		obstacles = new ArrayList<IObstacle>(500); // when drawing, objects add up pretty quick, so 500 is fine
 		tmpObs = new NoObstacle();
 		
-		painter = new Painter(this, new Listener(this));
-		painter.setRenderer(new EditorRenderer(this));
+		graphics = new GraphicsRenderer(this);
+		graphics.start();
+		
+//		painter = new Painter(this, new Listener(this));
+//		painter.setRenderer(new EditorRenderer(this));
 	}
 
 	@Override
 	public void run() {
-		while (true) {
+		while (true)
+		{
 			synchronized (lock)
-			{
-				System.out.println("im here");
-	//			try {
-	//				lock.wait();
-	//			} catch (InterruptedException e) {
-	//				e.printStackTrace();
-	//			}
-				
+			{	
 				while (isSimulationRunning) {
 					pop.move();
 					sleep();
 					
 					// all genes have been expressed,
 					// do selection and all that stuff
-					if (Var.dnaIndex == Var.DnaLength) {
+					if (Var.dnaIndex >= Var.DnaLength) {
+						Var.dnaIndex = 0;
+						
 						pop.calculateFitness();
 						pop.createNewGeneration();
 						pop.resetPositions();
-						
-						Var.dnaIndex = 0;
 					}
 				}
 				
-				
+				// simulation has been paused, wait here until notified
+				// the notify comes from Listener, from button click
+				try { lock.wait(); } 
+				catch (InterruptedException e) { e.printStackTrace(); }
 			}
-			System.out.println("loop");
 		}
 	}
 	
@@ -72,7 +72,7 @@ public class Environment extends Thread {
 	}
 
 	private void sleep() {
-		try { Thread.sleep((long)Var.iterationSleep); }
+		try { Thread.sleep(Var.iterationSleep); }
 		catch (InterruptedException e) { e.printStackTrace(); }
 	}
 
@@ -85,7 +85,7 @@ public class Environment extends Thread {
 	}
 
 	public Painter getPainter() {
-		return painter;
+		return graphics.painter;
 	}
 
 	public Population getPopulation() {

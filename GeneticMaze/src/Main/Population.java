@@ -1,5 +1,6 @@
 package Main;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 import Subject.Subject;
@@ -8,11 +9,29 @@ public class Population {
 	
 	Subject pop[];
 	int popsize;
+	
+	public static Color pathColors[];
 
 	public Population() {
 		popsize = Var.populationSize;
+		
+		initPathColors();
+		
 		pop = new Subject[popsize];
 		for (int i=0; i<popsize; i++) pop[i] = new Subject(i);
+	}
+	
+	// method gets only called once
+	public void initPathColors() {
+		pathColors = new Color[Var.DnaLength];
+		int r = 0, g = 0;
+		double colorChange = 255 / (double)(Var.DnaLength);
+		for (int i=0; i<Var.DnaLength; i++) {
+			// colors go from green -> red
+			r = (int)(0 + (colorChange * i));
+			g = (int)(255 - (colorChange * i));
+			pathColors[i] = new Color(r, g, 0, 32);
+		}
 	}
 
 	public void calculateFitness() {

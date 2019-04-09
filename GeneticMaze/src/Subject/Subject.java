@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
+import Main.Population;
 import Main.Var;
 import Obstacle.IObstacle;
 
@@ -15,6 +17,7 @@ public class Subject {
 	
 	Vector position;
 	DNA dna;
+	Path path;
 	
 	Color clr;
 	
@@ -23,12 +26,14 @@ public class Subject {
 	int cx, cy;
 
 	public Subject(int id_) {
-		dna = new DNA(-1);
 		id = id_;
+		dna = new DNA(-1);
+		path = new Path(this);
 		
 		// set starting position - same as resetting position
 		position = new Vector();
 		resetPosition();
+		
 		
 //		this.printDna();
 		
@@ -47,6 +52,8 @@ public class Subject {
 	public void draw(Graphics2D g) {
 		g.setColor(clr);
 		g.fillOval(cx, cy, Var.subjectSize, Var.subjectSize);
+		
+		path.draw(g);
 	}
 	
 	public void move() {
@@ -93,10 +100,8 @@ public class Subject {
 	public void resetPosition() {
 		position.set(Var.start.getCenterX(), Var.start.getCenterY());
 		colided = false;
-	}
-	
-	public void printDna() {
-		System.out.println(dna.toString());
+		
+		path = new Path(this);
 	}
 
 	public static Subject mateSubjects(Subject p1, Subject p2, int childId) {
@@ -125,15 +130,32 @@ public class Subject {
 		return new Point2D.Double(position.x, position.y);
 	}
 	
+	public Vector getPositionVector() {
+		return position;
+	}
+	
 	public Point2D.Double getNextPosition() {
 		return new Point2D.Double(
 			position.x + dna.seq[Var.dnaIndex].x,
 			position.y + dna.seq[Var.dnaIndex].y
 		);
 	}
+	
+	// can be out of bounds!
+	public Vector getNextPositionVector() {
+		return dna.getSeq()[Var.dnaIndex + 1];
+	}
 
 	public DNA getDNA() {
 		return dna;
+	}
+
+	public Path getPath() {
+		return path;
+	}
+	
+	public void printDna() {
+		System.out.println(dna.toString());
 	}
 
 }

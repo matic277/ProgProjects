@@ -8,14 +8,18 @@ public class Var {
 	public static EditingType editType = EditingType.MAZE;
 	
 	public static double
-		mutationRate = 0.15
+		mutationRate = 0.15,
+		averageFitness
+	;
+	
+	public static long
+		iterationSleep = 1000 / 60,
+		FPS = 1000 / 60 // drawing speed
 	;
 	
 	public static boolean
 		mutation = true
 	;
-	
-	public static int subjectSize = 8;
 	
 	public static int
 		buttonSpaceHeight = 50,
@@ -27,9 +31,8 @@ public class Var {
 		width = drawingWidth + rightPanelWidth,
 		height = drawingHeight + buttonSpaceHeight,
 		
-		
-		
 		populationSize = 20,
+		subjectSize = 8,
 		DnaLength = 200,
 		vectorLength = 5,
 		vectorMaxValue = 5,
@@ -52,11 +55,6 @@ public class Var {
 		obstacleThickness = (int)(Math.sqrt(vectorMaxValue*vectorMaxValue + vectorMinValue*vectorMinValue)) * 4
 	;
 	
-	public static double
-		averageFitness,
-		
-		iterationSleep = 1000 / 60
-	;
 	
 	// variables of boxes for start and end
 	public static int 

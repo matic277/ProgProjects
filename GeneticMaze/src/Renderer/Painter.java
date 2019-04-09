@@ -91,10 +91,6 @@ public class Painter extends JPanel {
 
 		// renderer, type MazeEditor or SimulationEditor(wraps MazeEditor)
 		renderer.draw(g);
-		
-		try { Thread.sleep(1000/60); }
-		catch (InterruptedException e) { e.printStackTrace(); }
-		super.repaint();
 	}
 	
 	public void enableResetButton() {

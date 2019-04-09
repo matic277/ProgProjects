@@ -14,11 +14,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import Obstacle.*;
+import Renderer.Painter;
 import Renderer.SimulationRenderer;
 
 public class Listener implements MouseListener, ChangeListener, MouseMotionListener, ActionListener {
 
 	Environment env;
+	public Painter painter;
 	
 	Object lock = new Object();
 	
@@ -39,9 +41,9 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(env.painter.populationSizeInput)) {
-			System.out.println("change in pop size: " + env.painter.populationSizeInput.getText());
-			Var.populationSize = Integer.parseInt(env.painter.populationSizeInput.getText());
+		if (e.getSource().equals(painter.populationSizeInput)) {
+			System.out.println("change in pop size: " + painter.populationSizeInput.getText());
+			Var.populationSize = Integer.parseInt(painter.populationSizeInput.getText());
 			
 			onClickResetButton();
 		}
@@ -52,12 +54,12 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		System.out.println("Clicked -> ("+e.getX()+", "+e.getY()+")");
 		
 		// Pause button
-		if (e.getSource().equals(env.painter.pauseButton)) {
+		if (e.getSource().equals(painter.pauseButton)) {
 			onClickPauseButton();
 		}
 		
 		// Refresh button
-		if (e.getSource().equals(env.painter.refreshButton)) {
+		if (e.getSource().equals(painter.refreshButton)) {
 			onClickRefreshButton();
 			// TODO: this button isn't needed anymore,
 			// since all inputs are immediately applied
@@ -65,37 +67,37 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		}
 		
 		// Switch button
-		if (e.getSource().equals(env.painter.switchButton)) {
+		if (e.getSource().equals(painter.switchButton)) {
 			onClickSwitchButton();
 		}
 		
 		// Undo button
-		else if (e.getSource().equals(env.painter.undoButton)) {
+		else if (e.getSource().equals(painter.undoButton)) {
 			onClickUndoButton();
 		}
 		
 		// Clear button
-		else if (e.getSource().equals(env.painter.clearButton)) {
+		else if (e.getSource().equals(painter.clearButton)) {
 			onClickClearButton();
 		}
 		
 		// Spawn start button
-		else if (e.getSource().equals(env.painter.spawnStartButton)) {
+		else if (e.getSource().equals(painter.spawnStartButton)) {
 			onClickSpawnStartButton();
 		}
 
 		// Spawn end button
-		else if (e.getSource().equals(env.painter.spawnEndButton)) {
+		else if (e.getSource().equals(painter.spawnEndButton)) {
 			onClickSpawnEndButton();
 		}
 		
 		// Done button
-		else if (e.getSource().equals(env.painter.doneButton)) {
+		else if (e.getSource().equals(painter.doneButton)) {
 			onClickDoneButton();
 		}
 		
 		// Reset population button
-		else if (e.getSource().equals(env.painter.resetButton)) {
+		else if (e.getSource().equals(painter.resetButton)) {
 			onClickResetButton();
 		}
 		
@@ -115,25 +117,20 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		env.pop = new Population();
 	}
 
-	private synchronized void onClickPauseButton() {
+	private void onClickPauseButton() {
 		System.out.println("Pause/Unpause");
 		
-		synchronized (lock)
-		{
-			
-			if (env.isSimulationRunning) {
-				try {
-					lock.wait();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				env.isSimulationRunning = false;
-			} else {
+		// if running, just set to false and
+		// he logic thread (Environment) will wait
+		if (env.isSimulationRunning) {
+			env.isSimulationRunning = false;
+		} 
+		// notify when un-paused
+		else {
+			synchronized (lock) {
 				lock.notify();
 				env.isSimulationRunning = true;
 			}
-			
 		}
 	}
 
@@ -254,35 +251,35 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		System.out.println("Slider changed");
 		
 		// Angle slider
-		if (e.getSource().equals(env.painter.angleSlider)) {
+		if (e.getSource().equals(painter.angleSlider)) {
 			onAngleSliderChange(e);
 		}
 		// Mutation slider
-		else if (e.getSource().equals(env.painter.mutationSlider)) {
+		else if (e.getSource().equals(painter.mutationSlider)) {
 			onMutationSliderChange(e);
 		}
 		// Speed slider
-		else if (e.getSource().equals(env.painter.speedSlider)) {
+		else if (e.getSource().equals(painter.speedSlider)) {
 			onSpeedSliderChange(e);
 		}
 		
 	}
 	
 	private void onSpeedSliderChange(ChangeEvent e) {
-		Var.iterationSleep = env.painter.speedSlider.getValue();
+		Var.iterationSleep = painter.speedSlider.getValue();
 		
 	}
 
 	private void onMutationSliderChange(ChangeEvent e) {
 //		JSlider s = (JSlider) e.getSource();
 		
-		Var.mutationRate = (double)(env.painter.mutationSlider.getValue()) / 100;
-		env.painter.mutationSliderValueText.setText((int)(Var.mutationRate * 100) + "%");
+		Var.mutationRate = (double)(painter.mutationSlider.getValue()) / 100;
+		painter.mutationSliderValueText.setText((int)(Var.mutationRate * 100) + "%");
 	}
 
 	private void onAngleSliderChange(ChangeEvent e) {
-		Var.vectorAngle = env.painter.angleSlider.getValue();
-		env.painter.angleSliderValueText.setText(Var.vectorAngle + "°");
+		Var.vectorAngle = painter.angleSlider.getValue();
+		painter.angleSliderValueText.setText(Var.vectorAngle + "°");
 	}
 
 	private void onClickSwitchButton() {
@@ -317,7 +314,7 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		
 		env.getPainter().setRenderer(new SimulationRenderer(env, env.getPainter().getCurrentRenderer()));
 		env.getPainter().hideDoneButton();
-		env.painter.enableResetButton();
+		painter.enableResetButton();
 		
 		env.lock = lock;
 		env.initPopulation();
