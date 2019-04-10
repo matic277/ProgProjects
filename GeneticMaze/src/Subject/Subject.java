@@ -19,8 +19,6 @@ public class Subject {
 	DNA dna;
 	Path path;
 	
-	Color clr;
-	
 	// coordinates of center of this subject
 	// used for drawing purposes
 	int cx, cy;
@@ -33,27 +31,18 @@ public class Subject {
 		// set starting position - same as resetting position
 		position = new Vector();
 		resetPosition();
-		
-		
-//		this.printDna();
-		
-//		Random rn = new Random();
-//		int r = rn.nextInt(256);
-//		int g = rn.nextInt(256);
-//		int b = rn.nextInt(256);
-//		clr = new Color(r, g, b);
-		
-		clr = Color.black;
-		
+
 		fitness = 0;
 		colided = false;
 	}
 	
 	public void draw(Graphics2D g) {
-		g.setColor(clr);
+		g.setColor(Color.DARK_GRAY);
 		g.fillOval(cx, cy, Var.subjectSize, Var.subjectSize);
 		
-		path.draw(g);
+		// TODO: fix, paths are still being drawn after collision
+		// adding another check here won't work
+		if (Var.pathDrawing) path.draw(g);
 	}
 	
 	public void move() {

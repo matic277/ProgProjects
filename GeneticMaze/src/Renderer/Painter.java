@@ -1,18 +1,24 @@
 package Renderer;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import Main.Environment;
 import Main.Listener;
@@ -42,20 +48,20 @@ public class Painter extends JPanel {
 	public JButton undoButton;
 	
 	public JSlider speedSlider;
-	JLabel speedSliderValueText;
 	
 	// right panel
 	public JSlider mutationSlider;
-	public JLabel mutationSliderValueText;
-	int mutationSliderWidth = 150;
-	
-	public JTextField populationSizeInput;
-	int populationSizeInputWidth = 70;
-	
 	public JSlider angleSlider;
-	public JLabel angleSliderValueText;
-	int angleSliderWidth = 150;
+	public JSlider pathDrawingSlider;
+	public JTextField populationSizeInput;
 	
+	public ArrayList<JComponent> componentOptions;
+	public ArrayList<JComponent> componentText;
+	
+	public JLabel mutationSliderToolTip;
+	public JLabel angleSliderToolTip;
+	
+	// bottom buttons
 	public JButton refreshButton;
 	int refreshButtonWidth = 100;
 	int refreshButtonHeight = 30;
@@ -104,17 +110,183 @@ public class Painter extends JPanel {
 	}
 	
 	public void initRightControlPanel(Listener listener_) {
-		// mutation slider
+		Rectangle rightPanelBounds = new Rectangle(Var.drawingWidth + 10, Var.buttonSpaceHeight + 10, Var.rightPanelWidth - 20, Var.drawingHeight - 20);
+		Rectangle rightPanelTextBounds = new Rectangle((int)(rightPanelBounds.x), (int)(rightPanelBounds.y), (int)(rightPanelBounds.width / 2 - 5), (int)(rightPanelBounds.height));
+		Rectangle rightPanelOptionsBounds = new Rectangle((int)(rightPanelBounds.getCenterX() + 5), (int)(rightPanelBounds.y), (int)(rightPanelBounds.width / 2 - 5), (int)(rightPanelBounds.height));
+		
+		// main rectangle
+		JLabel rightPanelBox = new JLabel();
+		rightPanelBox.setBounds(rightPanelBounds);
+		rightPanelBox.setOpaque(true);
+		rightPanelBox.setBackground(new Color(0, 0, 0, 0)); // transparency
+		rightPanelBox.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		
+		// text rectangle
+		JLabel rightPanelBoxText = new JLabel();
+		rightPanelBoxText.setBounds(rightPanelTextBounds);
+		rightPanelBoxText.setOpaque(true);
+		rightPanelBoxText.setBackground(new Color(0, 0, 0, 0));
+		rightPanelBoxText.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		
+		// options rectangle
+		JLabel rightPanelBoxOptions = new JLabel();
+		rightPanelBoxOptions.setBounds(rightPanelOptionsBounds);
+		rightPanelBoxOptions.setOpaque(true);
+		rightPanelBoxOptions.setBackground(new Color(0, 0, 0, 0));
+		rightPanelBoxOptions.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		
+		this.add(rightPanelBox);
+		this.add(rightPanelBoxText);
+		this.add(rightPanelBoxOptions);
+		
+		
+		componentOptions = new ArrayList<JComponent>();
+		componentText = new ArrayList<JComponent>();
+		
+		
+		initAngleSlider(listener_);
+		initMutationSlider(listener_);
+		initPathDrawingSlider(listener_);
+		initPopulationSizeInput(listener_);
+		initPauseButton(listener_);
+		initRefreshButton(listener_);
+		
+		
+		// height of each component (right panel-right side, components)
+		int componentOptionsHeight = 70;
+		
+		// rightPanelOptionsBounds
+		for (int i=0; i<componentOptions.size(); i++) {
+			Rectangle bounds = new Rectangle((int)(rightPanelOptionsBounds.x), (int)(rightPanelOptionsBounds.y + i*(componentOptionsHeight + 20)), (int)(rightPanelOptionsBounds.width), (int)(componentOptionsHeight));
+			
+			JLabel componentBoundsBackground = new JLabel();
+			componentBoundsBackground.setBounds(bounds);
+			componentBoundsBackground.setOpaque(true);
+			componentBoundsBackground.setBackground(new Color(0, 0, 0, 0));
+			componentBoundsBackground.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+			this.add(componentBoundsBackground);
+			
+			// components
+			JComponent c = componentOptions.get(i);
+			c.setBounds(bounds);
+			this.add(c);
+		}
+		
+		// rightPanelTextBounds
+		for (int i=0; i<componentText.size(); i++) {
+			Rectangle bounds = new Rectangle((int)(rightPanelTextBounds.x), (int)(rightPanelTextBounds.y + i*(componentOptionsHeight + 20)), (int)(rightPanelTextBounds.width), (int)(componentOptionsHeight));
+			
+			JLabel componentBoundsBackground = new JLabel();
+			componentBoundsBackground.setBounds(bounds);
+			componentBoundsBackground.setOpaque(true);
+			componentBoundsBackground.setBackground(new Color(0, 0, 0, 0));
+			componentBoundsBackground.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+			this.add(componentBoundsBackground);
+			
+			JComponent c = componentText.get(i);
+			c.setBounds(bounds);
+			this.add(c);
+		}
+		
+		// do these after the for loops, not
+		// after the initial inits of components
+		initToolTips();
+	}
+	
+	// the two JLabels that update when moving 
+	// slider for mutations or angle
+	private void initToolTips() {
+		Rectangle parentBounds, childBounds;
+		
+		// mutation slider tool-tip
+		mutationSliderToolTip = new JLabel(Var.mutationRate + "%");
+		parentBounds = mutationSlider.getBounds();
+		childBounds = new Rectangle((int)(parentBounds.getCenterX() - 17), parentBounds.y - 15, 34, 15);
+		mutationSliderToolTip.setBounds(childBounds);
+		mutationSliderToolTip.setVisible(true);
+		mutationSliderToolTip.setOpaque(true);
+		mutationSliderToolTip.setBackground(Color.red);
+		this.add(mutationSliderToolTip);
+		
+		// angle slider tool-tip
+		angleSliderToolTip = new JLabel(Var.vectorAngle +"°");
+		parentBounds = angleSlider.getBounds();
+		childBounds = new Rectangle((int)(parentBounds.getCenterX() - 15), parentBounds.y - 15, 30, 15);
+		angleSliderToolTip.setBounds(childBounds);
+		angleSliderToolTip.setVisible(true);
+		angleSliderToolTip.setOpaque(true);
+		angleSliderToolTip.setBackground(Color.red);
+		this.add(angleSliderToolTip);
+		
+	}
+
+	private void initRefreshButton(Listener listener_) {
+		Rectangle refreshButtonBounds = new Rectangle(Var.width - refreshButtonWidth - 10, Var.height - refreshButtonHeight - 10, refreshButtonWidth, refreshButtonHeight);
+		refreshButton = new JButton("Refresh");
+		refreshButton.setBounds(refreshButtonBounds);
+		refreshButton.addMouseListener(listener_);
+		refreshButton.setToolTipText("Apply the newly set parameters");
+		
+		this.add(refreshButton);
+	}
+
+	private void initPauseButton(Listener listener_) {
+		// pause button
+		Rectangle pauseButtonBounds = new Rectangle((int)(Var.width - refreshButtonWidth - 10 - pauseButtonWidth - 10), (int)(Var.height - refreshButtonHeight - 10), pauseButtonWidth, pauseButtonHeight);
+		pauseButton = new JButton("Pause");
+		pauseButton.setBounds(pauseButtonBounds);
+		pauseButton.addMouseListener(listener_);
+		pauseButton.setToolTipText("Pause/Unpause simulation");
+		pauseButton.setEnabled(false);
+		
+		this.add(pauseButton);
+		
+	}
+
+	public void initPathDrawingSlider(Listener listener_) {
+		// switch check-box
+		Hashtable<Integer, JLabel> ht = new Hashtable<Integer, JLabel>();
+		ht.put(1, new JLabel("On"));
+		ht.put(0, new JLabel("Off"));
+		
+		pathDrawingSlider = new JSlider(0, 1, ((Var.pathDrawing)? 1 : 0));
+		pathDrawingSlider.addChangeListener(listener_);
+		
+		pathDrawingSlider.setMajorTickSpacing(1);
+		pathDrawingSlider.setLabelTable(ht);
+		pathDrawingSlider.setPaintLabels(true);
+		pathDrawingSlider.setPaintTicks(true);
+		
+		pathDrawingSlider.setBackground(Color.LIGHT_GRAY);
+		
+		// description text
+		JLabel pathDrawingSliderText = new JLabel("Enable or disable path drawing:");
+
+		componentText.add(pathDrawingSliderText);
+		componentOptions.add(pathDrawingSlider);
+	}
+	
+	public void initPopulationSizeInput(Listener listener_) {
+		// population size input
+		populationSizeInput = new JTextField();
+		populationSizeInput.setText(Var.populationSize + "");
+		populationSizeInput.addActionListener(listener_);
+		
+		// description text
+		JLabel populationSizeText = new JLabel("Size of population (subjects):");
+		
+		componentText.add(populationSizeText);
+		componentOptions.add(populationSizeInput);
+	}
+	
+	public void initMutationSlider(Listener listener_) {
 		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
 		labelTable.put(0, new JLabel("0%"));
 		labelTable.put(50, new JLabel("50%"));
 		labelTable.put(100, new JLabel("100%"));
 		
-		Rectangle mutationSliderBounds = new Rectangle(Var.width - mutationSliderWidth - 20, Var.buttonSpaceHeight + 50, mutationSliderWidth, 50);
-		
 		mutationSlider = new JSlider(0, 100, (int)(Var.mutationRate * 100));
 		mutationSlider.setForeground(Color.black);
-		mutationSlider.setBounds(mutationSliderBounds);
 		
 		mutationSlider.setBackground(IRenderer.upperControlPanelClr);
 		mutationSlider.setToolTipText("Odds of mutating a single gene");
@@ -128,30 +300,21 @@ public class Painter extends JPanel {
 		
 		// description text
 		JLabel mutationSliderText = new JLabel("Odds of mutating a single gene:");
-		Rectangle mutationSliderTextBounds = new Rectangle((int)(mutationSliderBounds.getCenterX() - mutationSliderBounds.getWidth()*2), (int)(mutationSliderBounds.getY()), 200, 50);
-		mutationSliderText.setBounds(mutationSliderTextBounds);
 		
-		// current value (above slider)
-		mutationSliderValueText = new JLabel((int)(Var.mutationRate * 100) + "%");
-		Rectangle mutationSliderValueTextBounds = new Rectangle((int)(mutationSliderBounds.getCenterX() - 20), (int)mutationSliderBounds.getY()-40, 50, 50);
-		mutationSliderValueText.setBounds(mutationSliderValueTextBounds);
-		
-		this.add(mutationSlider);
-		this.add(mutationSliderText);
-		this.add(mutationSliderValueText);
-		
+		componentText.add(mutationSliderText);
+		componentOptions.add(mutationSlider);
+	}
+	
+	public void initAngleSlider(Listener listener_) {
 		// angle slider
-		labelTable = new Hashtable<Integer, JLabel>();
+		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
 		labelTable.put(0, new JLabel("0°"));
 		labelTable.put(45, new JLabel("45°"));
 		labelTable.put(90, new JLabel("90°"));
 		labelTable.put(180, new JLabel("180°"));
-		
-		Rectangle angleSliderBounds = new Rectangle(Var.width - angleSliderWidth - 20, Var.buttonSpaceHeight + (int)mutationSliderBounds.getY() + 30, angleSliderWidth, 50);
-		
+
 		angleSlider = new JSlider(0, 180, Var.vectorAngle);
 		angleSlider.setForeground(Color.black);
-		angleSlider.setBounds(angleSliderBounds);
 		
 		angleSlider.setBackground(IRenderer.upperControlPanelClr);
 		angleSlider.setToolTipText("The maximum angle at which subjects can turn");
@@ -165,53 +328,15 @@ public class Painter extends JPanel {
 		
 		// description text
 		JLabel angleSliderText = new JLabel("Maximum angle of rotation:");
-		Rectangle angleSliderTextBounds = new Rectangle((int)(angleSliderBounds.getX() - 200), (int)(angleSliderBounds.getY()), 200, 50);
-		angleSliderText.setBounds(angleSliderTextBounds);
 		
-		// current value (above slider)
-		angleSliderValueText = new JLabel(Var.vectorAngle + "°");
-		Rectangle angleSliderValueTextBounds = new Rectangle((int)(angleSliderBounds.getCenterX() - 20), (int)angleSliderBounds.getY()-40, 200, 50);
-		angleSliderValueText.setBounds(angleSliderValueTextBounds);
-		
-		this.add(angleSlider);
-		this.add(angleSliderText);
-		this.add(angleSliderValueText);
-		
-		// population size input
-		Rectangle populationSizeInputBounds = new Rectangle(Var.width - populationSizeInputWidth - 30, Var.buttonSpaceHeight + (int)angleSliderBounds.getY() + 30, populationSizeInputWidth, 25);
-		populationSizeInput = new JTextField();
-		populationSizeInput.setText(Var.populationSize + "");
-		populationSizeInput.setBounds(populationSizeInputBounds);
-		populationSizeInput.addActionListener(listener_);
-		
-		// description text
-		JLabel populationSizeText = new JLabel("Size of population (subjects):");
-		Rectangle populationSizeTextBounds = new Rectangle((int)(populationSizeInputBounds.getX() - 200), (int)(populationSizeInputBounds.getY() + 8), 200, 15);
-		populationSizeText.setBounds(populationSizeTextBounds);
-
-		this.add(populationSizeInput);
-		this.add(populationSizeText);
-		
-		// refresh button
-		Rectangle refreshButtonBounds = new Rectangle(Var.width - refreshButtonWidth - 10, Var.height - refreshButtonHeight - 10, refreshButtonWidth, refreshButtonHeight);
-		refreshButton = new JButton("Refresh");
-		refreshButton.setBounds(refreshButtonBounds);
-		refreshButton.addMouseListener(listener_);
-		refreshButton.setToolTipText("Apply the newly set parameters");
-		
-		this.add(refreshButton);
-		
-		// pause button
-		Rectangle pauseButtonBounds = new Rectangle((int)(refreshButtonBounds.getX() - pauseButtonWidth - 10), (int)(refreshButtonBounds.getY()), pauseButtonWidth, pauseButtonHeight);
-		pauseButton = new JButton("Pause");
-		pauseButton.setBounds(pauseButtonBounds);
-		pauseButton.addMouseListener(listener_);
-		pauseButton.setToolTipText("Pause/Unpause simulation");
-		pauseButton.setEnabled(false);
-		
-		this.add(pauseButton);
-		
+		componentText.add(angleSliderText);
+		componentOptions.add(angleSlider);
 	}
+	
+	
+	
+	
+	
 	
 	// TODO:
 	// fix this lazy way of setting the x position of these buttons

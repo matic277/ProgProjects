@@ -18,7 +18,8 @@ public class Var {
 	;
 	
 	public static boolean
-		mutation = true
+		mutation = true,
+		pathDrawing = true
 	;
 	
 	public static int

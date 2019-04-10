@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import javax.swing.event.ChangeEvent;
@@ -262,24 +263,38 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		else if (e.getSource().equals(painter.speedSlider)) {
 			onSpeedSliderChange(e);
 		}
+		// Draw path slider (on/off)
+		else if (e.getSource().equals(painter.pathDrawingSlider)) {
+			onPathDrawingSliderChange(e);
+		}
 		
 	}
 	
+	private void onPathDrawingSliderChange(ChangeEvent e) {
+		//System.out.println("slider val: " + painter.pathDrawingSlider.getValue());
+		
+		if (painter.pathDrawingSlider.getValue() < 1) {
+			Var.pathDrawing = false;
+		} else {
+			Var.pathDrawing = true;
+		}
+		
+	}
+
 	private void onSpeedSliderChange(ChangeEvent e) {
 		Var.iterationSleep = painter.speedSlider.getValue();
-		
 	}
 
 	private void onMutationSliderChange(ChangeEvent e) {
 //		JSlider s = (JSlider) e.getSource();
 		
 		Var.mutationRate = (double)(painter.mutationSlider.getValue()) / 100;
-		painter.mutationSliderValueText.setText((int)(Var.mutationRate * 100) + "%");
+		painter.mutationSliderToolTip.setText((int)(Var.mutationRate * 100) + "%");
 	}
 
 	private void onAngleSliderChange(ChangeEvent e) {
 		Var.vectorAngle = painter.angleSlider.getValue();
-		painter.angleSliderValueText.setText(Var.vectorAngle + "°");
+		painter.angleSliderToolTip.setText(Var.vectorAngle + "°");
 	}
 
 	private void onClickSwitchButton() {
