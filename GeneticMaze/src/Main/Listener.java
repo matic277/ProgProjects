@@ -112,10 +112,13 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 		System.out.println(env.obstacles.size());
 	}
 	
+	// TODO: refresh and reset pop buttons are basically the same thing, lol
+	// remove one of them
 	private void onClickRefreshButton() {
 		System.out.println("Refresh");
 		
-		env.pop = new Population();
+		env.resetPopulation();
+		Var.generationNumber = 0;
 	}
 
 	private void onClickPauseButton() {
@@ -226,8 +229,6 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 			}
 		}
 	}
-
-	
 	
 	private void onClickUndoButton() {
 		env.removeLastObstacle();
@@ -235,6 +236,7 @@ public class Listener implements MouseListener, ChangeListener, MouseMotionListe
 
 	private void onClickResetButton() {
 		env.resetPopulation();
+		Var.generationNumber = 0;
 	}
 
 	private void onClickSpawnEndButton() {

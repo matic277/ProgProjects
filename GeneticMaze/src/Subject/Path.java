@@ -27,9 +27,9 @@ public class Path {
 
 	
 	public void draw(Graphics2D g) {
-		Vector start, end;
-		
 		g.setStroke(new BasicStroke(5));
+		
+		Vector start, end;
 		
 		// draw all paths leading to dnaIndex
 		for (int i=0; i<Var.dnaIndex - 2; i++) {
@@ -43,10 +43,7 @@ public class Path {
 				(int)end.x,
 				(int)end.y
 			);
-			
-			//System.out.println(colors[i].getRed() + " " + colors[i].get);
 		}
-		
 		g.setStroke(new BasicStroke(1));
 	}
 }

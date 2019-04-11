@@ -168,6 +168,34 @@ public class Painter extends JPanel {
 			
 			// components
 			JComponent c = componentOptions.get(i);
+			// make jtextfield and path-drawing switch smaller
+			if (c instanceof JTextField) {
+				// make is smaller in width and height
+				// adjust x and y by adding or subtracting
+				// the amount taken off of height and width
+				bounds = new Rectangle(
+					(int)(rightPanelOptionsBounds.x + (100/2)),
+					(int)(rightPanelOptionsBounds.y + i*(componentOptionsHeight + 20) + (40/2)),
+					(int)(rightPanelOptionsBounds.width - 100),
+					(int)(componentOptionsHeight - 40)
+				);
+			} else if (c instanceof JSlider) {
+				JSlider pathDrawSlider = (JSlider) c;
+				if (pathDrawSlider.getMajorTickSpacing() == 1) {
+					// the only slider with majorTickSpacing set to 1 is the switch slider
+					// TODO: this is a hacky way of finding this slider object, change it
+					bounds = new Rectangle(
+						(int)(rightPanelOptionsBounds.x + (120/2)),
+						(int)(rightPanelOptionsBounds.y + i*(componentOptionsHeight + 20)),
+						(int)(rightPanelOptionsBounds.width - 120),
+						(int)(componentOptionsHeight)
+					);
+					pathDrawSlider.setBounds(bounds);
+					this.add(c);
+					continue;
+				}
+			}
+			
 			c.setBounds(bounds);
 			this.add(c);
 		}
@@ -199,13 +227,13 @@ public class Painter extends JPanel {
 		Rectangle parentBounds, childBounds;
 		
 		// mutation slider tool-tip
-		mutationSliderToolTip = new JLabel(Var.mutationRate + "%");
+		mutationSliderToolTip = new JLabel((int)(Var.mutationRate * 100) + "%");
 		parentBounds = mutationSlider.getBounds();
 		childBounds = new Rectangle((int)(parentBounds.getCenterX() - 17), parentBounds.y - 15, 34, 15);
 		mutationSliderToolTip.setBounds(childBounds);
 		mutationSliderToolTip.setVisible(true);
 		mutationSliderToolTip.setOpaque(true);
-		mutationSliderToolTip.setBackground(Color.red);
+		mutationSliderToolTip.setBackground(Color.orange);
 		this.add(mutationSliderToolTip);
 		
 		// angle slider tool-tip
@@ -215,7 +243,7 @@ public class Painter extends JPanel {
 		angleSliderToolTip.setBounds(childBounds);
 		angleSliderToolTip.setVisible(true);
 		angleSliderToolTip.setOpaque(true);
-		angleSliderToolTip.setBackground(Color.red);
+		angleSliderToolTip.setBackground(Color.orange);
 		this.add(angleSliderToolTip);
 		
 	}
@@ -260,7 +288,7 @@ public class Painter extends JPanel {
 		pathDrawingSlider.setBackground(Color.LIGHT_GRAY);
 		
 		// description text
-		JLabel pathDrawingSliderText = new JLabel("Enable or disable path drawing:");
+		JLabel pathDrawingSliderText = new JLabel("  Enable or disable path drawing");
 
 		componentText.add(pathDrawingSliderText);
 		componentOptions.add(pathDrawingSlider);
@@ -273,7 +301,7 @@ public class Painter extends JPanel {
 		populationSizeInput.addActionListener(listener_);
 		
 		// description text
-		JLabel populationSizeText = new JLabel("Size of population (subjects):");
+		JLabel populationSizeText = new JLabel("  Size of population");
 		
 		componentText.add(populationSizeText);
 		componentOptions.add(populationSizeInput);
@@ -299,7 +327,7 @@ public class Painter extends JPanel {
 		mutationSlider.setPaintTicks(true);
 		
 		// description text
-		JLabel mutationSliderText = new JLabel("Odds of mutating a single gene:");
+		JLabel mutationSliderText = new JLabel("  Odds of mutating a single gene");
 		
 		componentText.add(mutationSliderText);
 		componentOptions.add(mutationSlider);
@@ -327,16 +355,11 @@ public class Painter extends JPanel {
 		angleSlider.setPaintTicks(true);
 		
 		// description text
-		JLabel angleSliderText = new JLabel("Maximum angle of rotation:");
+		JLabel angleSliderText = new JLabel("  Maximum angle of rotation");
 		
 		componentText.add(angleSliderText);
 		componentOptions.add(angleSlider);
 	}
-	
-	
-	
-	
-	
 	
 	// TODO:
 	// fix this lazy way of setting the x position of these buttons
