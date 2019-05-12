@@ -70,6 +70,6 @@ public class AffectionWord implements INode, IWord {
 	}
 	
 	public String toString() {
-		return "[" + getTag() + ", '" + word + "', " + pleasantness + ", " + activation + ", " + imagery + "]";
+		return "[" + getTag() + ", '" + word + "', P:" + pleasantness + ", A:" + activation + ", I:" + imagery + "]";
 	}
 }

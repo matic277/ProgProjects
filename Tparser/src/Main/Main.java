@@ -25,11 +25,11 @@ public class Main {
 	}
 	
 	public static void test() {
-		String tweet = "This is a brand new, nice test tweet. @testTweet :)";
+		String tweet = "This is a  brand new, nice test tweet. www.sample.si @testTweet :)";
 		
-		WordTree tree = new WordTree(tweet);
-		tree.classify();
-		tree.printTree();
+		Tokenizer t = new Tokenizer(tweet);
+		t.classify();
+		t.print();
 	}
 
 }

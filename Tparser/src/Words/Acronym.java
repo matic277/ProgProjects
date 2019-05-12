@@ -45,7 +45,7 @@ public class Acronym implements IWord, INode {
 	}
 	
 	public String toString() {
-		return "[" + getTag() + ", " + "'"+sourceText+"' -> " + "'" + fullText + "'" + ", " + getPleasantness() + "]";
+		return "[" + getTag() + ", " + "'"+sourceText+"' -> " + "'" + fullText + "'" + ", P:" + getPleasantness() + "]";
 	}
 
 }

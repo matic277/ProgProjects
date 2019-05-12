@@ -54,7 +54,7 @@ public class Smiley implements IWord, INode {
 	
 	@Override
 	public String toString() {
-		return "[" + getTag() + ", '" + sourceWord + "', Plesantness: " + pleasantness + "]";
+		return "[" + getTag() + ", '" + sourceWord + "', P: " + pleasantness + "]";
 	}
 
 }

@@ -26,19 +26,19 @@ public class StopwordDictionary implements IDictionary {
 			);
 		}
 		
-		System.out.println("\t-> Numer of entries: " + hashTable.size());
+		System.out.println("\t|-> Numer of entries: " + hashTable.size());
 		
 		checkIntegrity();
 
-		System.out.println("\t-> Done.");
+		System.out.println("\t|-> Done.");
 		System.out.println();
 	}
 	
 	private void checkIntegrity() {
-		System.out.println("\t-> Checking integrity...");
+		System.out.println("\t|-> Checking integrity...");
 		hashTable.forEach((word, node) -> {
 			if (!node.checkIntegrity()) {
-				System.out.println("\t\t-> Maybe a bad node: " + node.toString());
+				System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
 			}
 		});
 	}

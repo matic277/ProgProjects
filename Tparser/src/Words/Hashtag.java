@@ -50,7 +50,7 @@ public class Hashtag implements IWord {
 	}
 	
 	public String toString() {
-		return "[" + getTag() + ", '" + sourceText + "', Plesantness: " + getPleasantness() + "]";
+		return "[" + getTag() + ", '" + sourceText + "', P: " + getPleasantness() + "]";
 	}
 
 }

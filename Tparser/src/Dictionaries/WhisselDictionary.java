@@ -26,11 +26,11 @@ public class WhisselDictionary implements IDictionary {
 			linesToRead.forEachOrdered(line -> processLine(line));
 		}
 		
-		System.out.println("\t-> Numer of entries: " + hashTable.size());
+		System.out.println("\t|-> Numer of entries: " + hashTable.size());
 		
 		checkIntegrity();
 
-		System.out.println("\t-> Done.");
+		System.out.println("\t|-> Done.");
 		System.out.println();
 	}
 	
@@ -44,10 +44,10 @@ public class WhisselDictionary implements IDictionary {
 	}
 	
 	private void checkIntegrity() {
-		System.out.println("\t\t-> Checking integrity...");
+		System.out.println("\t|\t|-> Checking integrity...");
 		hashTable.forEach((word, node) -> {
 			if (!node.checkIntegrity()) {
-				System.out.println("\t\t-> Maybe a bad node: " + node.toString());
+				System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
 			}
 		});
 	}

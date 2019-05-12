@@ -7,6 +7,11 @@ public class URL implements IWord {
 	public URL(String source) {
 		sourceText = source;
 	}
+	
+	public static boolean isType(String s) {
+		String regExPattern = "(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)";
+		return s.matches(regExPattern);
+	}
 
 	@Override
 	public String getSourceWord() {

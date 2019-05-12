@@ -9,8 +9,9 @@ import Words.Other;
 import Words.Smiley;
 import Words.StopWord;
 import Words.Target;
+import Words.URL;
 
-public class WordTree {
+public class Tokenizer {
 	
 	ArrayList<IWord> nodes;
 	String sourceText;
@@ -23,7 +24,7 @@ public class WordTree {
 	int sumOfNeutralWords = 0;
 	int sumOfPositiveWords = 0;
 	
-	public WordTree(String source) {
+	public Tokenizer(String source) {
 		sourceText = source;
 		tokenizeToTree();
 	}
@@ -35,6 +36,8 @@ public class WordTree {
 		
 		// classify words
 		for (String token : tokens) {
+			if (token.length() == 0) continue;
+			
 			// preprocessing ????
 			token = token.toLowerCase();
 			token = token.replace(",", "");
@@ -59,6 +62,11 @@ public class WordTree {
 			// @ tags
 			else if (Target.isType(token)) {
 				nodes.add(new Target(token));
+			}
+			
+			// urls
+			else if (URL.isType(token)) {
+				nodes.add(new URL(token));
 			}
 			
 			// whissell words
@@ -148,21 +156,21 @@ public class WordTree {
 	}
 	
 	
-	public void printTree() {
+	public void print() {
 		System.out.println("Tree of tweet:");
-		System.out.println("\t-> Source text: '" + sourceText + "'");
-		System.out.println("\t-> Tokens:");
+		System.out.println("\t|-> Source text: '" + sourceText + "'");
+		System.out.println("\t|-> Tokens:");
 		
 		for (IWord w : nodes) {
-			System.out.println("\t\t-> " + w.toString());
+			System.out.println("\t|\t|-> " + w.toString());
 		}
 		
-		System.out.println("\t-> Stats:");
-		System.out.println("\t\t-> Num of neg words: " + numOfNegativeWords);
-		System.out.println("\t\t-> Num of neu words: " + numOfNeutralWords);
-		System.out.println("\t\t-> Num of pos words: " + numOfPositiveWords);
-		System.out.println("\t\t-> Sum of neg words: " + sumOfNegativeWords);
-		System.out.println("\t\t-> Sum of neu words: " + sumOfNeutralWords);
-		System.out.println("\t\t-> Sum of pos words: " + sumOfPositiveWords);
+		System.out.println("\t|-> Stats:");
+		System.out.println("\t\t|-> Num of neg words: " + numOfNegativeWords);
+		System.out.println("\t\t|-> Num of neu words: " + numOfNeutralWords);
+		System.out.println("\t\t|-> Num of pos words: " + numOfPositiveWords);
+		System.out.println("\t\t|-> Sum of neg words: " + sumOfNegativeWords);
+		System.out.println("\t\t|-> Sum of neu words: " + sumOfNeutralWords);
+		System.out.println("\t\t|-> Sum of pos words: " + sumOfPositiveWords);
 	}
 }

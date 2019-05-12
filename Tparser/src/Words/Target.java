@@ -54,7 +54,7 @@ public class Target implements IWord {
 	}
 	
 	public String toString() {
-		return "[" + getTag() + ", '" + sourceWord + "']";
+		return "[" + getTag() + ", '" + sourceWord + "', " + "P:" + getPleasantness() + "]";
 	}
 
 }
