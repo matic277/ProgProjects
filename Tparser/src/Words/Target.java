@@ -15,6 +15,7 @@ public class Target implements IWord {
 	}
 	
 	public static boolean isType(String s) {
+		if (s.length() < 2) return false;
 		if (s.charAt(0) == '@') return true;
 		return false;
 	}

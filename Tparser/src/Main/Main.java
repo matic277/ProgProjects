@@ -25,7 +25,7 @@ public class Main {
 	}
 	
 	public static void test() {
-		String tweet = "This is a  brand new, nice test tweet. www.sample.si @testTweet :)";
+		String tweet = "This is a  brand new, nice test tweet. www.sampleurl.si @testTweet :)";
 		
 		Tokenizer t = new Tokenizer(tweet);
 		t.classify();
