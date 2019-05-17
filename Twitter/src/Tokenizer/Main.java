@@ -2,13 +2,21 @@ package Tokenizer;
 
 import java.io.IOException;
 
+import Dictionaries.DictionaryCollection;
 import StreamConsumer.StreamHandler;
 
 public class Main {
 	
 	public static void main(String[] args) throws IOException {
+		// build dictionaries first, not necessary
+		// but when tweets start streaming in its
+		// nice to have them ready
+		DictionaryCollection.getDictionaryCollection();
+		
+		// twitter stream collector
 		StreamHandler stream = new StreamHandler();
 		
+		// debugging purpose thread
 		new Thread() {
 			public void run() {
 				System.out.println("debugger started");
@@ -32,6 +40,7 @@ public class Main {
 					stream.processedTweets.clear();
 				}
 			}
+			
 		}.start();
 		
 //		test();

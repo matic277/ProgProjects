@@ -23,6 +23,8 @@ public class Logger implements Runnable {
 		File file = new File(relativePath_OutputFile);
 		BufferedWriter writer = null;
 		
+		// this is only appending text to the file
+		// no need to worry about overwriting
 		try {
 			writer = new BufferedWriter(new FileWriter(file, true));
 			

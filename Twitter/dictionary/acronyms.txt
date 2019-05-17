@@ -57,7 +57,7 @@ OP,Original Poster, Original Post
 POV,Point of View
 ROTFL,Rolling on the Floor Laughing
 TBA,To be Announced
-THX Thanks
+THX,Thanks
 TNX,Thanks
 TY,Thank you
 TYT,Take your Time

@@ -8,10 +8,14 @@ public class DictionaryCollection {
 	private static String relativeFilePath_Whissell = "dictionary/dictionary_English.txt";
 	private static String relativeFilePath_Stopwords = "dictionary/stopwords.txt";
 	private static String relativeFilePath_Smileys = "dictionary/smileys.txt";
+	private static String relativeFilePath_Negationwords = "dictionary/negationwords.txt";
+	private static String relativeFilePath_Acronym = "dictionary/acronyms.txt";
 
 	private WhissellDictionary whissell;
 	private StopwordDictionary stopwords;
 	private SmileyDictionary smileys;
+	private NegationwordDictionary negationwords;
+	private AcronymDictionary acronym;
 	
 	private static DictionaryCollection dictionaries;
 	
@@ -23,10 +27,11 @@ public class DictionaryCollection {
 			dictionaries.constructSmileyDictionary(relativeFilePath_Smileys);
 			dictionaries.constructStopwordDictionary(relativeFilePath_Stopwords);
 			dictionaries.constructWhissellDictionary(relativeFilePath_Whissell);
-			return dictionaries;
-		} else {
+			dictionaries.constructNegationwordsDictionary(relativeFilePath_Negationwords);
+			dictionaries.constructAcronymDictionary(relativeFilePath_Acronym);
 			return dictionaries;
 		}
+		return dictionaries;
 	}
 	
 	private void constructSmileyDictionary(String path) {
@@ -44,6 +49,16 @@ public class DictionaryCollection {
 		catch (IOException e) { e.printStackTrace(); }
 	}
 	
+	private void constructNegationwordsDictionary(String path) {
+		try { negationwords = new NegationwordDictionary(path); }
+		catch (IOException e) { e.printStackTrace(); }
+	}
+	
+	private void constructAcronymDictionary(String path) {
+		try { acronym = new AcronymDictionary(path); }
+		catch (IOException e) { e.printStackTrace(); }
+	}
+	
 	public IDictionary getSmileyDictionary() {
 		return smileys;
 	}
@@ -52,5 +67,8 @@ public class DictionaryCollection {
 	}
 	public IDictionary getStopwordsDictionary() {
 		return stopwords;
+	}
+	public IDictionary getNegationwordsDictionary() {
+		return negationwords;
 	}
 }
