@@ -1,5 +1,6 @@
 package Words;
 
+import Dictionaries.DictionaryCollection;
 import Dictionaries.IDictionary;
 
 public class Hashtag implements IWord {
@@ -7,12 +8,9 @@ public class Hashtag implements IWord {
 	String sourceText;
 	String word;
 	
-	IDictionary dictionary;
-	
-	public Hashtag(String source, IDictionary dictionary) {
+	public Hashtag(String source) {
 		sourceText = source;
 		word = "";
-		this.dictionary = dictionary;
 		
 		// removes # from hashtag:
 		// #something -> something
@@ -36,6 +34,7 @@ public class Hashtag implements IWord {
 
 	@Override
 	public double getPleasantness() {
+		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
 		if (dictionary.contains(word)) {
 			return dictionary.getEntry(word).getPleasantness();
 		}

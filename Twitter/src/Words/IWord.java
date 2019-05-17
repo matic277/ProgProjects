@@ -1,7 +1,5 @@
 package Words;
 
-import java.util.Hashtable;
-
 public interface IWord {
 	
 	String getSourceWord();

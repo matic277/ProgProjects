@@ -25,8 +25,6 @@ public class AffectionWord implements INode, IWord {
 		this.imagery = Double.parseDouble(imagery);
 	}
 	
-
-	
 	public boolean checkIntegrity() {
 		if (word.length() > 1 && checkValidValue(pleasantness) && checkValidValue(activation) && checkValidValue(imagery)) {
 			return true;

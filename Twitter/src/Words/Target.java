@@ -1,7 +1,6 @@
 package Words;
 
-import java.util.Hashtable;
-
+import Dictionaries.DictionaryCollection;
 import Dictionaries.IDictionary;
 
 public class Target implements IWord {
@@ -9,12 +8,8 @@ public class Target implements IWord {
 	String sourceWord;
 	String word;
 	
-	IDictionary dictionary;
-	
-	public Target(String source, IDictionary dictionary) {
+	public Target(String source) {
 		sourceWord = source;
-		this.dictionary = dictionary;
-		
 		word = sourceWord.substring(1);
 	}
 	
@@ -35,6 +30,7 @@ public class Target implements IWord {
 
 	@Override
 	public double getPleasantness() {
+		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
 		if (dictionary.contains(word)) {
 			return dictionary.getEntry(word).getPleasantness();
 		}
@@ -43,16 +39,18 @@ public class Target implements IWord {
 
 	@Override
 	public double getActivation() {
+		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
 		if (dictionary.contains(word)) {
-			return dictionary.getEntry(word).getActivation();
+			return dictionary.getEntry(word).getPleasantness();
 		}
 		return -1;
 	}
 
 	@Override
 	public double getImagery() {
+		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
 		if (dictionary.contains(word)) {
-			return dictionary.getEntry(word).getImagery();
+			return dictionary.getEntry(word).getPleasantness();
 		}
 		return -1;
 	}
