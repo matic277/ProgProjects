@@ -29,20 +29,26 @@ public class StopWord implements INode, IWord {
 	public String getTag() {
 		return "<STP>";
 	}
+	
+	@Override
+	public void setPleasantness(double pleasantness) { }
+	
+	@Override
+	public void setFlipPleasantness() { }
 
 	@Override
 	public double getPleasantness() {
-		return -1;
+		return -2;
 	}
 
 	@Override
 	public double getActivation() {
-		return -1;
+		return -2;
 	}
 
 	@Override
 	public double getImagery() {
-		return -1;
+		return -2;
 	}
 	
 	@Override

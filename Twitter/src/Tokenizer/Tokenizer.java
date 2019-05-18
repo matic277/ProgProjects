@@ -5,6 +5,7 @@ import Dictionaries.DictionaryCollection;
 import Words.AffectionWord;
 import Words.Hashtag;
 import Words.IWord;
+import Words.NegationWord;
 import Words.Other;
 import Words.Smiley;
 import Words.StopWord;
@@ -77,6 +78,14 @@ public class Tokenizer {
 				words.add(new URL(token));
 			}
 			
+			// negation words
+			else if (dictionaries.getNegationwordsDictionary().contains(token)) {
+				IWord word = dictionaries.getNegationwordsDictionary().getEntry(token);
+				words.add(new NegationWord(
+					word.getSourceText()
+				));
+			}
+
 			// whissell words
 			else if (dictionaries.getWhissellDictionary().contains(token)) {
 				IWord word = dictionaries.getWhissellDictionary().getEntry(token);
@@ -101,6 +110,17 @@ public class Tokenizer {
 				words.add(new Other(token));
 			}
 		}
+	}
+	
+	private boolean isUpperCase(String word) {
+		int uppercaseLettersNum = 0;
+		for (int i=0; i<word.length(); i++) {
+			if (Character.isUpperCase(word.charAt(i))) {
+				uppercaseLettersNum++;
+			}
+		}
+		double ratio = (double)uppercaseLettersNum / sourceText.length();
+		return (ratio > 0.4);
 	}
 
 }

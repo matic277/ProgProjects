@@ -23,6 +23,9 @@ public class WhissellDictionary extends AbsDictionary {
 		// word,pleasantness,activation,imagery
 		String tokens[];
 		tokens = s.split(",");
+		
+		// words *should* already be lower case, but still
+		tokens[0] = tokens[0].toLowerCase();
 
 		hashTable.put(tokens[0], new AffectionWord(tokens[0], tokens[1], tokens[2], tokens[3]));
 	}

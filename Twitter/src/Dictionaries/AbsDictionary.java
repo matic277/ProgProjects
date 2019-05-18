@@ -14,7 +14,7 @@ abstract class AbsDictionary implements IDictionary {
 	Hashtable<String, INode> hashTable;
 	
 	// encoding problems
-	String strangeChars = " ¨!\"#$%&/()=?*ÐŠÈÆŽŠðšæèž:;_~¡^¢°²`ÿ´½'¨'¸+-*\"<>-¤ßè×÷\\â€¦™« ";
+	String strangeChars = " ¨!\"#$%&/()=?*ÐŠÈÆŽŠðšæèž:;_~¡^¢°²`ÿ´½'¨¸+-*\"<>-¤ßè×÷\\â€¦™«";
 
 	public AbsDictionary() {
 	
@@ -24,7 +24,9 @@ abstract class AbsDictionary implements IDictionary {
 		System.out.println("Creating dictionary of " + dictionaryName + "...");
 		System.out.println("\t|-> Creating hashtable...");
 		
-		// hashtable, key -> word, value -> node(word and statistics)
+		// hashtable:
+		// key		-> string,
+		// value	-> node(word and statistics)
 		hashTable = new Hashtable<String, INode>(hashtableSize);
 		
 		Stream<String> linesToRead;
@@ -34,7 +36,7 @@ abstract class AbsDictionary implements IDictionary {
 				line -> processLine(line)
 			);
 		}
-		
+
 		System.out.println("\t|-> Done.");
 		System.out.println("\t|-> Number of entries: " + hashTable.size());
 	}
@@ -48,6 +50,18 @@ abstract class AbsDictionary implements IDictionary {
 	
 	protected void checkIntegrity() {
 		System.out.println("\t|-> Checking integrity...");
+		
+		// TODO: not the best or the cleanest way to do this, change this.
+		// Remove some characters that are ok to appear in some dictionaries
+		if (this.getClass().getName().equals("Dictionaries.WhissellDictionary")) {
+			strangeChars = strangeChars.replace("-", "");
+			strangeChars = strangeChars.replace("'", "");
+		} else if (this.getClass().getName().equals("Dictionaries.SmileyDictionary")) {
+			strangeChars = " ¨!\"#$%&?ÐŠÈÆŽŠðšæèž_~¡¢°²`ÿ´½¨¸+\"¤ßè×÷\\â€¦™«";
+		}  else if (this.getClass().getName().equals("Dictionaries.NegationwordDictionary")) {
+			strangeChars =  strangeChars.replace("'", "");
+		}
+		
 		hashTable.forEach((word, node) -> {
 			if (!node.checkIntegrity()) {
 				System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
@@ -66,6 +80,7 @@ abstract class AbsDictionary implements IDictionary {
 				}
 			}
 		});
+		
 		System.out.println("\t\\-> Done.");
 		System.out.println();
 	}

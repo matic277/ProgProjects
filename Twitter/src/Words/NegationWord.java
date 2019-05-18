@@ -28,17 +28,17 @@ public class NegationWord implements IWord, INode {
 	
 	@Override
 	public double getActivation() {
-		return -1;
+		return -2;
 	}
 
 	@Override
 	public double getImagery() {
-		return -1;
+		return -2;
 	}
 
 	@Override
 	public double getPleasantness() {
-		return -1;
+		return -2;
 	}
 
 	@Override
@@ -51,5 +51,13 @@ public class NegationWord implements IWord, INode {
 		return "[" + getTag() + ", '" + sourceText + "']";
 	}
 
+	@Override
+	public void setPleasantness(double pleasantness) {
+		
+	}
+	
+	@Override
+	public void setFlipPleasantness() {
 
+	}
 }

@@ -22,7 +22,13 @@ public class URL implements IWord {
 	public String getTag() {
 		return "<URL>";
 	}
-
+	
+	@Override
+	public void setPleasantness(double pleasantness) { }
+	
+	@Override
+	public void setFlipPleasantness() { }
+	
 	@Override
 	public double getPleasantness() {
 		return -2;

@@ -22,8 +22,8 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 		this.sourceText = sourceText;
 		this.fullText = fullText;
 		
-		// process the full version
-		// with the use of Whissell
+		// process the full-text pleasantness
+		// with the use of Whissell dictionary
 		processAcronym();
 	}
 	
@@ -32,16 +32,6 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 		listOfWords = fullText.split(" ");
 		
 		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
-		
-		BigDecimal value;
-		BigDecimal _175 = new BigDecimal(1.76);
-		BigDecimal _2 = new BigDecimal(2);
-		
-		// class ranges (according to pleasantness)
-		// <AFT>:
-		//		[1, 1.75]	-> negative
-		//		(1.75, 2.25)-> neutral
-		//		[2, 3]		-> positive
 		
 		int positiveWordsNum = 0;
 		int negativeWordsNum = 0;
@@ -58,12 +48,11 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 		for (String word : listOfWords) {
 			if (dictionary.contains(word)) {
 				double pleasantness = dictionary.getEntry(word).getPleasantness();
-				value = new BigDecimal(pleasantness);
 				
-				if (value.compareTo(_175) == -1) {
+				if (pleasantness < neutralThreshold) {
 					negativeWordsNum++;
 					negativeWordsSum += pleasantness;
-				} else if (value.compareTo(_2) == -1) {
+				} else if (pleasantness < positiveThreshold) {
 					neutralWordsNum++;
 					neutralWordsSum += pleasantness;
 				} else {
@@ -72,13 +61,17 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 				}
 			} else {
 				neutralWordsNum++;
-				neutralWordsSum += 2.0;
 			}
 		}
 		
 		negativeWordsAvg = negativeWordsSum / negativeWordsNum;
 		positiveWordsAvg = positiveWordsSum / positiveWordsNum;
 		neutralWordsAvg =  neutralWordsSum  / neutralWordsNum;
+		
+		// some could be NaN (division by zero in the code above)
+		negativeWordsAvg = (Double.isNaN(negativeWordsAvg))? 0 : negativeWordsAvg;
+		positiveWordsAvg = (Double.isNaN(positiveWordsAvg))? 0 : positiveWordsAvg;
+		neutralWordsAvg =  (Double.isNaN(neutralWordsAvg))? 0 : neutralWordsAvg;;
 		
 		double totalAvg = (negativeWordsAvg + positiveWordsAvg + neutralWordsAvg) / 3;
 		pleasantness = totalAvg;
@@ -108,20 +101,27 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 
 	@Override
 	public double getActivation() {
-		return -1;
+		return -2;
 	}
 
 	@Override
 	public double getImagery() {
-		return -1;
+		return -2;
 	}
-
+	
 	@Override
 	public boolean checkIntegrity() {
-		if (sourceText.length() > 1) return true;
+		if (sourceText.length() > 1 && checkValidValue(pleasantness)) {
+			return true;
+		}
 		return false;
 	}
-
+	
+	private boolean checkValidValue(double value) {
+		if (value >= -1 && value <= 1) return true;
+		return false;
+	}
+	
 	@Override
 	public String getString() {
 		return sourceText;
@@ -130,5 +130,17 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 	public String toString() {
 		DecimalFormat format = new DecimalFormat("#.###");
 		return "[" + getTag() + ", " + "'"+sourceText+"' -> " + "'" + fullText + "'" + ", P:" + format.format(pleasantness) + "]";
+	}
+
+	@Override
+	public void setPleasantness(double pleasantness) {
+		this.pleasantness = pleasantness;
+		if (this.pleasantness < -1) this.pleasantness = -1;
+		else if (this.pleasantness > 1) this.pleasantness = 1;
+	}
+	
+	@Override
+	public void setFlipPleasantness() {
+		this.pleasantness *= -1;
 	}
 }

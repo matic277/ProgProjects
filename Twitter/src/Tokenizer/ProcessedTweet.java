@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import Words.AffectionWord;
 import Words.IWord;
+import Words.NegationWord;
 import Words.Other;
 import Words.Smiley;
 
@@ -27,12 +28,20 @@ public class ProcessedTweet {
 		this.words = words;
 		
 		doSomeStatistics();
+		test();
 	}
 	
 	private void test() {
 		IWord word;
 		for (int i=0; i<words.size(); i++) {
 			word = words.get(i);
+			
+			if (word instanceof NegationWord) {
+				if (words.get(i+1) instanceof AffectionWord || words.get(i+1) instanceof Smiley) {
+					words.get(i+1).setFlipPleasantness();
+					i++;
+				}
+			}
 		}
 	}
 	

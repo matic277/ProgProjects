@@ -3,6 +3,10 @@ package Words;
 
 abstract class AbsMeasurableWord {
 	
+	// magnitude, how much should
+	// pleasantness get amplified by
+	double magnitude = 1.2;
+	
 	double positiveThreshold = 0.3;
 	double neutralThreshold = -0.3;
 	
@@ -15,14 +19,27 @@ abstract class AbsMeasurableWord {
 		if (pleasantness > positiveThreshold) return true;
 		return false;
 	}
+	
 	public boolean isNeutralPleasantness() {
-//		System.out.println(pleasantness +" >= "+ neutralThreshold +" && "+ pleasantness +" <= "+ positiveThreshold);
 		if (pleasantness >= neutralThreshold && pleasantness <= positiveThreshold) return true;
 		return false;
 	}
+	
 	public boolean isNegativePleasantness() {
 		if (pleasantness < neutralThreshold) return true;
 		return false;
 	}
-
+	
+	public double magnifyPleasantness() {
+		pleasantness *= magnitude;
+		if (pleasantness > 1) {
+			pleasantness = 1;
+			return 1;
+		}
+		if (pleasantness < -1) {
+			pleasantness = -1;
+			return -1;
+		}
+		return pleasantness;
+	}
 }

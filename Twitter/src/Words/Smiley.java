@@ -26,6 +26,18 @@ public class Smiley extends AbsMeasurableWord implements IWord, INode {
 	public String getTag() {
 		return "<SML>";
 	}
+	
+	@Override
+	public void setPleasantness(double pleasantness) {
+		this.pleasantness = pleasantness;
+		if (this.pleasantness < -1) this.pleasantness = -1;
+		else if (this.pleasantness > 1) this.pleasantness = 1;
+	}
+	
+	@Override
+	public void setFlipPleasantness() {
+		this.pleasantness *= -1;
+	}
 
 	@Override
 	public double getPleasantness() {

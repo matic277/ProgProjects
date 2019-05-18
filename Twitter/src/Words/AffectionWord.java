@@ -6,7 +6,7 @@ import Dictionaries.INode;
 
 public class AffectionWord extends AbsMeasurableWord implements INode, IWord {
 	
-	String sourceText = "";
+	String sourceText;
 	
 	public AffectionWord(String sourceText, double pleasantness, double activation, double imagery) {
 		this.sourceText = sourceText;
@@ -37,6 +37,18 @@ public class AffectionWord extends AbsMeasurableWord implements INode, IWord {
 	@Override
 	public String getString() {
 		return sourceText;
+	}
+	
+	@Override
+	public void setPleasantness(double pleasantness) {
+		this.pleasantness = pleasantness;
+		if (this.pleasantness < -1) this.pleasantness = -1;
+		else if (this.pleasantness > 1) this.pleasantness = 1;
+	}
+	
+	@Override
+	public void setFlipPleasantness() {
+		this.pleasantness *= -1;
 	}
 
 	@Override

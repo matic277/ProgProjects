@@ -29,6 +29,12 @@ public class Target implements IWord {
 	public String getTag() {
 		return "<TRG>";
 	}
+	
+	@Override
+	public void setPleasantness(double pleasantness) { }
+	
+	@Override
+	public void setFlipPleasantness() { }
 
 	@Override
 	public double getPleasantness() {
