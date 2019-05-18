@@ -1,11 +1,12 @@
 package Words;
 
+import java.text.DecimalFormat;
+
 import Dictionaries.INode;
 
-public class Smiley implements IWord, INode {
+public class Smiley extends AbsMeasurableWord implements IWord, INode {
 	
 	String sourceWord;
-	double pleasantness;
 	
 	public Smiley(String source, double pleasantness) {
 		sourceWord = source;
@@ -33,12 +34,12 @@ public class Smiley implements IWord, INode {
 
 	@Override
 	public double getActivation() {
-		return -1;
+		return -2;
 	}
 
 	@Override
 	public double getImagery() {
-		return -1;
+		return -2;
 	}
 
 	@Override
@@ -54,7 +55,8 @@ public class Smiley implements IWord, INode {
 	
 	@Override
 	public String toString() {
-		return "[" + getTag() + ", '" + sourceWord + "', P: " + pleasantness + "]";
+		DecimalFormat format = new DecimalFormat("#.###");
+		return "[" + getTag() + ", '" + sourceWord + "', P: " + format.format(pleasantness) + "]";
 	}
 
 }

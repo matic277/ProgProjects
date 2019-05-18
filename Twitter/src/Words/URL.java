@@ -25,17 +25,17 @@ public class URL implements IWord {
 
 	@Override
 	public double getPleasantness() {
-		return -1;
+		return -2;
 	}
 
 	@Override
 	public double getActivation() {
-		return -1;
+		return -2;
 	}
 
 	@Override
 	public double getImagery() {
-		return -1;
+		return -2;
 	}
 	
 	public String toString() {

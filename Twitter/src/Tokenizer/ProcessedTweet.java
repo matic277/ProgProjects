@@ -29,55 +29,42 @@ public class ProcessedTweet {
 		doSomeStatistics();
 	}
 	
-	private void doSomeStatistics() {
-		BigDecimal value;
-		
-		BigDecimal _175 = new BigDecimal(1.76);
-		BigDecimal _2 = new BigDecimal(2);
-		
-		// class ranges (according to pleasantness)
-		// <AFT>:
-		//		[1, 1.75]	-> negative
-		//		(1.75, 2.25)-> neutral
-		//		[2, 3]		-> positive
-		
-		// <SML>:	
-		//		[-1, 0)		-> negative
-		//		0			-> neutral
-		//		(0, 1]		-> positive
+	private void test() {
+		IWord word;
+		for (int i=0; i<words.size(); i++) {
+			word = words.get(i);
+		}
+	}
 	
+	private void doSomeStatistics() {
+
 		for (IWord w : words) {
 			double pleasantness = w.getPleasantness();
-			value = new BigDecimal(pleasantness);
 			
 			if (w instanceof AffectionWord) {
-				if (value.compareTo(_175) == -1) {
-//					System.out.println("-> neg: " + w.getSourceWord());
+				AffectionWord word = (AffectionWord) w;
+				if (word.isNegativePleasantness()) {
 					numOfNegativeWords++;
 					sumOfNegativeWords += pleasantness;
-				} else if (value.compareTo(_2) == -1) {
-//					System.out.println("-> neu: " + w.getSourceWord());
+				} else if (word.isNeutralPleasantness()) {
 					numOfNeutralWords++;
 					sumOfNeutralWords += pleasantness;
 				} else {
-//					System.out.println("-> pos: " + w.getSourceWord());
 					numOfPositiveWords++;
 					sumOfPositiveWords += pleasantness;
 				}
 			}
 			
 			else if (w instanceof Smiley) {
-				 if (pleasantness == 0){
-//					System.out.println("-> neu: " + w.getSourceWord());
+				Smiley smiley = (Smiley) w;
+				 if (smiley.isNeutralPleasantness()){
 					numOfNeutralWords++;
 					sumOfNeutralWords += pleasantness;
 				}
-				 else if (pleasantness < 0) {
-//					System.out.println("-> neg: " + w.getSourceWord());
+				 else if (smiley.isNegativePleasantness()) {
 					numOfNegativeWords++;
 					sumOfNegativeWords += pleasantness;
-				} else if (pleasantness > 0) {
-//					System.out.println("-> pos: " + w.getSourceWord());
+				} else {
 					numOfPositiveWords++;
 					sumOfPositiveWords += pleasantness;
 				}

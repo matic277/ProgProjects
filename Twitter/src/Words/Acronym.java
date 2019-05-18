@@ -1,12 +1,13 @@
 package Words;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 import Dictionaries.DictionaryCollection;
 import Dictionaries.IDictionary;
 import Dictionaries.INode;
 
-public class Acronym implements IWord, INode {
+public class Acronym extends AbsMeasurableWord implements IWord, INode {
 	
 							// example:
 	String sourceText;		// jk
@@ -127,7 +128,7 @@ public class Acronym implements IWord, INode {
 	}
 	
 	public String toString() {
-		return "[" + getTag() + ", " + "'"+sourceText+"' -> " + "'" + fullText + "'" + ", P:" + getPleasantness() + "]";
+		DecimalFormat format = new DecimalFormat("#.###");
+		return "[" + getTag() + ", " + "'"+sourceText+"' -> " + "'" + fullText + "'" + ", P:" + format.format(pleasantness) + "]";
 	}
-
 }

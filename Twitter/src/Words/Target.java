@@ -1,5 +1,7 @@
 package Words;
 
+import java.text.DecimalFormat;
+
 import Dictionaries.DictionaryCollection;
 import Dictionaries.IDictionary;
 
@@ -34,7 +36,7 @@ public class Target implements IWord {
 		if (dictionary.contains(word)) {
 			return dictionary.getEntry(word).getPleasantness();
 		}
-		return -1;
+		return -2;
 	}
 
 	@Override
@@ -43,7 +45,7 @@ public class Target implements IWord {
 		if (dictionary.contains(word)) {
 			return dictionary.getEntry(word).getPleasantness();
 		}
-		return -1;
+		return -2;
 	}
 
 	@Override
@@ -52,11 +54,12 @@ public class Target implements IWord {
 		if (dictionary.contains(word)) {
 			return dictionary.getEntry(word).getPleasantness();
 		}
-		return -1;
+		return -2;
 	}
 	
 	public String toString() {
-		return "[" + getTag() + ", '" + sourceWord + "', " + "P:" + getPleasantness() + "]";
+		DecimalFormat format = new DecimalFormat("#.###");
+		return "[" + getTag() + ", '" + sourceWord + "', " + "P:" + format.format(getPleasantness()) + "]";
 	}
 
 }

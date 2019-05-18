@@ -6,6 +6,7 @@ import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
+import twitter4j.SymbolEntity;
 
 public class StreamListener implements StatusListener {
 	
@@ -26,6 +27,26 @@ public class StreamListener implements StatusListener {
         } else {
      	   tweet = status.getText();
         }
+        
+        
+//        if (tweet.contains("?")) {
+//        	System.out.println("Tweet: " + tweet);
+//        	System.out.println("syent: " + status.getSymbolEntities());
+//        	SymbolEntity[] sy = status.getSymbolEntities();
+//        	for (SymbolEntity se : sy) {
+//        		System.out.print(se.toString() + " ");
+//        	}
+//        	System.out.println();
+//        	System.out.print("Unico: ");
+//        	String s = "";
+//        	char[] arr = tweet.toCharArray();
+//        	for (char c : arr) {
+//        		System.out.print( "\\u" + Integer.toHexString(c | 0x10000).substring(1) );
+//        	}
+//        	System.out.println();
+//        	System.out.println();
+//        	
+//        }
 
         // add tweet to list of tweets
         ref.tweets.add(tweet);

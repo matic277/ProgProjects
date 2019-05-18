@@ -1,5 +1,5 @@
 package Words;
 
-public class Emoji {
+public class Emoji extends AbsMeasurableWord {
 
 }

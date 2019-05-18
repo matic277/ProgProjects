@@ -43,7 +43,13 @@ public class NegationWord implements IWord, INode {
 
 	@Override
 	public String getString() {
+		return sourceText;
+	}
+	
+	@Override
+	public String toString() {
 		return "[" + getTag() + ", '" + sourceText + "']";
 	}
+
 
 }

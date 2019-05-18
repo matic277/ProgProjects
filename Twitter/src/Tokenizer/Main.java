@@ -46,11 +46,11 @@ public class Main {
 //		test();
 	}
 	
-//	public static void test() {
-//		String tweet = "This is a  brand new, nice test tweet. www.sample.si @testTweet :)";
-//		
-//		Tokenizer t = new Tokenizer(tweet);
-//		System.out.println(t.processTweet().toString());
-//	}
+	public static void test() {
+		String tweet = "This is a  brand new, nice test tweet. www.sample.si @testTweet :)";
+		
+		Tokenizer t = new Tokenizer(tweet);
+		System.out.println(t.processTweet().toString());
+	}
 
 }

@@ -1,50 +1,47 @@
 package Words;
 
+import java.text.DecimalFormat;
+
 import Dictionaries.INode;
 
-public class AffectionWord implements INode, IWord {
+public class AffectionWord extends AbsMeasurableWord implements INode, IWord {
 	
-	String word = "";
+	String sourceText = "";
 	
-	// for all: [1, 3]
-	double pleasantness = 0;	// 1 (unpleasant) to 3 (pleasant)
-	double activation = 0;		// 1 (passive) to 3 (active)
-	double imagery = 0;			// 1 (difficult to form a mental picture of this word) to 3 (easy to form a mental picture)
-	
-	public AffectionWord(String word, double pleasantness, double activation, double imagery) {
-		this.word = word;
+	public AffectionWord(String sourceText, double pleasantness, double activation, double imagery) {
+		this.sourceText = sourceText;
 		this.pleasantness = pleasantness;
 		this.activation = activation;
 		this.imagery = imagery;
 	}
 	
-	public AffectionWord(String word, String pleasantness, String activation, String imagery) {
-		this.word = word;
-		this.pleasantness = Double.parseDouble(pleasantness);
-		this.activation = Double.parseDouble(activation);
-		this.imagery = Double.parseDouble(imagery);
+	public AffectionWord(String sourceText, String pleasantness, String activation, String imagery) {
+		this.sourceText = sourceText;
+		this.pleasantness = Double.parseDouble(pleasantness) - 2;
+		this.activation = Double.parseDouble(activation) - 2;
+		this.imagery = Double.parseDouble(imagery) - 2;
 	}
 	
 	public boolean checkIntegrity() {
-		if (word.length() > 1 && checkValidValue(pleasantness) && checkValidValue(activation) && checkValidValue(imagery)) {
+		if (sourceText.length() > 1 && checkValidValue(pleasantness) && checkValidValue(activation) && checkValidValue(imagery)) {
 			return true;
 		}
 		return false;
 	}
 	
 	private boolean checkValidValue(double value) {
-		if (value >= 1 && value <= 3) return true;
+		if (value >= -1 && value <= 1) return true;
 		return false;
 	}
 
 	@Override
 	public String getString() {
-		return word;
+		return sourceText;
 	}
 
 	@Override
 	public String getSourceWord() {
-		return word;
+		return sourceText;
 	}
 
 	@Override
@@ -67,7 +64,9 @@ public class AffectionWord implements INode, IWord {
 		return imagery;
 	}
 	
+	@Override
 	public String toString() {
-		return "[" + getTag() + ", '" + word + "', P:" + pleasantness + ", A:" + activation + ", I:" + imagery + "]";
+		DecimalFormat format = new DecimalFormat("#.###");
+		return "[" + getTag() + ", '" + sourceText + "', P:" + format.format(pleasantness) + ", A:" + format.format(activation) + ", I:" + format.format(imagery) + "]";
 	}
 }
