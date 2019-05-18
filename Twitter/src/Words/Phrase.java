@@ -4,17 +4,14 @@ import java.text.DecimalFormat;
 
 import Dictionaries.INode;
 
-public class Smiley extends AbsMeasurableWord implements IWord, INode {
+public class Phrase implements IWord, INode {
 	
 	String sourceText;
+	double pleasantness;
 	
-	public Smiley(String sourceText, double pleasantness) {
+	public Phrase(String sourceText, double pleasantness) {
 		this.sourceText = sourceText;
 		this.pleasantness = pleasantness;
-	}
-	public Smiley(String sourceText, String plesantness) {
-		this.sourceText = sourceText;
-		this.pleasantness = Double.parseDouble(plesantness);
 	}
 
 	@Override
@@ -24,12 +21,7 @@ public class Smiley extends AbsMeasurableWord implements IWord, INode {
 
 	@Override
 	public String getTag() {
-		return "<SML>";
-	}
-
-	@Override
-	public double getPleasantness() {
-		return pleasantness;
+		return "<PHR>";
 	}
 
 	@Override
@@ -43,8 +35,14 @@ public class Smiley extends AbsMeasurableWord implements IWord, INode {
 	}
 
 	@Override
+	public double getPleasantness() {
+		return pleasantness;
+	}
+
+	@Override
 	public boolean checkIntegrity() {
-		if (sourceText.length() > 1 && pleasantness >= -1 && pleasantness <= 1) return true;
+		if (sourceText.length() > 5 && sourceText.contains(" ") && pleasantness >= -1 && pleasantness <= 1)
+			return true;
 		return false;
 	}
 
@@ -58,5 +56,4 @@ public class Smiley extends AbsMeasurableWord implements IWord, INode {
 		DecimalFormat format = new DecimalFormat("#.###");
 		return "[" + getTag() + ", '" + sourceText + "', P: " + format.format(pleasantness) + "]";
 	}
-
 }

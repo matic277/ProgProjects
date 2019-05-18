@@ -3,7 +3,10 @@ package Tokenizer;
 import java.io.IOException;
 
 import Dictionaries.DictionaryCollection;
+import Dictionaries.IDictionary;
+import Dictionaries.SmileyDictionary;
 import StreamConsumer.StreamHandler;
+import Words.Smiley;
 
 public class Main {
 	

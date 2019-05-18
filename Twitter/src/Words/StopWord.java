@@ -4,10 +4,10 @@ import Dictionaries.INode;
 
 public class StopWord implements INode, IWord {
 	
-	String word = "";
+	String sourceText = "";
 	
-	public StopWord(String source) {
-		word = source;
+	public StopWord(String sourceText) {
+		this.sourceText = sourceText;
 	}
 
 	@Override
@@ -17,14 +17,12 @@ public class StopWord implements INode, IWord {
 
 	@Override
 	public String getString() {
-		return word;
+		return sourceText;
 	}
-	
-
 
 	@Override
-	public String getSourceWord() {
-		return word;
+	public String getSourceText() {
+		return sourceText;
 	}
 
 	@Override
@@ -49,6 +47,6 @@ public class StopWord implements INode, IWord {
 	
 	@Override
 	public String toString() {
-		return "[" + getTag() + ", '" + word + "']";
+		return "[" + getTag() + ", '" + sourceText + "']";
 	}
 }

@@ -21,7 +21,7 @@ public class Target implements IWord {
 	}
 
 	@Override
-	public String getSourceWord() {
+	public String getSourceText() {
 		return sourceWord;
 	}
 

@@ -12,6 +12,9 @@ import Words.IWord;
 abstract class AbsDictionary implements IDictionary {
 	
 	Hashtable<String, INode> hashTable;
+	
+	// encoding problems
+	String strangeChars = " ¨!\"#$%&/()=?*ÐŠÈÆŽŠðšæèž:;_~¡^¢°²`ÿ´½'¨'¸+-*\"<>-¤ßè×÷\\â€¦™« ";
 
 	public AbsDictionary() {
 	
@@ -49,6 +52,19 @@ abstract class AbsDictionary implements IDictionary {
 			if (!node.checkIntegrity()) {
 				System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
 			}
+			
+			String s = node.getString();
+			char[] chars = s.toCharArray();
+			
+			loop:
+			for (int i=0; i<strangeChars.length(); i++) {
+				for (int j=0; j<chars.length; j++) {
+					if (chars[j] == strangeChars.charAt(i)) {
+						System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
+						break loop;
+					}
+				}
+			}
 		});
 		System.out.println("\t\\-> Done.");
 		System.out.println();
@@ -62,6 +78,10 @@ abstract class AbsDictionary implements IDictionary {
 	@Override
 	public IWord getEntry(String key) {
 		return (IWord) hashTable.get(key);
+	}
+	
+	public Hashtable getHashtable() {
+		return hashTable;
 	}
 
 }

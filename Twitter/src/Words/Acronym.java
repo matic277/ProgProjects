@@ -88,7 +88,7 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 	}
 
 	@Override
-	public String getSourceWord() {
+	public String getSourceText() {
 		return sourceText;
 	}
 	

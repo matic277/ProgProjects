@@ -40,7 +40,7 @@ public class AffectionWord extends AbsMeasurableWord implements INode, IWord {
 	}
 
 	@Override
-	public String getSourceWord() {
+	public String getSourceText() {
 		return sourceText;
 	}
 

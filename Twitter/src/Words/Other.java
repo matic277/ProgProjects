@@ -2,15 +2,15 @@ package Words;
 
 public class Other implements IWord {
 	
-	String word;
+	String sourceText;
 	
-	public Other(String source) {
-		word = source;
+	public Other(String sourceText) {
+		this.sourceText = sourceText;
 	}
 
 	@Override
-	public String getSourceWord() {
-		return word;
+	public String getSourceText() {
+		return sourceText;
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class Other implements IWord {
 	}
 	
 	public String toString() {
-		return "[" + getTag() + ", '" + word + "']";
+		return "[" + getTag() + ", '" + sourceText + "']";
 	}
 
 }

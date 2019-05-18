@@ -2,7 +2,7 @@ package Words;
 
 public interface IWord {
 
-	String getSourceWord();
+	String getSourceText();
 	String getTag();
 	double getActivation();
 	double getImagery();

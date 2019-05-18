@@ -62,7 +62,7 @@ public class Tokenizer {
 			else if (dictionaries.getSmileyDictionary().contains(token)) {
 				IWord word = dictionaries.getSmileyDictionary().getEntry(token);
 				words.add(new Smiley(
-					word.getSourceWord(),
+					word.getSourceText(),
 					word.getPleasantness()
 				));
 			}
@@ -81,7 +81,7 @@ public class Tokenizer {
 			else if (dictionaries.getWhissellDictionary().contains(token)) {
 				IWord word = dictionaries.getWhissellDictionary().getEntry(token);
 				words.add(new AffectionWord(
-					word.getSourceWord(),
+					word.getSourceText(),
 					word.getPleasantness(),
 					word.getActivation(),
 					word.getImagery()
@@ -92,7 +92,7 @@ public class Tokenizer {
 			else if (dictionaries.getStopwordsDictionary().contains(token)) {
 				IWord word = dictionaries.getStopwordsDictionary().getEntry(token);
 				words.add(new StopWord(
-					word.getSourceWord()
+					word.getSourceText()
 				));
 			}
 			

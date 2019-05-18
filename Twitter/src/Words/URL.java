@@ -14,7 +14,7 @@ public class URL implements IWord {
 	}
 
 	@Override
-	public String getSourceWord() {
+	public String getSourceText() {
 		return sourceText;
 	}
 
