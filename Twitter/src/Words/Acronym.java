@@ -1,6 +1,5 @@
 package Words;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import Dictionaries.DictionaryCollection;
@@ -24,10 +23,22 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 		
 		// process the full-text pleasantness
 		// with the use of Whissell dictionary
-		processAcronym();
+		calculatePleasantness();
+	}
+	public Acronym(String sourceText) {
+		this.sourceText = sourceText;
+		
+		Acronym a = (Acronym)DictionaryCollection.getDictionaryCollection().getAcronymDictionary().getEntry(sourceText);
+		this.fullText = a.getFullText();
+		
+		calculatePleasantness();
 	}
 	
-	private void processAcronym() {
+	public static boolean isType(String s) {
+		return DictionaryCollection.getDictionaryCollection().getAcronymDictionary().contains(s);
+	}
+	
+	private void calculatePleasantness() {
 		fullText = fullText.toLowerCase();
 		listOfWords = fullText.split(" ");
 		
@@ -75,14 +86,26 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 		
 		double totalAvg = (negativeWordsAvg + positiveWordsAvg + neutralWordsAvg) / 3;
 		pleasantness = totalAvg;
+		
 		// TODO:
 		// total overhead when calculating average
-		// pleasantness, maybe change this ?
+		// pleasantness, but leaving it for now as
+		// these numbers might play a role in the future
+		
+		// PROBLEM:
+		// example: lol -> ['lol' -> 'laughing out loud', P:0,073]
+		// lol only gets a pleasantness of 0,073 which is completely
+		// neutral... probably not good?
+		// Take the pleasantness of the most pleasant word???
 	}
 
 	@Override
 	public String getSourceText() {
 		return sourceText;
+	}
+	
+	public String getFullText() {
+		return fullText;
 	}
 	
 	public String[] getListOfWords() {

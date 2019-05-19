@@ -3,6 +3,7 @@ package Tokenizer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import StreamConsumer.Tweet;
 import Words.AffectionWord;
 import Words.IWord;
 import Words.NegationWord;
@@ -12,6 +13,7 @@ import Words.Smiley;
 public class ProcessedTweet {
 	
 	String sourceText;
+	String username;
 
 	ArrayList<IWord> words;
 	
@@ -23,8 +25,9 @@ public class ProcessedTweet {
 	int sumOfNeutralWords = 0;
 	int sumOfPositiveWords = 0;
 	
-	public ProcessedTweet(String sourceText, ArrayList<IWord> words) {
-		this.sourceText = sourceText;
+	public ProcessedTweet(Tweet tweet, ArrayList<IWord> words) {
+		this.sourceText = tweet.sourceStatus;
+		this.username = tweet.username;
 		this.words = words;
 		
 		doSomeStatistics();
@@ -88,6 +91,7 @@ public class ProcessedTweet {
 	public String toString() {
 		String s = "";
 		s += "---------------------------\n";
+		s += "Poster: " + username + "\n";
 		s += "Source tweet:\n" + sourceText + "\n\n";
 		s += "Tree of tweet:\n";
 		

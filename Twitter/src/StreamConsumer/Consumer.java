@@ -5,11 +5,11 @@ import Tokenizer.Tokenizer;
 public class Consumer implements Runnable {
 	
 	//BlockingQueue queue;
-	String tweet;
+	Tweet tweet;
 	
 	StreamHandler ref;
 	
-	public Consumer(String tweet, StreamHandler ref) {
+	public Consumer(Tweet tweet, StreamHandler ref) {
 		this.tweet = tweet;
 		this.ref = ref;
 	}

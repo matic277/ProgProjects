@@ -20,36 +20,22 @@ public class StreamListener implements StatusListener {
 	public void onStatus(Status status) {
         // throw away non-english tweets
         if (!status.getLang().equals("en")) return;
-        	
+        
         String tweet = "";
         if (status.isRetweet()) {
-     	   tweet = "(re-tweet): " + status.getUser().getScreenName() + "\n" + status.getRetweetedStatus().getText();
+     	   tweet = status.getRetweetedStatus().getText();
         } else {
      	   tweet = status.getText();
         }
         
-        
-//        if (tweet.contains("?")) {
-//        	System.out.println("Tweet: " + tweet);
-//        	System.out.println("syent: " + status.getSymbolEntities());
-//        	SymbolEntity[] sy = status.getSymbolEntities();
-//        	for (SymbolEntity se : sy) {
-//        		System.out.print(se.toString() + " ");
-//        	}
-//        	System.out.println();
-//        	System.out.print("Unico: ");
-//        	String s = "";
-//        	char[] arr = tweet.toCharArray();
-//        	for (char c : arr) {
-//        		System.out.print( "\\u" + Integer.toHexString(c | 0x10000).substring(1) );
-//        	}
-//        	System.out.println();
-//        	System.out.println();
-//        	
+//        SymbolEntity[] se = status.getSymbolEntities();
+//        System.out.println("len: " + se.length);
+//        for (SymbolEntity s : se) {
+//        	System.out.println(s.getText());
 //        }
 
         // add tweet to list of tweets
-        ref.tweets.add(tweet);
+        ref.tweets.add(new Tweet(tweet, status.getUser().getScreenName()));
         //System.out.println("\t-> New tweet added, size of list: " + ref.tweets.size());
         
         // take the tweet that has been in the list of the longest and process it

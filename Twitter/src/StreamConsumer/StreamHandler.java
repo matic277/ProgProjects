@@ -24,7 +24,7 @@ public class StreamHandler {
 	//public BlockingQueue queue = new ArrayBlockingQueue(10000);
 	public StreamListener listener;
 	
-	public ConcurrentLinkedDeque<String> tweets = new ConcurrentLinkedDeque<String>();
+	public ConcurrentLinkedDeque<Tweet> tweets = new ConcurrentLinkedDeque<Tweet>();
 	public ConcurrentLinkedDeque<ProcessedTweet> processedTweets = new ConcurrentLinkedDeque<ProcessedTweet>();
 	
 	public StreamHandler() {

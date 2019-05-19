@@ -2,6 +2,8 @@ package Words;
 
 import java.text.DecimalFormat;
 
+import Dictionaries.DictionaryCollection;
+import Dictionaries.IDictionary;
 import Dictionaries.INode;
 
 public class Smiley extends AbsMeasurableWord implements IWord, INode {
@@ -15,6 +17,14 @@ public class Smiley extends AbsMeasurableWord implements IWord, INode {
 	public Smiley(String sourceText, String plesantness) {
 		this.sourceText = sourceText;
 		this.pleasantness = Double.parseDouble(plesantness);
+	}
+	public Smiley(String sourceText) {
+		this.sourceText = sourceText;
+		this.pleasantness = DictionaryCollection.getDictionaryCollection().getSmileyDictionary().getEntry(sourceText).getPleasantness();
+	}
+	
+	public static boolean isType(String s) {
+		return DictionaryCollection.getDictionaryCollection().getSmileyDictionary().contains(s);
 	}
 
 	@Override
@@ -70,5 +80,4 @@ public class Smiley extends AbsMeasurableWord implements IWord, INode {
 		DecimalFormat format = new DecimalFormat("#.###");
 		return "[" + getTag() + ", '" + sourceText + "', P: " + format.format(pleasantness) + "]";
 	}
-
 }

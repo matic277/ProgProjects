@@ -1,5 +1,6 @@
 package Words;
 
+import Dictionaries.DictionaryCollection;
 import Dictionaries.INode;
 
 public class NegationWord implements IWord, INode {
@@ -8,6 +9,10 @@ public class NegationWord implements IWord, INode {
 	
 	public NegationWord(String sourceText) {
 		this.sourceText = sourceText;
+	}
+	
+	public static boolean isType(String s) {
+		return DictionaryCollection.getDictionaryCollection().getNegationwordDictionary().contains(s);
 	}
 
 	@Override

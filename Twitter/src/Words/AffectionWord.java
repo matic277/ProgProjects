@@ -2,6 +2,8 @@ package Words;
 
 import java.text.DecimalFormat;
 
+import Dictionaries.DictionaryCollection;
+import Dictionaries.IDictionary;
 import Dictionaries.INode;
 
 public class AffectionWord extends AbsMeasurableWord implements INode, IWord {
@@ -20,6 +22,21 @@ public class AffectionWord extends AbsMeasurableWord implements INode, IWord {
 		this.pleasantness = Double.parseDouble(pleasantness) - 2;
 		this.activation = Double.parseDouble(activation) - 2;
 		this.imagery = Double.parseDouble(imagery) - 2;
+	}
+	
+	public AffectionWord(String sourceText) {
+		this.sourceText = sourceText;
+		
+		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
+		IWord word = dictionary.getEntry(sourceText);
+		
+		this.pleasantness = word.getPleasantness();
+		this.activation = word.getActivation();
+		this.imagery = word.getImagery();
+	}
+
+	public static boolean isType(String s) {
+		return DictionaryCollection.getDictionaryCollection().getWhissellDictionary().contains(s);
 	}
 	
 	public boolean checkIntegrity() {

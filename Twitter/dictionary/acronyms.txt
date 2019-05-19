@@ -1,37 +1,37 @@
-2F4U,Too Fast For You
-AAMOF,As a Matter of Fact
-ACK,Acknowledgment
-AFAIK,As far as I know
-AFAIR,As far as I remember
-AFK,Away from Keyboard
-AKA,Also known as
-BTW,By the Way
-B/C,Because
-bc,Because
-C&P,Copy and Paste
-DIY,Do it Yourself
-FAQ,Frequently asked Questions
-FWIW,For what it's Worth
-FYI,For your Information
-FTW,For the Win
-HF,Have fun
-HTH,Hope this Helps
-IDK,I don't know
-IIRC,If I Recall
-IMHO,In my Humble Opinion
-IMO,In my Opinion
-IOW,In other Words
-ITT,In this Thread
-LOL,Laughing out loud
-DGMW,Don't get me wrong
-SMH,Shaking my head
-OFC,Of course
-SMS,Short Message Service
-LMK,let me know
-ROFL,Rolling on floor laughing
-YOLO,You Only Live Once
-LMAO,laughing my ass off
-LMFAO,laughing my fucking ass off
+2f4u,too fast for you
+aamof,as a matter of fact
+ack,acknowledgment
+afaik,as far as i know
+afair,as far as i remember
+afk,away from keyboard
+aka,also known as
+btw,by the way
+b/c,because
+bc,because
+c&p,copy and paste
+diy,do it yourself
+faq,frequently asked questions
+fwiw,for what it's worth
+fyi,for your information
+ftw,for the win
+hf,have fun
+hth,hope this helps
+idk,i don't know
+iirc,if i recall
+imho,in my humble opinion
+imo,in my opinion
+iow,in other words
+itt,in this thread
+lol,laughing out loud
+dgmw,don't get me wrong
+smh,shaking my head
+ofc,of course
+sms,short message service
+lmk,let me know
+rofl,rolling on floor laughing
+yolo,you only live once
+lmao,laughing my ass off
+lmfao,laughing my fucking ass off
 lit,good amazing
 af,as fuck
 tf,what the fuck
@@ -49,46 +49,46 @@ sfw,safe for work
 nsfl,not safe for life
 til,today i learned
 fml,fuck my life
-IDGAF,I Don’t Give A Fuck
-FTFY,Fixed That For You
+idgaf,i don’t give a fuck
+ftfy,fixed that for you
 eli5,explain like i'm 5
-OMG,Oh my God
-OP,Original Poster, Original Post
-POV,Point of View
-ROTFL,Rolling on the Floor Laughing
-TBA,To be Announced
-THX,Thanks
-TNX,Thanks
-TY,Thank you
-TYT,Take your Time
-TTYL,Talk to you Later
-WTH,What the Hell
-WTF,What the Fuck
-2moro,Tomorrow
-2nte,Tonight
-BFF,Best Friends, Forever
-BRB,Be right Back
-BRT,Be right There
-F2F,Face to Face
-GR8,Great
-IDC,I Don't Care
-IDK,I Don't Know
-ILU,I Love You
-ILY,I Love You
-IRL,In Real Life
-J/K,Just Kidding
-JK,Just Kidding
-KMS,Kill Myself
-L8R,Later
-MYOB,Mind Your Own Business
-NP,No Problem
-NSFW,Not Safe for Work
-NVM,Never Mind
-OMW,On My Way
-QT,Cutie
-RN,Right Now
-UR,Your
-W8,Wait
-WB,Welcome Back
-XOXO,Hugs and Kisses
-XOXOXO,Hugs and Kisses
+omg,oh my god
+op,original poster, original post
+pov,point of view
+rotfl,rolling on the floor laughing
+tba,to be announced
+thx,thanks
+tnx,thanks
+ty,thank you
+tyt,take your time
+ttyl,talk to you later
+wth,what the hell
+wtf,what the fuck
+2moro,tomorrow
+2nte,tonight
+bff,best friends, forever
+brb,be right back
+brt,be right there
+f2f,face to face
+gr8,great
+idc,i don't care
+idk,i don't know
+ilu,i love you
+ily,i love you
+irl,in real life
+j/k,just kidding
+jk,just kidding
+kms,kill myself
+l8r,later
+myob,mind your own business
+np,no problem
+nsfw,not safe for work
+nvm,never mind
+omw,on my way
+qt,cutie
+rn,right now
+ur,your
+w8,wait
+wb,welcome back
+xoxo,hugs and kisses
+xoxoxo,hugs and kisses

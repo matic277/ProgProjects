@@ -1,5 +1,6 @@
 package Words;
 
+import Dictionaries.DictionaryCollection;
 import Dictionaries.INode;
 
 public class StopWord implements INode, IWord {
@@ -8,6 +9,10 @@ public class StopWord implements INode, IWord {
 	
 	public StopWord(String sourceText) {
 		this.sourceText = sourceText;
+	}
+	
+	public static boolean isType(String s) {
+		return DictionaryCollection.getDictionaryCollection().getStopwordDictionary().contains(s);
 	}
 
 	@Override

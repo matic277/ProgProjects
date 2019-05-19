@@ -27,7 +27,7 @@ public class DictionaryCollection {
 			dictionaries.constructSmileyDictionary(relativeFilePath_Smileys);
 			dictionaries.constructStopwordDictionary(relativeFilePath_Stopwords);
 			dictionaries.constructWhissellDictionary(relativeFilePath_Whissell);
-			dictionaries.constructNegationwordsDictionary(relativeFilePath_Negationwords);
+			dictionaries.constructNegationwordDictionary(relativeFilePath_Negationwords);
 			dictionaries.constructAcronymDictionary(relativeFilePath_Acronym);
 			return dictionaries;
 		}
@@ -49,7 +49,7 @@ public class DictionaryCollection {
 		catch (IOException e) { e.printStackTrace(); }
 	}
 	
-	private void constructNegationwordsDictionary(String path) {
+	private void constructNegationwordDictionary(String path) {
 		try { negationwords = new NegationwordDictionary(path); }
 		catch (IOException e) { e.printStackTrace(); }
 	}
@@ -65,10 +65,13 @@ public class DictionaryCollection {
 	public IDictionary getWhissellDictionary() {
 		return whissell;
 	}
-	public IDictionary getStopwordsDictionary() {
+	public IDictionary getStopwordDictionary() {
 		return stopwords;
 	}
-	public IDictionary getNegationwordsDictionary() {
+	public IDictionary getNegationwordDictionary() {
 		return negationwords;
+	}
+	public IDictionary getAcronymDictionary() {
+		return acronym;
 	}
 }
