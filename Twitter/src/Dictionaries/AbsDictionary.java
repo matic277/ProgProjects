@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.stream.Stream;
 
@@ -11,7 +12,7 @@ import Words.IWord;
 
 abstract class AbsDictionary implements IDictionary {
 	
-	Hashtable<String, INode> hashTable;
+	HashMap<String, INode> hashTable;
 	
 	// encoding problems
 	String strangeChars = " ¨!\"#$%&/()=?*ÐŠÈÆŽŠðšæèž:;_~¡^¢°²`ÿ´½'¨¸+-*\"<>-¤ßè×÷\\â€¦™«";
@@ -27,7 +28,7 @@ abstract class AbsDictionary implements IDictionary {
 		// hashtable:
 		// key		-> string,
 		// value	-> node(word and statistics)
-		hashTable = new Hashtable<String, INode>(hashtableSize);
+		hashTable = new HashMap<String, INode>(hashtableSize);
 		
 		Stream<String> linesToRead;
 		try (Stream<String> lines = Files.lines(Paths.get(relativeFilePath), Charset.defaultCharset())) {
@@ -95,7 +96,7 @@ abstract class AbsDictionary implements IDictionary {
 		return (IWord) hashTable.get(key);
 	}
 	
-	public Hashtable getHashtable() {
+	public HashMap getHashtable() {
 		return hashTable;
 	}
 

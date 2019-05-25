@@ -17,7 +17,7 @@ public class Main {
 		// but when tweets start streaming in, its
 		// nice to have them already built
 		DictionaryCollection.getDictionaryCollection();
-			
+		
 		// twitter stream collector
 		StreamHandler stream = new StreamHandler();
 		
