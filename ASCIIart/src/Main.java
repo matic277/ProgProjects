@@ -1,10 +1,16 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.imageio.ImageIO;
+
 public class Main {
 	
-	static String outputSrc = "C:/Users/V4/Desktop/JavaOutput.txt";
+	static String outputSrc = "Resources/JavaOutput.txt";
 	static ImageLoader r;
 	static Writer w;
 	
@@ -26,29 +32,54 @@ public class Main {
 	};
 	
 	public static void main(String[] args) {
-		init();
+		//initFileWriter();
+		loadImage("monkey.jpeg");
 		
 		int h = r.image.getHeight();
 		int w = r.image.getWidth();
 		
-		String output[] = new String[h];
-		for (int i=0; i<output.length; i++) output[i] = "";
+//		String output[] = new String[h];
+//		for (int i=0; i<output.length; i++) output[i] = "";
+//		
+//		for (int i=0; i<h; i++) {
+//			for (int j=0; j<w; j++) {
+//				output[i] += evalPixel(r.image.getRGB(j, i));
+//			}
+//		}
 		
 		for (int i=0; i<h; i++) {
 			for (int j=0; j<w; j++) {
-				output[i] += evalPixel(r.image.getRGB(j, i));
+				r.image.setRGB(j, i, evalPixel2(r.image.getRGB(j, i)));
 			}
 		}
 		
-		//printOutput(output);
-		writeOutput(output);
+//		printOutput(output);
+//		writeOutput(output);
+		saveImage();
+	}
+	
+	public static void saveImage() {
+		try {
+			BufferedImage bimage = new BufferedImage(r.image.getWidth(null), r.image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		    Graphics2D bGr = bimage.createGraphics();
+		    bGr.drawImage(r.image, 0, 0, null);
+		    bGr.dispose();
+		    
+		    File outputfile = new File("Resources/output.png");
+		    ImageIO.write(r.image, "png", outputfile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}   
 	}
 
-	private static void init() {
+	private static void initFileWriter() {
 		try { w = new FileWriter(outputSrc); }
 		catch (IOException e) { e.printStackTrace(); }
+	}
+
+	private static void loadImage(String imgName) {
 		r = new ImageLoader();
-		r.loadImage("monkey.jpeg");
+		r.loadImage(imgName);
 	}
 	
 	public static void writeOutput(String output[]) {
@@ -64,21 +95,63 @@ public class Main {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-	}
-
-	public static void printOutput(String output[]) {
-		for (int i=0; i<output.length; i++) System.out.println(output[i]);
 	}
 	
-
-	public static void printPixel(int pixel) {
-	    int alpha = (pixel >> 24) & 0xff;
+	static double maxBrightness = 255 * 3;
+	static double midBrightness = maxBrightness / 2;
+	static double scaleFactor = 1; // 1 for no additional effect, > 1 for more effect, < 1 for less effect
+	
+	public static int evalPixel2(int pixel) {
+//		int alpha = (pixel >> 24) & 0xff;
 	    int red = (pixel >> 16) & 0xff;
 	    int green = (pixel >> 8) & 0xff;
 	    int blue = (pixel) & 0xff;
-	    System.out.print("(" + alpha + ", " + red + ", " + green + ", " + blue + ") ");
+	    
+	    double newRed, newBlue, newGreen;
+	    
+	    int sumOfClrs = red + green + blue;
+	    double scale = 1;
+	    
+	    if (sumOfClrs >= midBrightness) {
+	    	// brighten
+	    	scale =  scaleFactor * (sumOfClrs / (maxBrightness - midBrightness));
+	    	//System.out.println(scale);
+	    	
+	    	newRed = red * scale;
+	    	newBlue = blue * scale;
+	    	newGreen = green * scale;
+	    } else {
+	    	// darken
+	    	scale = scaleFactor * (sumOfClrs / (midBrightness));
+	    	//System.out.println(scale);
+	    	
+	    	newRed = red * scale;
+	    	newBlue = blue * scale;
+	    	newGreen = green * scale;	    	
+	    }
+	    
+	    return new Color(
+	    	(int)((newRed > 255)? 255 : newRed),
+	    	(int)((newGreen > 255)? 255 : newGreen),
+	    	(int)((newBlue > 255)? 255 : newBlue)
+	    ).getRGB();
 	}
+	
+	
+	public static int evalPixel3(int pixel) {
+//	    int alpha = (pixel >> 24) & 0xff;
+	    int red = (pixel >> 16) & 0xff;
+	    int green = (pixel >> 8) & 0xff;
+	    int blue = (pixel) & 0xff;
+
+	    int avg = (red + green + blue) / 3;
+	    
+//	    red = blue = green = (int)avg;
+	    
+	    return new Color(avg, avg, avg).getRGB();
+	}
+	
+	
 	
 	public static char evalPixel(int pixel) {
 	    int alpha = (pixel >> 24) & 0xff;
@@ -90,7 +163,21 @@ public class Main {
 	    int chunk = (255 + 255 + 255) / chars.length;
 	    
 	    for (int i=0; i<chars.length; i++) if (total < chunk*i) return chars[i];
+	    
 	    return ' ';
 	}
 
+	
+	
+	public static void printOutput(String output[]) {
+		for (int i=0; i<output.length; i++) System.out.println(output[i]);
+	}
+	
+	public static void printPixel(int pixel) {
+	    int alpha = (pixel >> 24) & 0xff;
+	    int red = (pixel >> 16) & 0xff;
+	    int green = (pixel >> 8) & 0xff;
+	    int blue = (pixel) & 0xff;
+	    System.out.print("(" + alpha + ", " + red + ", " + green + ", " + blue + ") ");
+	}
 }
