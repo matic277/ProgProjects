@@ -34,6 +34,8 @@ lmao,laughing my ass off
 lmfao,laughing my fucking ass off
 lit,good amazing
 af,as fuck
+fu,fuck you
+fk,fuck
 tf,what the fuck
 bae,babe girlfriend
 dae,does anybody else
@@ -79,6 +81,7 @@ irl,in real life
 j/k,just kidding
 jk,just kidding
 kms,kill myself
+kys,kill yourself
 l8r,later
 myob,mind your own business
 np,no problem

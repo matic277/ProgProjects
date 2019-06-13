@@ -37,11 +37,15 @@ public class Main {
 				}
 			}
 			
-			// if there are more than 100 tweets processed,
+			// if there are more than _x_ tweets processed,
 			// log them to file and clear the list
 			public void logTweetsIfNeccessary() {
-				if (stream.processedTweets.size() > 100) {
-					new Logger(stream.processedTweets.toArray()).run();
+				if (stream.processedTweets.size() > 30) {
+					ProcessedTweet[] tweets = stream.processedTweets.toArray(new ProcessedTweet[stream.processedTweets.size()]);
+//					new Logger(stream.processedTweets.toArray());
+					Logger logger = new Logger(tweets);
+					logger.saveResults();
+					logger.saveResultsAsCsv();
 					stream.processedTweets.clear();
 				}
 			}

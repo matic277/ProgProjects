@@ -37,13 +37,24 @@ public class Tokenizer {
 
 	public Tokenizer(Tweet tweet) {
 		this.tweet = tweet;
-		sourceText = tweet.sourceStatus;
+		sourceText = tweet.sourceText;
 		dictionaries = DictionaryCollection.getDictionaryCollection();
 	}
 	
 	public ProcessedTweet processTweet() {
+		// clean strings of new line chars and stuff
+		String newLine = System.getProperty("line.separator");
+		
+		String cleanSource = sourceText;
+		cleanSource = cleanSource.replace("\n\n", " ");
+		cleanSource = cleanSource.replace("\n", " ");
+//		cleanSource = cleanSource.replace("\n\t", "");
+//		cleanSource = cleanSource.replace("\t", "");
+//		cleanSource = cleanSource.replace(newLine, "");
+		tweet.cleanSource = cleanSource;
+		
 		// init size of list of words
-		String[] tokens = sourceText.split(" ");
+		String[] tokens = cleanSource.split(" ");		
 		words = new ArrayList<IWord>(tokens.length);
 		
 		classifyWords(tokens);

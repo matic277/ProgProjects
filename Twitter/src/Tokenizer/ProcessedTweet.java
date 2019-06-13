@@ -12,7 +12,12 @@ import Words.Smiley;
 
 public class ProcessedTweet {
 	
+	// source where newline chars are removed
+	String cleanSource;
+	
+	// source with original text
 	String sourceText;
+	
 	String username;
 
 	ArrayList<IWord> words;
@@ -25,8 +30,11 @@ public class ProcessedTweet {
 	int sumOfNeutralWords = 0;
 	int sumOfPositiveWords = 0;
 	
+	int sentiment;
+	
 	public ProcessedTweet(Tweet tweet, ArrayList<IWord> words) {
-		this.sourceText = tweet.sourceStatus;
+		this.cleanSource = tweet.cleanSource;
+		this.sourceText = tweet.sourceText;
 		this.username = tweet.username;
 		this.words = words;
 		
@@ -49,7 +57,6 @@ public class ProcessedTweet {
 	}
 	
 	private void doSomeStatistics() {
-
 		for (IWord w : words) {
 			double pleasantness = w.getPleasantness();
 			
@@ -88,11 +95,31 @@ public class ProcessedTweet {
  		}
 	}
 	
+	// placeholder function for sentiment, returning biggest
+	// number of numOf_x_Words
+	public int getSentiment() {
+		if (numOfNegativeWords > numOfNeutralWords)
+			if (numOfNegativeWords > numOfPositiveWords) return -1;
+			else return 1;
+		if (numOfNeutralWords > numOfPositiveWords)
+			return 0;
+		return 1;
+	}
+	
+	public String getSourceText() {
+		return sourceText;
+	}
+	
+	public String getCleanSource() {
+		return cleanSource;
+	}
+	
 	public String toString() {
 		String s = "";
 		s += "---------------------------\n";
 		s += "Poster: " + username + "\n";
 		s += "Source tweet:\n" + sourceText + "\n\n";
+		s += "Clean tweet:\n" + cleanSource + "\n\n";
 		s += "Tree of tweet:\n";
 		
 		for (int i=0; i<words.size()-1; i++) {
