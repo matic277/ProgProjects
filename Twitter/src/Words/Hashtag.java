@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import Dictionaries.DictionaryCollection;
 import Dictionaries.IDictionary;
+import Dictionaries.WhissellDictionary;
 
 public class Hashtag extends AbsMeasurableWord implements IWord {
 	
@@ -46,28 +47,22 @@ public class Hashtag extends AbsMeasurableWord implements IWord {
 		this.pleasantness *= -1;
 	}
 
+	
+	// should split by upper-case chars: #HelloWorld -> [hello, word]
+	// then find the most polarizing word and return its value??
+	// (return the value of the most positive word or the most negative word)
 	@Override
 	public double getPleasantness() {
-		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
+		WhissellDictionary dictionary = (WhissellDictionary) DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
 		if (dictionary.contains(word)) {
 			return dictionary.getEntry(word).getPleasantness();
 		}
-		return -2;
-	}
-
-	@Override
-	public double getActivation() {
-		return -2;
-	}
-
-	@Override
-	public double getImagery() {
-		return -2;
+		return 0;
 	}
 	
 	public String toString() {
 		DecimalFormat format = new DecimalFormat("#.###");
-		return "[" + getTag() + ", '" + sourceText + "', P: " + format.format(pleasantness) + "]";
+		return "[" + getTag() + ", " + getSentimentTag() + ", '" + sourceText + "', P: " + format.format(pleasantness) + "]";
 	}
 
 }

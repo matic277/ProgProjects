@@ -30,21 +30,6 @@ public class NegationWord implements IWord, INode {
 		if (sourceText.length() < 2 || sourceText.length() > 10) return false;
 		return true;
 	}
-	
-	@Override
-	public double getActivation() {
-		return -2;
-	}
-
-	@Override
-	public double getImagery() {
-		return -2;
-	}
-
-	@Override
-	public double getPleasantness() {
-		return -2;
-	}
 
 	@Override
 	public String getString() {
@@ -54,15 +39,5 @@ public class NegationWord implements IWord, INode {
 	@Override
 	public String toString() {
 		return "[" + getTag() + ", '" + sourceText + "']";
-	}
-
-	@Override
-	public void setPleasantness(double pleasantness) {
-		
-	}
-	
-	@Override
-	public void setFlipPleasantness() {
-
 	}
 }

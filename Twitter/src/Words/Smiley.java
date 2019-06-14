@@ -5,8 +5,9 @@ import java.text.DecimalFormat;
 import Dictionaries.DictionaryCollection;
 import Dictionaries.IDictionary;
 import Dictionaries.INode;
+import Dictionaries.SmileyDictionary;
 
-public class Smiley extends AbsMeasurableWord implements IWord, INode {
+public class Smiley extends AbsMeasurableWord implements INode {
 	
 	String sourceText;
 	
@@ -20,7 +21,8 @@ public class Smiley extends AbsMeasurableWord implements IWord, INode {
 	}
 	public Smiley(String sourceText) {
 		this.sourceText = sourceText;
-		this.pleasantness = DictionaryCollection.getDictionaryCollection().getSmileyDictionary().getEntry(sourceText).getPleasantness();
+		SmileyDictionary dictionary = (SmileyDictionary) DictionaryCollection.getDictionaryCollection().getSmileyDictionary();
+		this.pleasantness = dictionary.getEntry(sourceText).getPleasantness();
 	}
 	
 	public static boolean isType(String s) {
@@ -35,33 +37,6 @@ public class Smiley extends AbsMeasurableWord implements IWord, INode {
 	@Override
 	public String getTag() {
 		return "<SML>";
-	}
-	
-	@Override
-	public void setPleasantness(double pleasantness) {
-		this.pleasantness = pleasantness;
-		if (this.pleasantness < -1) this.pleasantness = -1;
-		else if (this.pleasantness > 1) this.pleasantness = 1;
-	}
-	
-	@Override
-	public void setFlipPleasantness() {
-		this.pleasantness *= -1;
-	}
-
-	@Override
-	public double getPleasantness() {
-		return pleasantness;
-	}
-
-	@Override
-	public double getActivation() {
-		return -2;
-	}
-
-	@Override
-	public double getImagery() {
-		return -2;
 	}
 
 	@Override
@@ -78,6 +53,6 @@ public class Smiley extends AbsMeasurableWord implements IWord, INode {
 	@Override
 	public String toString() {
 		DecimalFormat format = new DecimalFormat("#.###");
-		return "[" + getTag() + ", '" + sourceText + "', P: " + format.format(pleasantness) + "]";
+		return "[" + getTag() + ", " + getSentimentTag() + ", '" + sourceText + "', P: " + format.format(pleasantness) + "]";
 	}
 }

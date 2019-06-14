@@ -54,13 +54,13 @@ public class Main {
 		
 
 		
-//		test();
+		test();
 	}
 	
 	public static void test() {
 		String tweet = "This is a  brand new, nice test tweet. www.sample.si @testTweet :)";
 		
-		tweet = "not good lol :/";
+		//tweet = "not good lol :/";
 		
 		Tokenizer t = new Tokenizer(new Tweet(tweet, "TEST_TWEET"));
 		System.out.println(t.processTweet().toString());

@@ -1,10 +1,5 @@
 package Words;
 
-import java.text.DecimalFormat;
-
-import Dictionaries.DictionaryCollection;
-import Dictionaries.IDictionary;
-
 public class Target implements IWord {
 	
 	String sourceWord;
@@ -30,42 +25,8 @@ public class Target implements IWord {
 		return "<TRG>";
 	}
 	
-	@Override
-	public void setPleasantness(double pleasantness) { }
-	
-	@Override
-	public void setFlipPleasantness() { }
-
-	@Override
-	public double getPleasantness() {
-		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
-		if (dictionary.contains(word)) {
-			return dictionary.getEntry(word).getPleasantness();
-		}
-		return -2;
-	}
-
-	@Override
-	public double getActivation() {
-		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
-		if (dictionary.contains(word)) {
-			return dictionary.getEntry(word).getPleasantness();
-		}
-		return -2;
-	}
-
-	@Override
-	public double getImagery() {
-		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
-		if (dictionary.contains(word)) {
-			return dictionary.getEntry(word).getPleasantness();
-		}
-		return -2;
-	}
-	
 	public String toString() {
-		DecimalFormat format = new DecimalFormat("#.###");
-		return "[" + getTag() + ", '" + sourceWord + "', " + "P:" + format.format(getPleasantness()) + "]";
+		return "[" + getTag() + ", '" + sourceWord + "']";
 	}
 
 }

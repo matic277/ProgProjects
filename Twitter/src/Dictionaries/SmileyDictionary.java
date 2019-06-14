@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Hashtable;
 import java.util.stream.Stream;
 
+import Words.AbsMeasurableWord;
 import Words.IWord;
 import Words.Smiley;
 
@@ -27,5 +28,9 @@ public class SmileyDictionary extends AbsDictionary {
 
 		
 		hashTable.put(tokens[0], new Smiley(tokens[0], tokens[1]));
+	}
+	
+	public AbsMeasurableWord getEntry(String key) {
+		return (AbsMeasurableWord) hashTable.get(key);
 	}
 }

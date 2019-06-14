@@ -24,38 +24,38 @@ public class DictionaryCollection {
 	public static DictionaryCollection getDictionaryCollection() {
 		if (dictionaries == null) {
 			dictionaries = new DictionaryCollection();
-			dictionaries.constructSmileyDictionary(relativeFilePath_Smileys);
-			dictionaries.constructStopwordDictionary(relativeFilePath_Stopwords);
-			dictionaries.constructWhissellDictionary(relativeFilePath_Whissell);
-			dictionaries.constructNegationwordDictionary(relativeFilePath_Negationwords);
-			dictionaries.constructAcronymDictionary(relativeFilePath_Acronym);
+			dictionaries.constructSmileyDictionary();
+			dictionaries.constructStopwordDictionary();
+			dictionaries.constructWhissellDictionary();
+			dictionaries.constructNegationwordDictionary();
+			dictionaries.constructAcronymDictionary();
 			return dictionaries;
 		}
 		return dictionaries;
 	}
 	
-	private void constructSmileyDictionary(String path) {
-		try { smileys = new SmileyDictionary(path); }
+	private void constructSmileyDictionary() {
+		try { smileys = new SmileyDictionary(relativeFilePath_Smileys); }
 		catch (IOException e) { e.printStackTrace(); }
 	}
 
-	private void constructStopwordDictionary(String path) {
-		try { stopwords = new StopwordDictionary(path); }
+	private void constructStopwordDictionary() {
+		try { stopwords = new StopwordDictionary(relativeFilePath_Stopwords); }
 		catch (IOException e) { e.printStackTrace(); }
 	}
 
-	private void constructWhissellDictionary(String path) {
-		try { whissell = new WhissellDictionary(path); }
+	private void constructWhissellDictionary() {
+		try { whissell = new WhissellDictionary(relativeFilePath_Whissell); }
 		catch (IOException e) { e.printStackTrace(); }
 	}
 	
-	private void constructNegationwordDictionary(String path) {
-		try { negationwords = new NegationwordDictionary(path); }
+	private void constructNegationwordDictionary() {
+		try { negationwords = new NegationwordDictionary(relativeFilePath_Negationwords); }
 		catch (IOException e) { e.printStackTrace(); }
 	}
 	
-	private void constructAcronymDictionary(String path) {
-		try { acronym = new AcronymDictionary(path); }
+	private void constructAcronymDictionary() {
+		try { acronym = new AcronymDictionary(relativeFilePath_Acronym); }
 		catch (IOException e) { e.printStackTrace(); }
 	}
 	

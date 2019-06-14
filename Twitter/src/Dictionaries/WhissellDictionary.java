@@ -1,13 +1,10 @@
 package Dictionaries;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Hashtable;
-import java.util.stream.Stream;
+
 
 import Words.AffectionWord;
 import Words.IWord;
+import Words.AbsMeasurableWord;
 
 public class WhissellDictionary extends AbsDictionary {
 	
@@ -28,5 +25,9 @@ public class WhissellDictionary extends AbsDictionary {
 		tokens[0] = tokens[0].toLowerCase();
 
 		hashTable.put(tokens[0], new AffectionWord(tokens[0], tokens[1], tokens[2], tokens[3]));
+	}
+	
+	public AbsMeasurableWord getEntry(String key) {
+		return (AbsMeasurableWord) hashTable.get(key);
 	}
 }

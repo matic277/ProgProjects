@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.stream.Stream;
 
 import Words.IWord;
@@ -17,9 +16,7 @@ abstract class AbsDictionary implements IDictionary {
 	// encoding problems
 	String strangeChars = " ¨!\"#$%&/()=?*ÐŠÈÆŽŠðšæèž:;_~¡^¢°²`ÿ´½'¨¸+-*\"<>-¤ßè×÷\\â€¦™«";
 
-	public AbsDictionary() {
-	
-	}
+	public AbsDictionary() { }
 	
 	protected void buildHashtable(String relativeFilePath, String dictionaryName, int skipToLine, int hashtableSize) throws IOException {
 		System.out.println("Creating dictionary of " + dictionaryName + "...");
@@ -96,7 +93,7 @@ abstract class AbsDictionary implements IDictionary {
 		return (IWord) hashTable.get(key);
 	}
 	
-	public HashMap getHashtable() {
+	public HashMap<String, INode> getHashmap() {
 		return hashTable;
 	}
 

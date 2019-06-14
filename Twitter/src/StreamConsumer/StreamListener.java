@@ -27,16 +27,9 @@ public class StreamListener implements StatusListener {
         } else {
      	   tweet = status.getText();
         }
-        
-//        SymbolEntity[] se = status.getSymbolEntities();
-//        System.out.println("len: " + se.length);
-//        for (SymbolEntity s : se) {
-//        	System.out.println(s.getText());
-//        }
 
         // add tweet to list of tweets
         ref.tweets.add(new Tweet(tweet, status.getUser().getScreenName()));
-        //System.out.println("\t-> New tweet added, size of list: " + ref.tweets.size());
         
         // take the tweet that has been in the list of the longest and process it
         // there are two queues, one of tweets and one of executors, make sure

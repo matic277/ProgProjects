@@ -71,7 +71,6 @@ public class Tokenizer {
 	
 	private void classifyWords(String[] tokens) {
 		
-		
 		for (String token : tokens)
 		{
 			if (token.length() == 0) continue;
@@ -134,81 +133,6 @@ public class Tokenizer {
 			// else, unknown/other word
 			words.add(new Other(cleanedToken));
 		}
-		
-		
-		
-//		
-//		// classify words
-//		for (String token : tokens) {
-//			if (token.length() == 0) continue;
-//			
-//			// preprocessing ????
-//			token = token.replace(",", "");
-//			token = token.replace("/", "");
-//			token = token.replace("!", "");
-//			token = token.replace("\\", "");
-//			token = token.replace("\t", "");
-//			token = token.replace("\n", "");
-//			
-//			String originalCaseToken = token; // not lower-cased
-//			token = token.toLowerCase();
-//			
-//			// hashtags
-//			if (Hashtag.isType(token)) {
-//				words.add(new Hashtag(token));
-//			}
-//			
-//			// smileys
-//			else if (dictionaries.getSmileyDictionary().contains(token)) {
-//				IWord word = dictionaries.getSmileyDictionary().getEntry(token);
-//				words.add(new Smiley(
-//					word.getSourceText(),
-//					word.getPleasantness()
-//				));
-//			}
-//			
-//			// @ tags
-//			else if (Target.isType(token)) {
-//				words.add(new Target(token));
-//			}
-//			
-//			// urls
-//			else if (URL.isType(token)) {
-//				words.add(new URL(token));
-//			}
-//			
-//			// negation words
-//			else if (dictionaries.getNegationwordsDictionary().contains(token)) {
-//				IWord word = dictionaries.getNegationwordsDictionary().getEntry(token);
-//				words.add(new NegationWord(
-//					word.getSourceText()
-//				));
-//			}
-//
-//			// whissell words
-//			else if (dictionaries.getWhissellDictionary().contains(token)) {
-//				IWord word = dictionaries.getWhissellDictionary().getEntry(token);
-//				words.add(new AffectionWord(
-//						word.getSourceText(),
-//						word.getPleasantness(),
-//						word.getActivation(),
-//						word.getImagery()
-//				));
-//			}
-//			
-//			// stop words
-//			else if (dictionaries.getStopwordsDictionary().contains(token)) {
-//				IWord word = dictionaries.getStopwordsDictionary().getEntry(token);
-//				words.add(new StopWord(
-//					word.getSourceText()
-//				));
-//			}
-//			
-//			// other
-//			else {
-//				words.add(new Other(token));
-//			}
-//		}
 	}
 	
 	private boolean isUpperCase(String word) {

@@ -56,9 +56,11 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 		double positiveWordsAvg = 0;
 		double neutralWordsAvg = 0;
 		
+		// TODO: CHANGED HERE
 		for (String word : listOfWords) {
 			if (dictionary.contains(word)) {
-				double pleasantness = dictionary.getEntry(word).getPleasantness();
+				AbsMeasurableWord absWord = (AbsMeasurableWord) dictionary.getEntry(word);
+				double pleasantness = absWord.getPleasantness();
 				
 				if (pleasantness < neutralThreshold) {
 					negativeWordsNum++;
@@ -152,7 +154,7 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 	
 	public String toString() {
 		DecimalFormat format = new DecimalFormat("#.###");
-		return "[" + getTag() + ", " + "'"+sourceText+"' -> " + "'" + fullText + "'" + ", P:" + format.format(pleasantness) + "]";
+		return "[" + getTag() + ", " + getSentimentTag() + ", '" + sourceText + "' -> " + "'" + fullText + "'" + ", P:" + format.format(pleasantness) + "]";
 	}
 
 	@Override

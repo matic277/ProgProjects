@@ -1,9 +1,11 @@
 package Tokenizer;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import StreamConsumer.Tweet;
+import Words.AbsMeasurableWord;
 import Words.AffectionWord;
 import Words.IWord;
 import Words.NegationWord;
@@ -26,9 +28,9 @@ public class ProcessedTweet {
 	int numOfNeutralWords = 0;
 	int numOfPositiveWords = 0;
 	
-	int sumOfNegativeWords = 0;
-	int sumOfNeutralWords = 0;
-	int sumOfPositiveWords = 0;
+	double sumOfNegativeWords = 0;
+	double sumOfNeutralWords = 0;
+	double sumOfPositiveWords = 0;
 	
 	int sentiment;
 	
@@ -38,18 +40,21 @@ public class ProcessedTweet {
 		this.username = tweet.username;
 		this.words = words;
 		
-		doSomeStatistics();
 		test();
+		doSomeStatistics();
 	}
 	
 	private void test() {
-		IWord word;
-		for (int i=0; i<words.size(); i++) {
+		IWord word, nextWord;
+		for (int i=0; i<words.size()-1; i++) {
 			word = words.get(i);
+			nextWord = words.get(i+1);
 			
 			if (word instanceof NegationWord) {
-				if (words.get(i+1) instanceof AffectionWord || words.get(i+1) instanceof Smiley) {
-					words.get(i+1).setFlipPleasantness();
+				if (nextWord instanceof AbsMeasurableWord) {
+					AbsMeasurableWord w = (AbsMeasurableWord) nextWord;
+					w.setFlipPleasantness();
+					words.set(i+1, w);
 					i++;
 				}
 			}
@@ -57,39 +62,27 @@ public class ProcessedTweet {
 	}
 	
 	private void doSomeStatistics() {
-		for (IWord w : words) {
-			double pleasantness = w.getPleasantness();
-			
-			if (w instanceof AffectionWord) {
-				AffectionWord word = (AffectionWord) w;
-				if (word.isNegativePleasantness()) {
+		for (IWord word : words) {
+			// AffectionWord, Hastag, Smiley, Acronym, Phrase, (Emoji)
+			if (word instanceof AbsMeasurableWord) {
+				AbsMeasurableWord mw = (AbsMeasurableWord) word;
+				double pleasantness = mw.getPleasantness();
+				
+				if (mw.isNegativePleasantness()) {
 					numOfNegativeWords++;
 					sumOfNegativeWords += pleasantness;
-				} else if (word.isNeutralPleasantness()) {
+				} else if (mw.isNeutralPleasantness()) {
 					numOfNeutralWords++;
 					sumOfNeutralWords += pleasantness;
+					
 				} else {
 					numOfPositiveWords++;
 					sumOfPositiveWords += pleasantness;
 				}
 			}
 			
-			else if (w instanceof Smiley) {
-				Smiley smiley = (Smiley) w;
-				 if (smiley.isNeutralPleasantness()){
-					numOfNeutralWords++;
-					sumOfNeutralWords += pleasantness;
-				}
-				 else if (smiley.isNegativePleasantness()) {
-					numOfNegativeWords++;
-					sumOfNegativeWords += pleasantness;
-				} else {
-					numOfPositiveWords++;
-					sumOfPositiveWords += pleasantness;
-				}
-			}
-			
-			else if (w instanceof Other){
+			// URL, Target, StopWord, Other, NegationWord
+			else {
 				numOfNeutralWords++;
 			}
  		}
@@ -115,6 +108,7 @@ public class ProcessedTweet {
 	}
 	
 	public String toString() {
+		DecimalFormat format = new DecimalFormat("#.###");
 		String s = "";
 		s += "---------------------------\n";
 		s += "Poster: " + username + "\n";
@@ -131,9 +125,9 @@ public class ProcessedTweet {
 		s += "\t|-> Num of neg words: " + numOfNegativeWords + "\n";
 		s += "\t|-> Num of neu words: " + numOfNeutralWords + "\n";
 		s += "\t|-> Num of pos words: " + numOfPositiveWords + "\n";
-		s += "\t|-> Sum of neg words: " + sumOfNegativeWords + "\n";
-		s += "\t|-> Sum of neu words: " + sumOfNeutralWords + "\n";
-		s += "\t\\-> Sum of pos words: " + sumOfPositiveWords + "\n";
+		s += "\t|-> Sum of neg words: " + format.format(sumOfNegativeWords) + "\n";
+		s += "\t|-> Sum of neu words: " + format.format(sumOfNeutralWords) + "\n";
+		s += "\t\\-> Sum of pos words: " + format.format(sumOfPositiveWords) + "\n";
 			
 		s += "---------------------------\n";
 		

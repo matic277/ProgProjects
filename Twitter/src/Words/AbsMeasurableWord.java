@@ -1,7 +1,7 @@
 package Words;
 
 
-abstract class AbsMeasurableWord {
+public abstract class AbsMeasurableWord implements IWord {
 	
 	// magnitude, how much should
 	// pleasantness get amplified by
@@ -30,16 +30,41 @@ abstract class AbsMeasurableWord {
 		return false;
 	}
 	
-	public double magnifyPleasantness() {
+	public void magnifyPleasantness() {
 		pleasantness *= magnitude;
 		if (pleasantness > 1) {
 			pleasantness = 1;
-			return 1;
 		}
-		if (pleasantness < -1) {
+		else if (pleasantness < -1) {
 			pleasantness = -1;
-			return -1;
 		}
+	}
+	
+	protected String getSentimentTag() {
+		if (isNeutralPleasantness()) return "(NEU)";
+		if (isPositivePleasantness()) return "(POS)";
+		return "(NEG)";
+	}
+	
+	public void setPleasantness(double pleasantness) {
+		this.pleasantness = pleasantness;
+		if (this.pleasantness < -1) this.pleasantness = -1;
+		else if (this.pleasantness > 1) this.pleasantness = 1;
+	}
+	
+	public void setFlipPleasantness() {
+		pleasantness *= -1;
+	}
+	
+	public double getPleasantness() {
 		return pleasantness;
+	}
+	
+	public double getActivation() {
+		return activation;
+	}
+	
+	public double getImagery() {
+		return imagery;
 	}
 }
