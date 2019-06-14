@@ -32,30 +32,30 @@ public class Main {
 	};
 	
 	public static void main(String[] args) {
-		//initFileWriter();
-		loadImage("monkey.jpeg");
+		initFileWriter();
+		loadImage("filename");
 		
 		int h = r.image.getHeight();
 		int w = r.image.getWidth();
 		
-//		String output[] = new String[h];
-//		for (int i=0; i<output.length; i++) output[i] = "";
-//		
-//		for (int i=0; i<h; i++) {
-//			for (int j=0; j<w; j++) {
-//				output[i] += evalPixel(r.image.getRGB(j, i));
-//			}
-//		}
+		String output[] = new String[h];
+		for (int i=0; i<output.length; i++) output[i] = "";
 		
 		for (int i=0; i<h; i++) {
 			for (int j=0; j<w; j++) {
-				r.image.setRGB(j, i, evalPixel2(r.image.getRGB(j, i)));
+				output[i] += evalPixel(r.image.getRGB(j, i));
 			}
 		}
 		
+//		for (int i=0; i<h; i++) {
+//			for (int j=0; j<w; j++) {
+//				r.image.setRGB(j, i, evalPixel2(r.image.getRGB(j, i)));
+//			}
+//		}
+		
 //		printOutput(output);
-//		writeOutput(output);
-		saveImage();
+		writeOutput(output);
+//		saveImage();
 	}
 	
 	public static void saveImage() {
