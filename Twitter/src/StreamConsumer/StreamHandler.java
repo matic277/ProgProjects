@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
 
-import Tokenizer.ProcessedTweet;
+import Tokenizer.Tweet;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -25,7 +25,7 @@ public class StreamHandler {
 	public StreamListener listener;
 	
 	public ConcurrentLinkedDeque<Tweet> tweets = new ConcurrentLinkedDeque<Tweet>();
-	public ConcurrentLinkedDeque<ProcessedTweet> processedTweets = new ConcurrentLinkedDeque<ProcessedTweet>();
+	public ConcurrentLinkedDeque<Tweet> processedTweets = new ConcurrentLinkedDeque<Tweet>();
 	
 	public StreamHandler() {
 		// create a pool with max 4 threads
@@ -48,22 +48,23 @@ public class StreamHandler {
         TwitterStream twitterStream = new TwitterStreamFactory(configurationBuilder.build()).getInstance();
         
         // thread pool
-//        executor = Executors.newWorkStealingPool();
-        //queue_size = new AtomicInteger(0);
+        // executor = Executors.newWorkStealingPool();
+        // queue_size = new AtomicInteger(0);
         
         listener = new StreamListener(this);
         twitterStream.addListener(listener);
         
         // query filter
-//        FilterQuery tweetFilterQuery = new FilterQuery();
-//        tweetFilterQuery.track(new String[]{"work"}); // OR on keywords
+        // FilterQuery tweetFilterQuery = new FilterQuery();
+        // tweetFilterQuery.track(new String[]{"work"}); // OR on keywords
         
         // note that not all tweets have location metadata set.
-//        twitterStream.filter(tweetFilterQuery);
+        // twitterStream.filter(tweetFilterQuery);
         twitterStream.sample();
 	}
 	
-	public static int index = 0;
+	private static int index = 0;
+	
 	private void readKeysFromFile() {
 		try (Stream<String> lines = Files.lines(Paths.get(relativeFilePath_apiKeys), Charset.defaultCharset())) {
 			//System.out.println(lines.count());
@@ -73,7 +74,6 @@ public class StreamHandler {
 					index++;
 				}
 			);
-			
 		} catch (IOException e) {
 			System.out.println("Error reading api keys!");
 			e.printStackTrace();

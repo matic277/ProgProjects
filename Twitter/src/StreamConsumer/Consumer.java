@@ -1,13 +1,13 @@
 package StreamConsumer;
 
-import Tokenizer.Tokenizer;
+import Tokenizer.Tweet;
 
 public class Consumer implements Runnable {
 	
 	//BlockingQueue queue;
-	Tweet tweet;
+	private Tweet tweet;
 	
-	StreamHandler ref;
+	private StreamHandler ref;
 	
 	public Consumer(Tweet tweet, StreamHandler ref) {
 		this.tweet = tweet;
@@ -18,11 +18,8 @@ public class Consumer implements Runnable {
 		//Stream.findSentiment(tweet);
 		//ref.queue_size.decrementAndGet();
 		
-		//String shortenedTweet = tweet.substring(0, 25);
-		//System.out.println("Processing tweet -> " + shortenedTweet);
-		
-		Tokenizer t = new Tokenizer(tweet);
-		ref.processedTweets.add(t.processTweet());
+		tweet.processTweet();
+		ref.processedTweets.add(tweet);
 			
 		//sleep(1000);
 	}

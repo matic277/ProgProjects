@@ -1,8 +1,6 @@
 package Tokenizer;
 import java.util.ArrayList;
 
-import Dictionaries.DictionaryCollection;
-import StreamConsumer.Tweet;
 import Words.Acronym;
 import Words.AffectionWord;
 import Words.Hashtag;
@@ -16,50 +14,36 @@ import Words.URL;
 
 public class Tokenizer {
 	
-	Tweet tweet;
-	
-	ArrayList<IWord> words;
 	String sourceText;
+	String cleanSourceText;
 	
-	DictionaryCollection dictionaries;
-	
-	int numOfNegativeWords = 0;
-	int numOfNeutralWords = 0;
-	int numOfPositiveWords = 0;
-	
-	int sumOfNegativeWords = 0;
-	int sumOfNeutralWords = 0;
-	int sumOfPositiveWords = 0;
+	private ArrayList<IWord> words;
 	
 	// don't remove ' or -
-	String charsToRemove = " ¨\"#$%&/()=*ÐŠÈÆŽŠðšæèž:;,_~¡^¢°²`ÿ´½¨¸.*\"<>¤ßè×÷\\â€¦™«";
-	String importantChars = "!?";
+	private String charsToRemove = " ¨\"#$%&/()=*ÐŠÈÆŽŠðšæèž:;,_~¡^¢°²`ÿ´½¨¸.*\"<>¤ßè×÷\\â€¦™«";
+	private String importantChars = "!?";
 
-	public Tokenizer(Tweet tweet) {
-		this.tweet = tweet;
-		sourceText = tweet.sourceText;
-		dictionaries = DictionaryCollection.getDictionaryCollection();
+	public Tokenizer(String cleanTweetText) {
+		this.sourceText = cleanTweetText;
 	}
 	
-	public ProcessedTweet processTweet() {
+	public ArrayList<IWord> tokenizeTweet() {
 		// clean strings of new line chars and stuff
-		String newLine = System.getProperty("line.separator");
+		// String newLine = System.getProperty("line.separator");
 		
-		String cleanSource = sourceText;
-		cleanSource = cleanSource.replace("\n\n", " ");
-		cleanSource = cleanSource.replace("\n", " ");
-//		cleanSource = cleanSource.replace("\n\t", "");
-//		cleanSource = cleanSource.replace("\t", "");
-//		cleanSource = cleanSource.replace(newLine, "");
-		tweet.cleanSource = cleanSource;
+//		String cleanSource = sourceText;
+//		cleanSource = cleanSource.replace("\n\n", " ");
+//		cleanSource = cleanSource.replace("\n", " ");
+//		cleanSourceText = cleanSource;
+		cleanSourceText = sourceText.replaceAll("(\\n)+", " ");
 		
 		// init size of list of words
-		String[] tokens = cleanSource.split(" ");		
+		String[] tokens = cleanSourceText.split(" ");		
 		words = new ArrayList<IWord>(tokens.length);
 		
 		classifyWords(tokens);
 		
-		return new ProcessedTweet(tweet, words);
+		return words;
 	}
 	
 	private String cleanToken(String token) {
@@ -73,6 +57,7 @@ public class Tokenizer {
 		
 		for (String token : tokens)
 		{
+			
 			if (token.length() == 0) continue;
 			
 			String loweredToken = token.toLowerCase();
@@ -94,6 +79,12 @@ public class Tokenizer {
 			// HASHTAG
 			if (Hashtag.isType(loweredToken)) {
 				words.add(new Hashtag(token));
+				continue;
+			}
+			
+			// TARGET
+			if (Target.isType(loweredToken)) {
+				words.add(new Target(token));
 				continue;
 			}
 			
@@ -134,16 +125,4 @@ public class Tokenizer {
 			words.add(new Other(cleanedToken));
 		}
 	}
-	
-	private boolean isUpperCase(String word) {
-		int uppercaseLettersNum = 0;
-		for (int i=0; i<word.length(); i++) {
-			if (Character.isUpperCase(word.charAt(i))) {
-				uppercaseLettersNum++;
-			}
-		}
-		double ratio = (double)uppercaseLettersNum / sourceText.length();
-		return (ratio > 0.4);
-	}
-
 }

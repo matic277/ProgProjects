@@ -5,11 +5,11 @@ import java.io.IOException;
 public class DictionaryCollection {
 	
 	// paths to dictionaries
-	private static String relativeFilePath_Whissell = "dictionary/dictionary_English.txt";
-	private static String relativeFilePath_Stopwords = "dictionary/stopwords.txt";
-	private static String relativeFilePath_Smileys = "dictionary/smileys.txt";
-	private static String relativeFilePath_Negationwords = "dictionary/negationwords.txt";
-	private static String relativeFilePath_Acronym = "dictionary/acronyms.txt";
+	private final String relativeFilePath_Whissell = "dictionary/dictionary_English.txt";
+	private final String relativeFilePath_Stopwords = "dictionary/stopwords.txt";
+	private final String relativeFilePath_Smileys = "dictionary/smileys.txt";
+	private final String relativeFilePath_Negationwords = "dictionary/negationwords.txt";
+	private final String relativeFilePath_Acronym = "dictionary/acronyms.txt";
 
 	private WhissellDictionary whissell;
 	private StopwordDictionary stopwords;

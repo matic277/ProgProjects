@@ -1,12 +1,10 @@
 package StreamConsumer;
 
-import Tokenizer.Logger;
-import Tokenizer.ProcessedTweet;
+import Tokenizer.Tweet;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
-import twitter4j.SymbolEntity;
 
 public class StreamListener implements StatusListener {
 	
@@ -35,6 +33,8 @@ public class StreamListener implements StatusListener {
         // there are two queues, one of tweets and one of executors, make sure
         // the executors one is as close to empty as possible, so that there
         // is only one queue (stupid but whatever)
+        // calling .pollFirst() method means the tweet gets removed from the 
+        // list as well
         if (!ref.tweets.isEmpty() && ref.executor.getQueue().size() == 0)
         	ref.executor.submit(new Consumer(ref.tweets.pollFirst(), ref));
         

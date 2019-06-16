@@ -3,12 +3,7 @@ package Tokenizer;
 import java.io.IOException;
 
 import Dictionaries.DictionaryCollection;
-import Dictionaries.IDictionary;
-import Dictionaries.SmileyDictionary;
 import StreamConsumer.StreamHandler;
-import StreamConsumer.Tweet;
-import Words.AffectionWord;
-import Words.Smiley;
 
 public class Main {
 	
@@ -41,11 +36,12 @@ public class Main {
 			// log them to file and clear the list
 			public void logTweetsIfNeccessary() {
 				if (stream.processedTweets.size() > 30) {
-					ProcessedTweet[] tweets = stream.processedTweets.toArray(new ProcessedTweet[stream.processedTweets.size()]);
+					Tweet[] tweets = stream.processedTweets.toArray(new Tweet[stream.processedTweets.size()]);
 //					new Logger(stream.processedTweets.toArray());
 					Logger logger = new Logger(tweets);
 					logger.saveResults();
 					logger.saveResultsAsCsv();
+					logger.saveResultsWithStatisticsAsCsv();
 					stream.processedTweets.clear();
 				}
 			}
@@ -54,7 +50,7 @@ public class Main {
 		
 
 		
-//		test();
+		test();
 	}
 	
 	public static void test() {
@@ -62,8 +58,10 @@ public class Main {
 		
 		//tweet = "not good lol :/";
 		
-		Tokenizer t = new Tokenizer(new Tweet(tweet, "TEST_TWEET"));
-		System.out.println(t.processTweet().toString());
+		Tweet t = new Tweet(tweet, "TEST_TWEET");
+		t.processTweet();
+		
+		System.out.println(t.toString());
 	}
 
 }

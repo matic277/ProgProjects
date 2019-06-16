@@ -1,14 +1,7 @@
 package Dictionaries;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Hashtable;
-import java.util.stream.Stream;
-
 import Words.AbsMeasurableWord;
-import Words.IWord;
 import Words.Smiley;
 
 public class SmileyDictionary extends AbsDictionary {

@@ -95,3 +95,4 @@ w8,wait
 wb,welcome back
 xoxo,hugs and kisses
 xoxoxo,hugs and kisses
+ppl,people

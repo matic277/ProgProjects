@@ -5,7 +5,7 @@ public abstract class AbsMeasurableWord implements IWord {
 	
 	// magnitude, how much should
 	// pleasantness get amplified by
-	double magnitude = 1.2;
+	double magnitude = 1.3;
 	
 	double positiveThreshold = 0.3;
 	double neutralThreshold = -0.3;

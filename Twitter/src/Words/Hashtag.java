@@ -3,7 +3,6 @@ package Words;
 import java.text.DecimalFormat;
 
 import Dictionaries.DictionaryCollection;
-import Dictionaries.IDictionary;
 import Dictionaries.WhissellDictionary;
 
 public class Hashtag extends AbsMeasurableWord implements IWord {
