@@ -23,8 +23,8 @@ public class Consumer implements Runnable {
 		
 		Tokenizer t = new Tokenizer(tweet);
 		ref.processedTweets.add(t.processTweet());
-		
-//		sleep(100);
+			
+		//sleep(1000);
 	}
 	
 	// debugging purpose

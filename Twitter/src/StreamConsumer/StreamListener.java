@@ -37,7 +37,7 @@ public class StreamListener implements StatusListener {
         // is only one queue (stupid but whatever)
         if (!ref.tweets.isEmpty() && ref.executor.getQueue().size() == 0)
         	ref.executor.submit(new Consumer(ref.tweets.pollFirst(), ref));
-
+        
         //ref.queue_size.incrementAndGet();
 	}
 

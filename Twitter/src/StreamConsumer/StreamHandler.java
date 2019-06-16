@@ -28,6 +28,9 @@ public class StreamHandler {
 	public ConcurrentLinkedDeque<ProcessedTweet> processedTweets = new ConcurrentLinkedDeque<ProcessedTweet>();
 	
 	public StreamHandler() {
+		// create a pool with max 4 threads
+		// executing at once, this can and
+		// should be changed in the future...
 		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
 		readKeysFromFile();
 		openAndListenStream();
