@@ -5,7 +5,9 @@ import java.util.HashMap;
 public class NGram {
 	
 	int n;
-	String[] words;
+	
+	String[] wordsarr;
+	ArrayList<String> wordslist;
 	
 	final int numberOfGrams;
 	
@@ -13,42 +15,77 @@ public class NGram {
 	ArrayList<Gram> list;
 	
 	public NGram(int n, String[] words) {
-		this.words = words;
+		this.wordsarr = words;
 		this.n = n;
 		this.table = new HashMap<String, Gram>(words.length);
 		this.list = new ArrayList<Gram>(words.length);
 		this.numberOfGrams = words.length - n;
 		
-		computeNGrams();
+		computeNGramsFromStringArray();
+	}
+	public NGram(int n, ArrayList<String> words) {
+		this.wordslist = words;
+		this.n = n;
+		this.table = new HashMap<String, Gram>(words.size());
+		this.list = new ArrayList<Gram>(words.size());
+		this.numberOfGrams = words.size() - n;
+		
+		computeNGramsFromArrayList();
 	}
 	
-	public void computeNGrams() {
-		for (int i=0; i<words.length-n; i++) {
+	public void computeNGramsFromArrayList() {
+		for (int i=0; i<wordslist.size()-n; i++) {
 			String ngram = "";
 			for (int j=0; j<n-1; j++) {
-				ngram += words[i+j] + " ";
+				ngram += wordslist.get(i+j) + " ";
 			}
-			ngram += words[i+n-1];
+			ngram += wordslist.get(i+n-1);
 			
 			Gram gram = new Gram(ngram);
 			
 			if (table.containsKey(ngram)) {
-				table.get(ngram).occurences++;
+				table.get(ngram).occurrences++;
 			} else {
 				table.put(ngram, gram);
 			}
 		}
 		
+//		orderAndPrintProbabilities();
+	}
+	
+	public void computeNGramsFromStringArray() {
+		for (int i=0; i<wordsarr.length-n; i++) {
+			String ngram = "";
+			for (int j=0; j<n-1; j++) {
+				ngram += wordsarr[i+j] + " ";
+			}
+			ngram += wordsarr[i+n-1];
+			
+			Gram gram = new Gram(ngram);
+			
+			if (table.containsKey(ngram)) {
+				table.get(ngram).occurrences++;
+			} else {
+				table.put(ngram, gram);
+			}
+		}
+		calculateProbabilities();
+//		orderAndPrintProbabilities();
+	}
+
+	private void calculateProbabilities() {
 		// loop through table entries and set probability
-		// and add them to list (this could be done better)
+		// and add them to list (this could be done better?)
 		table.forEach((key, value) -> {
-			value.probability = (double)value.occurences / numberOfGrams;
+			value.probability = (value.occurrences / numberOfGrams) * 100.0;
 			list.add(value);
 		});
-		
-		// sort list based on occurences (or probabilities)
+	}
+	
+	private void orderAndPrintProbabilities() {
+		// sort list based on occurrences (or probabilities)
 		list.sort((g1, g2) -> {
-			return Double.compare(g2.occurences, g1.occurences);
+			return Double.compare(g2.occurrences, g1.occurrences);
 		});
 		
 		System.out.println("\nTop 20 most frequent " + n + "-grams:");
@@ -68,7 +105,7 @@ class Gram {
 	String[] words;
 	String ngram;
 	
-	int occurences = 1;
+	double occurrences = 1;
 	double probability = 0;
 	
 	public Gram(String[] words) {
@@ -80,7 +117,7 @@ class Gram {
 	
 	@Override
 	public String toString() {
-		DecimalFormat f = new DecimalFormat("#.#####");
-		return "['" + ngram + "', " + occurences + ", " + f.format(probability) + "%]";
+		DecimalFormat f = new DecimalFormat("#.#######");
+		return "['" + ngram + "', " + (int)occurrences + ", " + f.format(probability) + "%]";
 	}
 }
