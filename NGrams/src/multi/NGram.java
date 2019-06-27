@@ -30,7 +30,7 @@ public class NGram {
 	}
 	
 	public void computeNGramsFromArrayList() {
-		for (int i=start; i<end-n; i++) {
+		for (int i=start; i<end-n+1; i++) {
 			String ngram = "";
 			for (int j=0; j<n-1; j++) {
 				ngram += wordslist.get(i+j) + " ";
@@ -45,8 +45,12 @@ public class NGram {
 				table.put(ngram, gram);
 			}
 		}
-		calculateProbabilities();
-		orderAndPrintProbabilities();
+		// no need to calculate probabilities or
+		// sort, do that when combining these tables
+		// in main
+		
+		//calculateProbabilities();
+		//orderAndPrintProbabilities();
 	}
 
 	private void calculateProbabilities() {
@@ -81,26 +85,5 @@ public class NGram {
 		for (int i=0; i<list.size(); i++) {
 			System.out.println("\t" + list.get(i).toString());
 		}
-	}
-}
-
-class Gram {
-	String[] words;
-	String ngram;
-	
-	double occurrences = 1;
-	double probability = 0;
-	
-	public Gram(String[] words) {
-		this.words = words;
-	}
-	public Gram(String ngram) {
-		this.ngram = ngram;
-	}
-	
-	@Override
-	public String toString() {
-		DecimalFormat f = new DecimalFormat("#.#######");
-		return "['" + ngram + "', " + (int)occurrences + ", " + f.format(probability) + "%]";
 	}
 }

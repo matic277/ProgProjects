@@ -2,6 +2,8 @@
 public class Main {
 	
 	public static void main(String[] args) {
+		long totalTime = System.currentTimeMillis();
+		
 		int ngramSize = 3;
 		
 		long t1 = System.currentTimeMillis();
@@ -13,6 +15,9 @@ public class Main {
 		NGram ng = new NGram(ngramSize, t.words);
 		
 		System.out.println("\nTime spent processing "+ngramSize+"-grams: " + ((System.currentTimeMillis() - t1)/1000.0) + " s");
+		
+		
+		System.out.println("\n -> Total time spent: " + ((System.currentTimeMillis() - totalTime)/1000.0) + "s");
 	}
 
 }

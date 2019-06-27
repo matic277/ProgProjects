@@ -1,8 +1,10 @@
 package multi;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.Callable;
 
-public class Worker implements Runnable {
+public class Worker implements Runnable, Callable<HashMap<String, Gram>> {
 	
 	int n; // ngram size
 	int start;
@@ -46,5 +48,11 @@ public class Worker implements Runnable {
 	public void printngrams() {
 		System.out.println("Thread no." + id);
 		ngram.printngrams();
+	}
+
+	@Override
+	public HashMap<String, Gram> call() throws Exception {
+		// TODO Auto-generated method stub
+		return ngram.table;
 	}
 }

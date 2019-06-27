@@ -62,8 +62,8 @@ public class Text {
 //			return;
 //		}
 		
-		if (ln % 1000 == 0)
-			System.out.println((ln / 77911.0)*100 + " %");
+//		if (ln % 1000 == 0)
+//			System.out.println((ln / 77911.0)*100 + " %");
 		
 //		if (line.contains("\n"))
 //			line = line.replace("\n", " ");
