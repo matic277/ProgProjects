@@ -22,7 +22,7 @@ public class Worker implements Runnable, Callable<HashMap<String, Gram>> {
 		this.n = n;
 		this.id = id;
 		
-		System.out.println("Thread no. " + id +": s=" + start + ", e=" + end);
+//		System.out.println("Thread no. " + id +": s=" + start + ", e=" + end);
 	}
 
 	@Override
