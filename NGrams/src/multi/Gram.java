@@ -1,29 +1,29 @@
 package multi;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.DecimalFormat;
 
 class Gram {
 	String[] words;
 	String ngram;
 	
-	double occurrences = 1;
+	int occurrences = 1;
 	double probability = 0;
 	
 	public Gram(String[] words) {
 		this.words = words;
+		ngram = "";
+		for (int i=0; i<words.length-1; i++) ngram += words[i] + " ";
+		ngram += words[words.length-1];
 	}
 	public Gram(String ngram) {
 		this.ngram = ngram;
 	}
 	
-	public Gram combine(Gram g) {
-		this.occurrences += g.occurrences;
-		return this;
-	}
-	
 	@Override
 	public String toString() {
 		DecimalFormat f = new DecimalFormat("#.#######");
-		return "['" + ngram + "', " + (int)occurrences + ", " + f.format(probability) + "%]";
+		return "['" + ngram + "', " + occurrences + ", " + f.format(probability) + "%]";
 	}
 }

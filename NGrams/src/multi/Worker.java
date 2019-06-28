@@ -12,7 +12,6 @@ public class Worker implements Runnable, Callable<HashMap<String, Gram>> {
 	int id;
 	
 	ArrayList<String> words;
-	
 	NGram ngram;
 	
 	public Worker(int id, ArrayList<String> words, int start, int end, int n) {
@@ -22,14 +21,12 @@ public class Worker implements Runnable, Callable<HashMap<String, Gram>> {
 		this.n = n;
 		this.id = id;
 		
-//		System.out.println("Thread no. " + id +": s=" + start + ", e=" + end);
+		//System.out.println("Thread no. " + id +": s=" + start + ", e=" + end);
 	}
 
 	@Override
 	public void run() {
-		// first, pre-process words
 		preprocessText();
-		
 		ngram = new NGram(start, end, n, words);
 	}
 	

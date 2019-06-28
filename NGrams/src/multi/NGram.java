@@ -39,11 +39,13 @@ public class NGram {
 			
 			Gram gram = new Gram(ngram);
 			
-			if (table.containsKey(ngram)) {
-				table.get(ngram).occurrences++;
-			} else {
-				table.put(ngram, gram);
-			}
+//			if (table.containsKey(ngram)) {
+//				table.get(ngram).occurrences++;
+//			} else {
+//				table.put(ngram, gram);
+//			}
+			table.computeIfPresent(ngram, (k, v) -> {v.occurrences++; return v;});
+			table.putIfAbsent(ngram, gram);
 		}
 		// no need to calculate probabilities or
 		// sort, do that when combining these tables
@@ -53,15 +55,15 @@ public class NGram {
 		//orderAndPrintProbabilities();
 	}
 
-	private void calculateProbabilities() {
-		// loop through table entries and set probability
-		// and add them to list (this could be done better?)
-		table.forEach((key, value) -> {
-			value.probability = (value.occurrences / numberOfGrams) * 100.0;
-			list.add(value);
-		});
-	}
-	
+//	private void calculateProbabilities() {
+//		// loop through table entries and set probability
+//		// and add them to list (this could be done better?)
+//		table.forEach((key, value) -> {
+//			value.probability = (value.occurrences / numberOfGrams) * 100.0;
+//			list.add(value);
+//		});
+//	}
+
 	private void orderAndPrintProbabilities() {
 		// sort list based on occurrences (or probabilities)
 		list.sort((g1, g2) -> {

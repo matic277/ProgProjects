@@ -1,5 +1,7 @@
 package multi;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,26 +13,19 @@ public class Main {
 		int ngramSize = 3;
 		int nthreads = 4;
 		
-		long t1 = System.currentTimeMillis();
+		
+		long readTime = System.currentTimeMillis();
 		Text tx = new Text();
-		System.out.println("Reading file: " + (System.currentTimeMillis() - t1)/1000.0 + "s");
-		
-//		NGram ng = new NGram(ngramSize, tx.words);
-//		System.out.println("\nTime spent processing "+ngramSize+"-grams: " + ((System.currentTimeMillis() - t1)/1000.0) + " s");
-		
+		System.out.println("File '"+tx.relativeFilePath+"' read in: " + (System.currentTimeMillis() - readTime)/1000.0 + "s");
+
 		ArrayList<String> words = tx.getWords();
-//		ArrayList<String> words = new ArrayList<String>(10);
-		
-//		String s = "Today it was sunny and nice outside. This is more text. Sample text.";
-//		s += " Yesterday was sunny and nice outside too. More sample text yesterday. More sample text. even more sample text.";
-//		String[] t = s.split(" ");
-//		for (String st : t) words.add(st);
 		
 		System.out.println("Ammount of words (tokenized by spaces and newlines): " + words.size());
 		
 		long ngramTime = System.currentTimeMillis();
 		System.out.println("\nProcessing text for " + ngramSize + "-grams:");
-		
+
+		// ---
 		Worker[] workers = initWorkers(ngramSize, nthreads, words);
 		runAndJoinThreads(workers);
 		HashMap<String, Gram> mergedTables = collectAndJoinTables(workers);
@@ -38,69 +33,19 @@ public class Main {
 		sortList(list);
 		printStats(list);
 		
-		System.out.println("\t -> Processing ngrams took(with sorting by ngram frequency) " + ((System.currentTimeMillis() - ngramTime)/1000.0) + "s");
+		
+		System.out.println("\t|-> Processing ngrams took(with sorting by ngram frequency) " + ((System.currentTimeMillis() - ngramTime)/1000.0) + "s");
 		
 		System.out.println("\nTotal time spent: " + ((System.currentTimeMillis() - totalTime)/1000.0) + "s");
 		
-//		for (int i=0; i<workers.length; i++) workers[i].printngrams();
 		
-		
-		// collectAndJoinTables();
-//		System.out.print("Combining hash-tables...");
-//		t1 = System.currentTimeMillis();
-//		// collect all hash tables and combine them
-//		HashMap<String, Gram>[] tables = new HashMap[nthreads];
-//		for (int i=0; i<workers.length; i++) tables[i] = workers[i].ngram.table;
-//		
-//		HashMap<String, Gram> merged = tables[0];
-//		for (int i=1; i<tables.length; i++) {
-//			HashMap<String, Gram> selected = tables[i];
-//			selected.entrySet().forEach(entry -> {
-//				merged.compute(entry.getKey(), (k, v) -> (v == null)? entry.getValue() : entry.getValue().combine(v));
-//			});
-//		}
-//		System.out.println(" done in: " + ((System.currentTimeMillis() - t1)/1000.0) + "s");
-		
-		// toListAndProbabilities()
-		// size is words.size()
-//		System.out.print("Putting into list and calculating probabilities...");
-//		t1 = System.currentTimeMillis();
-//		ArrayList<Gram> combined = new ArrayList<Gram>(words.size());
-//		
-//		final int numberOfGrams = merged.size();
-//		merged.forEach((k, v) -> {
-//			v.probability = (v.occurrences / numberOfGrams) * 100;
-//			combined.add(v);
-//		});
-//		System.out.println(" done in: " + ((System.currentTimeMillis() - t1)/1000.0) + "s");
-		
-		// sortList() pass in combined
-//		System.out.print("Sorting list by probabilities...");
-//		t1 = System.currentTimeMillis();
-//		combined.sort((g1, g2) -> {
-//			return Double.compare(g1.occurrences, g2.occurrences);
-//		});
-//		System.out.println(" done in: " + ((System.currentTimeMillis() - t1)/1000.0) + "s");
-		
-		// printstats();
-//		System.out.println("\nCombined arraylist size: " + combined.size());
-//		System.out.println("Top 20 most frequent: ");
-//		for (int i=combined.size()-1, ind = 1; i>combined.size()-20; i--, ind++) {
-//			if (i < 0) break;
-//			System.out.println("\t ("+ind+") " + (ind>9? "":" ") + combined.get(i).toString());
-//		}
-		
-		
-//		System.out.println("\n -> Total time spent: " + ((System.currentTimeMillis() - totalTime)/1000.0) + "s");
+		double sum = 0;
+		for (Gram g : list) sum += g.probability;
+		System.out.println("\nSum of probabilities: " + sum);
 	}
-	
-//	private static void updateWorkerInstructions(Worker[] workers, int ngramSize) {
-//		// just update how big the ngrams are supposed to be
-//		for (Worker w : workers) w.n = ngramSize;
-//	}
 
 	private static Worker[] initWorkers(int ngramSize, int nthreads, ArrayList<String> words) {
-		System.out.print("\t -> Threads initing....");
+		System.out.print("\t|-> Threads initing....");
 		long t1 = System.currentTimeMillis();
 		int chunk = words.size() / nthreads ;
 		int lastchunk = 0;
@@ -131,7 +76,7 @@ public class Main {
 		for (int i=0; i<threads.length; i++) {
 			threads[i] = new Thread(workers[i]);
 		}
-		System.out.print("\t -> Threads started and running...");
+		System.out.print("\t|-> Threads started and running...");
 		for (int i=0; i<threads.length; i++) threads[i].start();
 		for (int i=0; i<threads.length; i++) {
 			try {
@@ -144,15 +89,15 @@ public class Main {
 	}
 
 	private static void printStats(ArrayList<Gram> list) {
-		System.out.println("\t -> Top 30 most frequent (of total "+list.size()+" ngrams): ");
+		System.out.println("\t|-> Top 30 most frequent (of total "+list.size()+" ngrams): ");
 		for (int i=list.size()-1, ind = 1; i>list.size()-31; i--, ind++) {
 			if (i < 0) break;
-			System.out.println("\t\t ("+ind+") " + (ind>9? "":" ") + list.get(i).toString());
+			System.out.println("\t|\t|-> ("+ind+") " + (ind>9? "":" ") + list.get(i).toString());
 		}
 	}
 	
 	private static void sortList(ArrayList<Gram> list) {
-		System.out.print("\t -> Sorting list by probabilities...");
+		System.out.print("\t|-> Sorting list by probabilities...");
 		long t1 = System.currentTimeMillis();
 		list.sort((g1, g2) -> {
 			return Double.compare(g1.occurrences, g2.occurrences);
@@ -161,35 +106,44 @@ public class Main {
 	}
 	
 	private static ArrayList<Gram> toListAndProbabilities(HashMap<String, Gram> mergedTables) {
-		System.out.print("\t -> Creating a list and calculating probabilities...");
+		System.out.print("\t|-> Creating a list and calculating probabilities...");
 		long t1 = System.currentTimeMillis();
-		final int numberOfGrams = mergedTables.size();
+		int numberOfGrams = 0;
 		ArrayList<Gram> combined = new ArrayList<Gram>(numberOfGrams);
 		
 		mergedTables.forEach((k, v) -> {
-			v.probability = (v.occurrences / numberOfGrams) * 100;
 			combined.add(v);
 		});
+		for (Gram g : combined) numberOfGrams += g.occurrences;
+		final int num = numberOfGrams;
+		
+		combined.forEach(g -> {
+			g.probability = ((double)g.occurrences / num) * 100.0;
+		});
+		
 		System.out.println(" done in: " + ((System.currentTimeMillis() - t1)/1000.0) + "s");
 		return combined;
 	}
 	
 	private static HashMap<String, Gram> collectAndJoinTables(Worker[] workers) {
-		System.out.print("\t -> Combining hash-tables...");
+		System.out.print("\t|-> Combining hash-tables...");
 		long t1 = System.currentTimeMillis();
-		// collect all hash tables and combine them
+		
 		HashMap<String, Gram>[] tables = new HashMap[workers.length];
 		for (int i=0; i<workers.length; i++) tables[i] = workers[i].ngram.table;
-		
-		HashMap<String, Gram> merged = tables[0];
+
+		// combine all tables into table[0]
+		// if two grams need to be combined
+		// sum up their *occurrences* property
 		for (int i=1; i<tables.length; i++) {
-			HashMap<String, Gram> selected = tables[i];
-			selected.entrySet().forEach(entry -> {
-				merged.compute(entry.getKey(), (k, v) -> (v == null)? entry.getValue() : entry.getValue().combine(v));
+			tables[i].forEach((k, v) -> {
+				tables[0].merge(k, v, (g1, g2) -> { g1.occurrences += g2.occurrences; return g1; });
 			});
+			// release some memory by setting all other hashmaps to null?
+			tables[i] = null;
 		}
 		System.out.println(" done in: " + ((System.currentTimeMillis() - t1)/1000.0) + "s");
-		return merged;
+		return tables[0];
 	}
 
 }
