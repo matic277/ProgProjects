@@ -33,29 +33,29 @@ public class Main {
 	
 	public static void main(String[] args) {
 		initFileWriter();
-		loadImage("filename");
+		loadImage("bullet1.png");
 		
 		int h = r.image.getHeight();
 		int w = r.image.getWidth();
 		
-		String output[] = new String[h];
-		for (int i=0; i<output.length; i++) output[i] = "";
-		
-		for (int i=0; i<h; i++) {
-			for (int j=0; j<w; j++) {
-				output[i] += evalPixel(r.image.getRGB(j, i));
-			}
-		}
-		
+//		String output[] = new String[h];
+//		for (int i=0; i<output.length; i++) output[i] = "";
+//		
 //		for (int i=0; i<h; i++) {
 //			for (int j=0; j<w; j++) {
-//				r.image.setRGB(j, i, evalPixel2(r.image.getRGB(j, i)));
+//				output[i] += evalPixel(r.image.getRGB(j, i));
 //			}
 //		}
 		
+		for (int i=0; i<h; i++) {
+			for (int j=0; j<w; j++) {
+				r.image.setRGB(j, i, evalPixel4(r.image.getRGB(j, i)));
+			}
+		}
+		
 //		printOutput(output);
-		writeOutput(output);
-//		saveImage();
+//		writeOutput(output);
+		saveImage();
 	}
 	
 	public static void saveImage() {
@@ -149,6 +149,22 @@ public class Main {
 //	    red = blue = green = (int)avg;
 	    
 	    return new Color(avg, avg, avg).getRGB();
+	}
+	
+	public static int evalPixel4(int pixel) {
+	    int alpha = (pixel >> 24) & 0xff;
+	    int red = (pixel >> 16) & 0xff;
+	    int green = (pixel >> 8) & 0xff;
+	    int blue = (pixel) & 0xff;
+	    
+	    
+	    if (red > green && red > blue) {
+	    	return new Color(blue, green, red, alpha).getRGB();
+	    }
+	    
+//	    red = blue = green = (int)avg;
+	    
+	    return new Color(red, green, blue, alpha).getRGB();
 	}
 	
 	
