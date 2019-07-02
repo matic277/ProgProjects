@@ -3,6 +3,8 @@ package Units;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.geom.Line2D;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -16,6 +18,8 @@ public class Enemy extends Unit {
 	
 	Player player;
 	double speed = 2;
+	
+	boolean canSeePlayer = false;
 	
 	Thread controller;
 
@@ -39,14 +43,56 @@ public class Enemy extends Unit {
 		});
 		controller.start();
 	}
-
+	
 	@Override
 	public void move() {
+		// handled below
+	}
+
+	public void move(ConcurrentLinkedQueue<Wall> walls) {
+		// if colliding with the wall, change
+		// the moving direction
+		Wall[] wallsArr = walls.toArray(new Wall[0]);
+		Vector nextPosition = new Vector(position);
+		nextPosition.add(movingDirection);
+		for (int i=0; i<wallsArr.length; i++) {
+			// TODO:
+			// (fix lazy way of detecting collision here)
+			// this method of detecting becomes a
+			// problem if enemies can move faster
+			// than the thickness of walls. Rewrite
+			// the same way collision is done with
+			// bullets and walls
+			if (wallsArr[i].hitbox.intersects(this.hitbox)) {
+				movingDirection.multi(-1);
+			}
+		}
+		
 		updatePosition(movingDirection);
 		
+		// face player if there is no wall in 
+		// between the player and this enemy
+		// face to played if player is in direct
+		// line of sight, otherwise face to where
+		// its heading
+		Line2D enemy_playerLine = new Line2D.Double(
+			new Point((int)position.x, (int)position.y),
+			new Point((int)player.centerposition.x, (int)player.centerposition.y)
+		);
+		
+		for (int i=0; i<wallsArr.length; i++) {
+			if (wallsArr[i].hitbox.intersectsLine(enemy_playerLine)) {
+				// face direction
+				facingDirection.x = movingDirection.x;
+				facingDirection.y = movingDirection.y;
+				canSeePlayer = false;
+				return;
+			}
+		};
 		// face player
 		facingDirection.x = player.position.x - position.x;
 		facingDirection.y = player.position.y - position.y;
+		canSeePlayer = true;
 	}
 
 	@Override
@@ -69,6 +115,7 @@ public class Enemy extends Unit {
 	}
 
 	public void shoot(ResourceLoader res, ConcurrentLinkedQueue<Bullet> bullets) {
+		if (!canSeePlayer) return;
 		Vector direction = new Vector(player.position.x - position.x, player.position.y - position.y);
 		direction.norm();
 		direction.multi(5);

@@ -21,7 +21,7 @@ public class ResourceLoader {
 	
 	private Image dragonHead, dragonBody, dragonTail;
 	
-	private Clip clip;
+	//private Clip clip;
 	
 	String musicLocation = "test.wav";
 	
@@ -55,7 +55,7 @@ public class ResourceLoader {
 		dragonTail = dragonTail.getScaledInstance(50, 50, 1);
 		// ---
 		
-		loadClip();
+		//loadClip();
 	}
 	
 	public static BufferedImage loadImage(String fileName) {
@@ -105,21 +105,21 @@ public class ResourceLoader {
 		return asteroidImage;
 	}
 	
-	public void loadClip() {
-		try {
-			File musicPath = new File(musicLocation);
-			AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-			this.clip = AudioSystem.getClip();
-			this.clip.open(audioInput);
-			
-			//clip.start();
-	
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public Clip getClip() {
-		return clip;
-	}
+//	public void loadClip() {
+//		try {
+//			File musicPath = new File(musicLocation);
+//			AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+//			this.clip = AudioSystem.getClip();
+//			this.clip.open(audioInput);
+//			
+//			//clip.start();
+//	
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+//	
+//	public Clip getClip() {
+//		return clip;
+//	}
 }

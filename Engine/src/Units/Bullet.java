@@ -3,6 +3,7 @@ package Units;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.Line2D;
 
 import Engine.Vector;
 
@@ -24,5 +25,9 @@ public class Bullet extends Unit {
 	public void draw(Graphics2D g) {
 		rotateAndDraw(g, direction);
 		//drawHitbox(g);
+	}
+	
+	public Vector getDirection() {
+		return direction;
 	}
 }

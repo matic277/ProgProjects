@@ -4,12 +4,10 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import javax.sound.sampled.Clip;
-
 import Graphics.Painter;
 import Graphics.ResourceLoader;
 import Units.Asteroid;
@@ -21,12 +19,13 @@ import Units.EnemyBullet;
 import Units.Missile;
 import Units.Player;
 import Units.Unit;
+import Units.Wall;
 import core.IObserver;
 
 public class Engine implements IObserver, Runnable {
 	
 	double playerSpeed = 4;
-	double bulletSpeed = 20;
+	double bulletSpeed = 30;
 	double missileSpeed = 5;
 	int fireRate = 75;
 	
@@ -41,11 +40,11 @@ public class Engine implements IObserver, Runnable {
 	public ConcurrentLinkedQueue<Bullet> bullets;
 	
 	public ConcurrentLinkedQueue<Unit> dummyUnits;
+	public ConcurrentLinkedQueue<Wall> walls;
 	
 	public ConcurrentLinkedQueue<Asteroid> asteroids;
 	
 	public ConcurrentLinkedQueue<Enemy> enemies;
-	public ConcurrentLinkedQueue<Unit> staticUnits;
 	
 	public Dragon dragon;
 	
@@ -80,7 +79,7 @@ public class Engine implements IObserver, Runnable {
 			
 		
 		enemies = new ConcurrentLinkedQueue<Enemy>();
-		staticUnits = new ConcurrentLinkedQueue<Unit>();
+		walls = new ConcurrentLinkedQueue<Wall>();
 		
 		
 		// listeners
@@ -104,7 +103,23 @@ public class Engine implements IObserver, Runnable {
 		Asteroid a = new Asteroid(new Vector(300, 300), null, res.getAsteroidImage());
 		asteroids.add(a);
 		
-		dragon = new Dragon(new Vector(0, 0), null, 500, res.getDragonHeadImage(), res.getDragonBodyImage(), res.getDragonTailImage());
+		walls.add(new Wall(
+			new Vector(400, 0),
+			new Dimension(10, 500),
+			null
+		));
+		walls.add(new Wall(
+				new Vector(10, 10),
+				new Dimension(10, 500),
+				null
+			));
+		walls.add(new Wall(
+				new Vector(10, 10),
+				new Dimension(500, 10),
+				null
+			));
+		
+//		dragon = new Dragon(new Vector(0, 0), null, 500, res.getDragonHeadImage(), res.getDragonBodyImage(), res.getDragonTailImage());
 		
 		painter = new Painter(this, panelSize, ml, kl);
 	}
@@ -143,19 +158,40 @@ public class Engine implements IObserver, Runnable {
 				closest = u;
 			}
 		}
-		System.out.println(asteroids.size());
-		System.out.println("returning " + closest.toString());
 		return closest;
 	}
 	
 	
-	private void moveUnits() {		
+	private void moveUnits() {
+		// can't just call checkCollision between
+		// bullets and walls, bullet might be too
+		// fast and might skip over walls
+		walls.forEach(w -> {
+			bullets.forEach(b -> {
+				Line2D projectory = new Line2D.Double(
+					new Point((int)b.getLocation().x, (int)b.getLocation().y),
+					new Point((int)(b.getDirection().x + b.getLocation().x), (int)(b.getDirection().y + b.getLocation().y))
+				);
+				if (w.getHitbox().intersectsLine(projectory)) {
+					System.out.println("removing");
+					bullets.remove(b);
+				}
+				
+				
+			});
+			missiles.forEach(m -> {
+				if (w.checkCollision(m)) missiles.remove(m);
+			});
+		});
+		
+		
+		
 		// if bullet is type enemy bullet, then don't remove it
 		// because it might still be in enemies hitbox (where its created)
 
 		// move enemies and check collisions
 		enemies.forEach(e -> {
-			e.move();
+			e.move(walls);
 			bullets.forEach(b -> {
 				// reduce hp remove if unit is dead
 				if (e.checkCollision(b) && !(b instanceof EnemyBullet)) {
@@ -166,6 +202,8 @@ public class Engine implements IObserver, Runnable {
 					}
 				}
 			});
+			// missiles that collide with enemies that
+			// aren't their targets
 			missiles.forEach(m -> {
 				// TODO: same here as for bullets
 				if (e.checkCollision(m)) {
@@ -192,7 +230,7 @@ public class Engine implements IObserver, Runnable {
 			asteroids.forEach(a -> {
 				if (b.checkCollision(a)) {
 					bullets.remove(b);
-					asteroids.remove(a);
+					if (a.lowerHealth(10)) asteroids.remove(a);
 				}
 			});
 			
@@ -206,18 +244,18 @@ public class Engine implements IObserver, Runnable {
 		// move missiles
 		missiles.forEach(m -> {
 			m.move();
-			if (m.checkCollision(m.target)) {
-				missiles.remove(m);
-				deleteTarget(m.target);
-			}
-			
-			// if target is dead, find another
-			// otherwise just remove
-			// TODO: don't just remove it?
 			if (!isTargetAlive(m.target)) {
 				Unit target = getClosestEnemy(mouse);
 				if (target != null) m.target = target;
 				else missiles.remove(m);
+			}
+			if (m.checkCollision(m.target)) {
+				missiles.remove(m);
+				if (m.target.lowerHealth(50)) {
+					enemies.remove(m.target);
+					asteroids.remove(m.target);
+					System.out.println("target removed was: " + m.target.toString());
+				}
 			}
 		});
 		
@@ -226,8 +264,10 @@ public class Engine implements IObserver, Runnable {
 			if (a.isOutOfBounds()) a.reposition();
 		});
 		
-		dragon.move();
-		dragon.checkCollision(bullets, asteroids);
+		if (dragon != null) {
+			dragon.move();
+			dragon.checkCollision(bullets, asteroids);
+		}
 	}
 	
 	private void deleteTarget(Unit target) {
@@ -246,6 +286,17 @@ public class Engine implements IObserver, Runnable {
 		// D
 		if (keyCodes[68]) force.x +=  playerSpeed;
 		
+		Line2D projectory = new Line2D.Double(
+			new Point((int)player.getLocation().x, (int)player.getLocation().y),
+			new Point((int)(force.x + player.getLocation().x), (int)(force.y + player.getLocation().y))
+		);
+		
+		Wall[] wallsArr = walls.toArray(new Wall[0]);
+		for (int i=0; i<wallsArr.length; i++) {
+			if (wallsArr[i].getHitbox().intersectsLine(projectory)) {
+				return;
+			}
+		};
 		player.updateDirection();
 		player.updatePosition(force);
 	}

@@ -77,13 +77,15 @@ public class Painter extends JPanel implements IObserver {
 		g.fillRect(0, 0, bounds.width, bounds.height);
 		
 		engine.dummyUnits.forEach(b -> b.draw(g));
+		engine.walls.forEach(b -> b.draw(g));
+		
 		engine.bullets.forEach(b -> b.draw(g));
 		engine.missiles.forEach(b -> b.draw(g));
 		
 		engine.asteroids.forEach(b -> b.draw(g));
 		engine.enemies.forEach(b -> b.draw(g));
 		
-		engine.dragon.draw(g);
+		if (engine.dragon != null) engine.dragon.draw(g);
 		
 		
 		engine.player.draw(g);
