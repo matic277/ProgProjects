@@ -21,6 +21,8 @@ public abstract class Unit {
 	Color c = Color.black;
 	
 	double hp = 100;
+	protected Rectangle hpContainer;
+	protected Rectangle hpAmmount;
 	
 	double imageAngleRad = 0;
 	
@@ -69,9 +71,6 @@ public abstract class Unit {
 		g.draw(hitbox);
 	}
 	
-	protected Rectangle hpContainer;
-	protected Rectangle hpAmmount;
-	
 	public void drawHP(Graphics2D g) {
 		g.setColor(Color.green);
 		if (hp < 50) g.setColor(Color.orange);
@@ -93,7 +92,6 @@ public abstract class Unit {
 	    g.rotate(imageAngleRad);
 	    g.translate(-cx, -cy);
 	    g.drawImage(image, 0, 0, null);
-//	    g.draw(hitbox);
 	    g.setTransform(oldAT);
 	    
 	    // courtesy of stack overflow
@@ -113,9 +111,9 @@ public abstract class Unit {
 	}
 
 	public void setLocation(Vector v) {
-		
 		position = v;
 	}
+	
 	public Vector getLocation() {
 		return position;
 	}

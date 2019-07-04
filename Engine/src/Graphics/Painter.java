@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Path2D;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,14 +62,13 @@ public class Painter extends JPanel implements IObserver {
 		a = new Rectangle(53, bounds.height-83, 17, 17);
 		s = new Rectangle(70, bounds.height-83, 17, 17);
 		d = new Rectangle(87, bounds.height-83, 17, 17);
-		
+
 		frame = new JFrame("Window");
 		frame.add(this);
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
 	}
-
 
 	@Override
 	protected void paintComponent(Graphics gr){
@@ -84,12 +85,12 @@ public class Painter extends JPanel implements IObserver {
 		
 		engine.asteroids.forEach(b -> b.draw(g));
 		engine.enemies.forEach(b -> b.draw(g));
+		engine.guards.forEach(b -> b.draw(g));
 		
 		if (engine.dragon != null) engine.dragon.draw(g);
 		
-		
 		engine.player.draw(g);
-		
+
 		drawInputs(g);
 		
 		sleep(fps);

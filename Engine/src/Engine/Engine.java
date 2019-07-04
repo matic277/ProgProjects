@@ -16,6 +16,7 @@ import Units.Dragon;
 import Units.DummyUnit;
 import Units.Enemy;
 import Units.EnemyBullet;
+import Units.Guard;
 import Units.Missile;
 import Units.Player;
 import Units.Unit;
@@ -45,6 +46,7 @@ public class Engine implements IObserver, Runnable {
 	public ConcurrentLinkedQueue<Asteroid> asteroids;
 	
 	public ConcurrentLinkedQueue<Enemy> enemies;
+	public ConcurrentLinkedQueue<Guard> guards;
 	
 	public Dragon dragon;
 	
@@ -79,6 +81,8 @@ public class Engine implements IObserver, Runnable {
 			
 		
 		enemies = new ConcurrentLinkedQueue<Enemy>();
+		guards = new ConcurrentLinkedQueue<Guard>();
+		
 		walls = new ConcurrentLinkedQueue<Wall>();
 		
 		
@@ -89,7 +93,15 @@ public class Engine implements IObserver, Runnable {
 		kl.addObserver(this);
 		
 
-		enemies.add(new Enemy(
+//		enemies.add(new Enemy(
+//			new Vector(50, 50),
+//			null,
+//			null,
+//			res.getEnemyImage(),
+//			player
+//		));
+		
+		guards.add(new Guard(
 			new Vector(50, 50),
 			null,
 			null,
@@ -109,15 +121,15 @@ public class Engine implements IObserver, Runnable {
 			null
 		));
 		walls.add(new Wall(
-				new Vector(10, 10),
-				new Dimension(10, 500),
-				null
-			));
+			new Vector(10, 10),
+			new Dimension(10, 500),
+			null
+		));
 		walls.add(new Wall(
-				new Vector(10, 10),
-				new Dimension(500, 10),
-				null
-			));
+			new Vector(10, 10),
+			new Dimension(500, 10),
+			null
+		));
 		
 //		dragon = new Dragon(new Vector(0, 0), null, 500, res.getDragonHeadImage(), res.getDragonBodyImage(), res.getDragonTailImage());
 		
@@ -173,11 +185,8 @@ public class Engine implements IObserver, Runnable {
 					new Point((int)(b.getDirection().x + b.getLocation().x), (int)(b.getDirection().y + b.getLocation().y))
 				);
 				if (w.getHitbox().intersectsLine(projectory)) {
-					System.out.println("removing");
 					bullets.remove(b);
 				}
-				
-				
 			});
 			missiles.forEach(m -> {
 				if (w.checkCollision(m)) missiles.remove(m);
@@ -254,7 +263,6 @@ public class Engine implements IObserver, Runnable {
 				if (m.target.lowerHealth(50)) {
 					enemies.remove(m.target);
 					asteroids.remove(m.target);
-					System.out.println("target removed was: " + m.target.toString());
 				}
 			}
 		});
@@ -268,6 +276,11 @@ public class Engine implements IObserver, Runnable {
 			dragon.move();
 			dragon.checkCollision(bullets, asteroids);
 		}
+		
+		guards.forEach(g -> {
+			g.move(walls);
+			if (g.isOutOfBounds()) g.reposition();
+		});
 	}
 	
 	private void deleteTarget(Unit target) {
