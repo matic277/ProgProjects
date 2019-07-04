@@ -34,7 +34,6 @@ public class Enemy extends Unit {
 			while (true){
 				this.movingDirection.rotateRandomly(15);
 				
-				
 				if (r.nextDouble() < 0.01) {
 					this.movingDirection.rotateRandomly(45);
 				}

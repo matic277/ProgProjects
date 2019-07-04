@@ -93,13 +93,13 @@ public class Engine implements IObserver, Runnable {
 		kl.addObserver(this);
 		
 
-//		enemies.add(new Enemy(
-//			new Vector(50, 50),
-//			null,
-//			null,
-//			res.getEnemyImage(),
-//			player
-//		));
+		enemies.add(new Enemy(
+			new Vector(50, 50),
+			null,
+			null,
+			res.getEnemyImage(),
+			player
+		));
 		
 		guards.add(new Guard(
 			new Vector(50, 50),
@@ -115,21 +115,21 @@ public class Engine implements IObserver, Runnable {
 		Asteroid a = new Asteroid(new Vector(300, 300), null, res.getAsteroidImage());
 		asteroids.add(a);
 		
-		walls.add(new Wall(
-			new Vector(400, 0),
-			new Dimension(10, 500),
-			null
-		));
-		walls.add(new Wall(
-			new Vector(10, 10),
-			new Dimension(10, 500),
-			null
-		));
-		walls.add(new Wall(
-			new Vector(10, 10),
-			new Dimension(500, 10),
-			null
-		));
+//		walls.add(new Wall(
+//			new Vector(400, 0),
+//			new Dimension(10, 500),
+//			null
+//		));
+//		walls.add(new Wall(
+//			new Vector(10, 10),
+//			new Dimension(10, 500),
+//			null
+//		));
+//		walls.add(new Wall(
+//			new Vector(10, 10),
+//			new Dimension(500, 10),
+//			null
+//		));
 		
 //		dragon = new Dragon(new Vector(0, 0), null, 500, res.getDragonHeadImage(), res.getDragonBodyImage(), res.getDragonTailImage());
 		

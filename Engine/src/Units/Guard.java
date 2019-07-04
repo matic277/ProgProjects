@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -14,12 +16,12 @@ import Graphics.ResourceLoader;
 public class Guard extends Unit {
 
 	Vector movingDirection;
-	Vector facingDirection; // face to player
+	Vector facingDirection; // face to player if seen
 	
 	Player player;
 	double speed = 2;
 	
-	double seeingAngle = 30;
+	
 	
 	Vector sight1;
 	Vector sight2;
@@ -28,7 +30,12 @@ public class Guard extends Unit {
 	
 	Thread controller;
 	
-	Path2D triangle;
+	double seeingAngle = 30;
+	Path2D visionPoly;
+	
+	
+	double[][] path;
+	int currentPathPosition = 0;
 
 	public Guard(Vector position, Vector movingDirection, Dimension hitbox, Image image, Player player) {
 		super(position, hitbox, image);
@@ -41,23 +48,39 @@ public class Guard extends Unit {
 		sight2 = new Vector(facingDirection);
 		sight2.rotate(360-seeingAngle/2);
 		
-		triangle = new Path2D.Double();
-		triangle.moveTo(centerposition.x, centerposition.y);
-		triangle.lineTo(centerposition.x+sight1.x, centerposition.y+sight1.y);
-		triangle.lineTo(centerposition.x+sight2.x, centerposition.y+sight2.y);
+		visionPoly = new Path2D.Double();
+		visionPoly.moveTo(centerposition.x, centerposition.y);
+		visionPoly.lineTo(centerposition.x+sight1.x, centerposition.y+sight1.y);
+		visionPoly.lineTo(centerposition.x+sight2.x, centerposition.y+sight2.y);
 		
-		controller = new Thread(() -> {
-			Random r = new Random();
-			while (true){
-				this.movingDirection.rotateRandomly(15);
-				
-				if (r.nextDouble() < 0.01) {
-					this.movingDirection.rotateRandomly(45);
-				}
-				Engine.Engine.sleep(100);
-			}
-		});
-		controller.start();
+		path = new double[][] {
+			{200, 200},
+			{250, 150},
+			{300, 150},
+			{350, 200},
+			{350, 600},
+			{300, 650},
+			{250, 650},
+			{200, 600}
+		};
+		position.x = path[0][0];
+		position.y = path[0][1];
+		
+		
+		
+		
+//		controller = new Thread(() -> {
+//			Random r = new Random();
+//			while (true){
+//				this.movingDirection.rotateRandomly(15);
+//				
+//				if (r.nextDouble() < 0.01) {
+//					this.movingDirection.rotateRandomly(45);
+//				}
+//				Engine.Engine.sleep(100);
+//			}
+//		});
+//		controller.start();
 	}
 	
 	@Override
@@ -80,21 +103,37 @@ public class Guard extends Unit {
 		// if colliding with the wall, change
 		// the moving direction
 		Wall[] wallsArr = walls.toArray(new Wall[0]);
-		Vector nextPosition = new Vector(position);
-		nextPosition.add(movingDirection);
-		for (int i=0; i<wallsArr.length; i++) {
-			// TODO:
-			// (fix lazy way of detecting collision here)
-			// this method of detecting becomes a
-			// problem if enemies can move faster
-			// than the thickness of walls. Rewrite
-			// the same way collision is done with
-			// bullets and walls
-			if (wallsArr[i].hitbox.intersects(this.hitbox)) {
-				movingDirection.multi(-1);
-			}
-		}
+//		Vector nextPosition = new Vector(position);
+//		nextPosition.add(movingDirection);
+//		for (int i=0; i<wallsArr.length; i++) {
+//			// TODO:
+//			// (fix lazy way of detecting collision here)
+//			// this method of detecting becomes a
+//			// problem if enemies can move faster
+//			// than the thickness of walls. Rewrite
+//			// the same way collision is done with
+//			// bullets and walls
+//			if (wallsArr[i].hitbox.intersects(this.hitbox)) {
+//				movingDirection.multi(-1);
+//			}
+//		}
 		
+		if ((Math.abs(position.x - path[currentPathPosition][0])) < 2 &&
+			(Math.abs(position.y - path[currentPathPosition][1])) < 2)
+		{
+			System.out.println(position.x - path[currentPathPosition][0]);
+			System.out.println(position.y - path[currentPathPosition][1]);
+			
+			currentPathPosition++;
+			
+			if (currentPathPosition > path.length-1) currentPathPosition = 0;
+			
+			System.out.println("moving to " +path[currentPathPosition][0] + ", " + path[currentPathPosition][1]);
+		}
+		movingDirection.x = path[currentPathPosition][0] - position.x;
+		movingDirection.y = path[currentPathPosition][1] - position.y;
+		movingDirection.norm();
+		movingDirection.multi(speed);
 		updatePosition(movingDirection);
 		
 		// create a path from *sightX* vectors and
@@ -103,11 +142,11 @@ public class Guard extends Unit {
 		// of *player* then face towards it, otherwise
 		// keep facing the traveling direction
 //		triangle = new Path2D.Double();
-		triangle.reset();
-		triangle.moveTo(centerposition.x, centerposition.y);
-		triangle.lineTo(centerposition.x+sight1.x, centerposition.y+sight1.y);
-		triangle.lineTo(centerposition.x+sight2.x, centerposition.y+sight2.y);
-		if (!triangle.contains(player.getLocation().x, player.getLocation().y)) {
+		visionPoly.reset();
+		visionPoly.moveTo(centerposition.x, centerposition.y);
+		visionPoly.lineTo(centerposition.x+sight1.x, centerposition.y+sight1.y);
+		visionPoly.lineTo(centerposition.x+sight2.x, centerposition.y+sight2.y);
+		if (!visionPoly.contains(player.getLocation().x, player.getLocation().y)) {
 			facingDirection.x = movingDirection.x;
 			facingDirection.y = movingDirection.y;
 			canSeePlayer = false;
@@ -125,13 +164,19 @@ public class Guard extends Unit {
 		rotateAndDraw(g, facingDirection);
 		drawHP(g);	
 		
-		Color c = new Color(255, 0, 255, 150);
+		Color c = new Color(255, 0, 255, 100);
+		
+		
 		g.setColor(c);
-		g.fill(triangle);
+		g.fill(visionPoly); // TODO: method randomly crashes due to Path2D not being thread safe?
 		
 //		g.drawLine((int)centerposition.x, (int)centerposition.y, (int)(centerposition.x+sight1.x), (int)(centerposition.y+sight1.y));
 //		g.drawLine((int)centerposition.x, (int)centerposition.y, (int)(centerposition.x+sight2.x), (int)(centerposition.y+sight2.y));
 //		drawHitbox(g);
+		
+		for (int i=0; i<path.length; i++) {
+			g.drawRect((int)path[i][0], (int)path[i][1], 5, 5);
+		}
 	}
 
 	public void reposition() {

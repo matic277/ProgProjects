@@ -6,7 +6,7 @@ import Engine.Engine;
 public class Main {
 
 	public static void main(String[] args) {
-		Engine e = new Engine(new Dimension(800, 600));
+		Engine e = new Engine(new Dimension(1000, 800));
 		new Thread(e).start();
 		
 		//ResourceLoader rl = new ResourceLoader();
