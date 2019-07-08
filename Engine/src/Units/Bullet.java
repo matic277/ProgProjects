@@ -9,25 +9,20 @@ import Engine.Vector;
 
 public class Bullet extends Unit {
 	
-	Vector direction;
-
 	public Bullet(Vector position, Vector direction, Dimension size, Image image) {
 		super(position, size, image);
-		this.direction = direction;
+		super.movingDirection = direction;
+		super.facingDirection = direction;
 	}
 
 	@Override
 	public void move() {
-		updatePosition(direction);
+		updatePosition(movingDirection);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		rotateAndDraw(g, direction);
+		rotateAndDraw(g, facingDirection);
 		//drawHitbox(g);
-	}
-	
-	public Vector getDirection() {
-		return direction;
 	}
 }

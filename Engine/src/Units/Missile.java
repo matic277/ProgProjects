@@ -9,29 +9,26 @@ import Engine.Vector;
 public class Missile extends Unit {
 		
 	public Unit target;
-	Vector direction;
-	double speed = 5;
-
 	public Missile(Vector position, Dimension hitbox, Image image, Unit unit) {
 		super(position, hitbox, image);;
+		super.speed = 5;
 		this.target = unit;
-		
-		direction = new Vector(0, 0);
 	}
 
 	@Override
 	public void move() {
-		direction.x = target.getLocation().x - position.x;
-		direction.y = target.getLocation().y - position.y;
-		direction.norm();
-		direction.multi(speed);
-
-		updatePosition(direction);
+		movingDirection.x = target.getLocation().x - position.x;
+		movingDirection.y = target.getLocation().y - position.y;
+		movingDirection.norm();
+		movingDirection.multi(speed);
+		
+		facingDirection = movingDirection;
+		updatePosition(movingDirection);
 	}
 	
 	@Override
 	public void draw(Graphics2D g) {
-		rotateAndDraw(g, direction);
+		rotateAndDraw(g, facingDirection);
 	}
  }
 

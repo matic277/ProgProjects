@@ -9,12 +9,10 @@ import Engine.Vector;
 public class Asteroid extends Unit {
 	
 	double rotationRate = 2.5;
-	Vector facingDirection;
-	Vector movingDirection;
-	double speed = 2;
 
 	public Asteroid(Vector position, Dimension size, Image image) {
 		super(position, size, image);
+		super.speed = 2;
 		facingDirection = new Vector(1, 1);
 		movingDirection = new Vector(speed, 0);
 	}

@@ -15,16 +15,20 @@ public abstract class Unit {
 	Image image;
 	
 	Rectangle hitbox;
-	Vector position;
+	public Vector position;
 	public Vector centerposition;
 	
 	Color c = Color.black;
 	
 	double hp = 100;
-	protected Rectangle hpContainer;
-	protected Rectangle hpAmmount;
+	Rectangle hpContainer;
+	Rectangle hpAmmount;
 	
 	double imageAngleRad = 0;
+	double speed;
+	
+	public Vector facingDirection;
+	public Vector movingDirection;
 	
 	public Unit(Vector position, Dimension size, Image image) {
 		if (size == null) {
@@ -38,6 +42,9 @@ public abstract class Unit {
 
 		hpContainer = new Rectangle(hitbox.x, hitbox.y+hitbox.height + 10, 50, 10);
 		hpAmmount = new Rectangle(hitbox.x, hitbox.y+hitbox.height + 10, 50, 10);
+		
+		facingDirection = new Vector(0, 0);
+		movingDirection = new Vector(0, 0);
 	}
 
 	public boolean isOutOfBounds() {
@@ -128,6 +135,22 @@ public abstract class Unit {
 	
 	public Image getUnitImage() {
 		return image;
+	}
+	
+	public Vector getMovingDirection() {
+		return movingDirection;
+	}
+	
+	public Vector getFacingDirection() {
+		return facingDirection;
+	}
+	
+	public void setFacingDirection(Vector v) {
+		this.facingDirection.set(v);
+	}
+	
+	public void setMovingDirection(Vector direction) {
+		this.movingDirection.set(direction);
 	}
 	
 	public String toString() {

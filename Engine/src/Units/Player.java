@@ -11,15 +11,14 @@ import Engine.Vector;
 public class Player extends Unit {
 	
 	Point mouse;
-	Vector direction;
-	double speed = 10;
 
 	public Player(Vector position, Dimension hitboxSize, Image image, Point mouse) {
 		super(position, hitboxSize, image);
+		super.speed = 10;
 		this.image = image;
 		this.mouse = mouse;
 		
-		direction = new Vector(0, 0);
+		facingDirection = new Vector(0, 0);
 	}
 
 	@Override
@@ -28,13 +27,13 @@ public class Player extends Unit {
 	}
 	
 	public void updateDirection() {
-		direction.x = mouse.x - position.x;
-		direction.y = mouse.y - position.y;
+		facingDirection.x = mouse.x - position.x;
+		facingDirection.y = mouse.y - position.y;
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		rotateAndDraw(g, direction);
+		rotateAndDraw(g, facingDirection);
 		drawHP(g);
 		drawHitbox(g);
 	}

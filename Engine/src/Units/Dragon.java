@@ -15,8 +15,7 @@ public class Dragon extends Unit {
 	int length = 30;
 	int partSpacing = 20;
 	
-	 CopyOnWriteArrayList<Part> parts;
-	
+	CopyOnWriteArrayList<Part> parts;
 
 	public Dragon(Vector position, Dimension size, int heightLevel, Image headImage, Image bodyImage, Image tailImage) {
 		super(position, size, null);

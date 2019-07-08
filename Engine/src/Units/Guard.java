@@ -15,30 +15,22 @@ import Graphics.ResourceLoader;
 
 public class Guard extends Unit {
 
-	Vector movingDirection;
-	Vector facingDirection; // face to player if seen
-	
 	Player player;
-	double speed = 2;
 	
-	
+	Object lock = new Object();
 	
 	Vector sight1;
 	Vector sight2;
-	
-	boolean canSeePlayer = false;
-	
-	Thread controller;
-	
-	double seeingAngle = 30;
 	Path2D visionPoly;
-	
-	
+	double seeingAngle = 30;
 	double[][] path;
 	int currentPathPosition = 0;
+	
+	boolean canSeePlayer = false;
 
 	public Guard(Vector position, Vector movingDirection, Dimension hitbox, Image image, Player player) {
 		super(position, hitbox, image);
+		super.speed = 2;
 		this.movingDirection = (movingDirection == null)? new Vector(speed, 0) : movingDirection;
 		this.facingDirection = new Vector(0, 0);
 		this.player = player;
@@ -65,22 +57,6 @@ public class Guard extends Unit {
 		};
 		position.x = path[0][0];
 		position.y = path[0][1];
-		
-		
-		
-		
-//		controller = new Thread(() -> {
-//			Random r = new Random();
-//			while (true){
-//				this.movingDirection.rotateRandomly(15);
-//				
-//				if (r.nextDouble() < 0.01) {
-//					this.movingDirection.rotateRandomly(45);
-//				}
-//				Engine.Engine.sleep(100);
-//			}
-//		});
-//		controller.start();
 	}
 	
 	@Override
@@ -121,14 +97,8 @@ public class Guard extends Unit {
 		if ((Math.abs(position.x - path[currentPathPosition][0])) < 2 &&
 			(Math.abs(position.y - path[currentPathPosition][1])) < 2)
 		{
-			System.out.println(position.x - path[currentPathPosition][0]);
-			System.out.println(position.y - path[currentPathPosition][1]);
-			
 			currentPathPosition++;
-			
 			if (currentPathPosition > path.length-1) currentPathPosition = 0;
-			
-			System.out.println("moving to " +path[currentPathPosition][0] + ", " + path[currentPathPosition][1]);
 		}
 		movingDirection.x = path[currentPathPosition][0] - position.x;
 		movingDirection.y = path[currentPathPosition][1] - position.y;
@@ -141,11 +111,18 @@ public class Guard extends Unit {
 		// if this shape contains the point(position)
 		// of *player* then face towards it, otherwise
 		// keep facing the traveling direction
-//		triangle = new Path2D.Double();
-		visionPoly.reset();
-		visionPoly.moveTo(centerposition.x, centerposition.y);
-		visionPoly.lineTo(centerposition.x+sight1.x, centerposition.y+sight1.y);
-		visionPoly.lineTo(centerposition.x+sight2.x, centerposition.y+sight2.y);
+		// --
+		// Engine thread resetting visionPoly and
+		// Painter thread using visionPoly to draw
+		// the visible area causes thread-safety
+		// errors, so lock is required here and when
+		// drawing in the draw() function
+		synchronized (lock) {
+			visionPoly.reset();
+			visionPoly.moveTo(centerposition.x, centerposition.y);
+			visionPoly.lineTo(centerposition.x+sight1.x, centerposition.y+sight1.y);
+			visionPoly.lineTo(centerposition.x+sight2.x, centerposition.y+sight2.y);
+		}
 		if (!visionPoly.contains(player.getLocation().x, player.getLocation().y)) {
 			facingDirection.x = movingDirection.x;
 			facingDirection.y = movingDirection.y;
@@ -168,12 +145,12 @@ public class Guard extends Unit {
 		
 		
 		g.setColor(c);
-		g.fill(visionPoly); // TODO: method randomly crashes due to Path2D not being thread safe?
 		
-//		g.drawLine((int)centerposition.x, (int)centerposition.y, (int)(centerposition.x+sight1.x), (int)(centerposition.y+sight1.y));
-//		g.drawLine((int)centerposition.x, (int)centerposition.y, (int)(centerposition.x+sight2.x), (int)(centerposition.y+sight2.y));
-//		drawHitbox(g);
+		synchronized (lock) {
+			g.fill(visionPoly); // TODO: method randomly crashes due to Path2D not being thread safe?
+		}
 		
+		// debug: drawing path points
 		for (int i=0; i<path.length; i++) {
 			g.drawRect((int)path[i][0], (int)path[i][1], 5, 5);
 		}
@@ -192,16 +169,16 @@ public class Guard extends Unit {
 	}
 
 	public void shoot(ResourceLoader res, ConcurrentLinkedQueue<Bullet> bullets) {
-//		if (!canSeePlayer) return;
-//		Vector direction = new Vector(player.position.x - position.x, player.position.y - position.y);
-//		direction.norm();
-//		direction.multi(5);
-//		bullets.add(new EnemyBullet(
-//			new Vector(position.x, position.y),
-//			direction,
-//			null,
-//			res.getEnemyBulletImage()
-//		));
+		if (!canSeePlayer) return;
+		Vector direction = new Vector(player.position.x - position.x, player.position.y - position.y);
+		direction.norm();
+		direction.multi(5);
+		bullets.add(new EnemyBullet(
+			new Vector(position.x, position.y),
+			direction,
+			null,
+			res.getEnemyBulletImage()
+		));
 	}
 
 }

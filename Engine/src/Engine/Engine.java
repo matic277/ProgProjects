@@ -182,7 +182,7 @@ public class Engine implements IObserver, Runnable {
 			bullets.forEach(b -> {
 				Line2D projectory = new Line2D.Double(
 					new Point((int)b.getLocation().x, (int)b.getLocation().y),
-					new Point((int)(b.getDirection().x + b.getLocation().x), (int)(b.getDirection().y + b.getLocation().y))
+					new Point((int)(b.getMovingDirection().x + b.getLocation().x), (int)(b.getMovingDirection().y + b.getLocation().y))
 				);
 				if (w.getHitbox().intersectsLine(projectory)) {
 					bullets.remove(b);
@@ -192,8 +192,7 @@ public class Engine implements IObserver, Runnable {
 				if (w.checkCollision(m)) missiles.remove(m);
 			});
 		});
-		
-		
+				
 		
 		// if bullet is type enemy bullet, then don't remove it
 		// because it might still be in enemies hitbox (where its created)

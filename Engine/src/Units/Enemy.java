@@ -13,11 +13,7 @@ import Graphics.ResourceLoader;
 
 public class Enemy extends Unit {
 	
-	Vector movingDirection;
-	Vector facingDirection; // face to player
-	
 	Player player;
-	double speed = 2;
 	
 	boolean canSeePlayer = false;
 	
@@ -25,6 +21,7 @@ public class Enemy extends Unit {
 
 	public Enemy(Vector position, Vector movingDirection, Dimension hitbox, Image image, Player player) {
 		super(position, hitbox, image);
+		super.speed = 2;
 		this.movingDirection = (movingDirection == null)? new Vector(speed, 0) : movingDirection;
 		this.facingDirection = new Vector(0, 0);
 		this.player = player;
@@ -32,10 +29,11 @@ public class Enemy extends Unit {
 		controller = new Thread(() -> {
 			Random r = new Random();
 			while (true){
-				this.movingDirection.rotateRandomly(15);
+				super.movingDirection.rotateRandomly(15);
+				
 				
 				if (r.nextDouble() < 0.01) {
-					this.movingDirection.rotateRandomly(45);
+					super.movingDirection.rotateRandomly(45);
 				}
 				Engine.Engine.sleep(100);
 			}
@@ -49,6 +47,8 @@ public class Enemy extends Unit {
 	}
 
 	public void move(ConcurrentLinkedQueue<Wall> walls) {
+		super.updatePosition(movingDirection);
+
 		// if colliding with the wall, change
 		// the moving direction
 		Wall[] wallsArr = walls.toArray(new Wall[0]);
@@ -66,8 +66,6 @@ public class Enemy extends Unit {
 				movingDirection.multi(-1);
 			}
 		}
-		
-		updatePosition(movingDirection);
 		
 		// face player if there is no wall in 
 		// between the player and this enemy
