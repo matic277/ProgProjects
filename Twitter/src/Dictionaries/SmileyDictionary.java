@@ -12,6 +12,11 @@ public class SmileyDictionary extends AbsDictionary {
 		checkIntegrity();
 	}
 	
+	private void checkIntegrity() {
+		String strangeChars = " ¨!\"#$%&?ÐŠÈÆŽŠðšæèž~¡¢°²`ÿ´½¨¸+¤ßè×÷â€¦™«";
+		super.checkIntegrity(strangeChars);
+	}
+	
 	@Override
 	public void processLine(String line) {
 		// data structure: smiley,plesantness

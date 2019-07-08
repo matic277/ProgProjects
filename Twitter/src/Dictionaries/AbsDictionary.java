@@ -13,9 +13,6 @@ abstract class AbsDictionary implements IDictionary {
 	
 	HashMap<String, INode> hashTable;
 	
-	// encoding problems
-	String strangeChars = " ¨!\"#$%&/()=?*ÐŠÈÆŽŠðšæèž:;_~¡^¢°²`ÿ´½'¨¸+-*\"<>-¤ßè×÷\\â€¦™«";
-
 	public AbsDictionary() { }
 	
 	protected void buildHashtable(String relativeFilePath, String dictionaryName, int skipToLine, int hashtableSize) throws IOException {
@@ -34,7 +31,6 @@ abstract class AbsDictionary implements IDictionary {
 				line -> processLine(line)
 			);
 		}
-
 		System.out.println("\t|-> Done.");
 		System.out.println("\t|-> Number of entries: " + hashTable.size());
 	}
@@ -46,25 +42,12 @@ abstract class AbsDictionary implements IDictionary {
 		// the buildHashtable function
 	}
 	
-	protected void checkIntegrity() {
+	protected void checkIntegrity(String strangeChars) {
 		System.out.println("\t|-> Checking integrity...");
-		
-		// TODO: not the best or the cleanest way to do this, change this.
-		// Remove some characters that are ok to appear in some dictionaries
-		if (this.getClass().getName().equals("Dictionaries.WhissellDictionary")) {
-			strangeChars = strangeChars.replace("-", "");
-			strangeChars = strangeChars.replace("'", "");
-		} else if (this.getClass().getName().equals("Dictionaries.SmileyDictionary")) {
-			strangeChars = " ¨!\"#$%&?ÐŠÈÆŽŠðšæèž_~¡¢°²`ÿ´½¨¸+\"¤ßè×÷\\â€¦™«";
-		}  else if (this.getClass().getName().equals("Dictionaries.NegationwordDictionary")) {
-			strangeChars =  strangeChars.replace("'", "");
-		}
-		
 		hashTable.forEach((word, node) -> {
 			if (!node.checkIntegrity()) {
 				System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
 			}
-			
 			String s = node.getString();
 			char[] chars = s.toCharArray();
 			
@@ -72,13 +55,12 @@ abstract class AbsDictionary implements IDictionary {
 			for (int i=0; i<strangeChars.length(); i++) {
 				for (int j=0; j<chars.length; j++) {
 					if (chars[j] == strangeChars.charAt(i)) {
-						System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
+						System.out.println("\t|\t|-> Maybe a bad node (suspect char: '"+ chars[j]+"'): "+ node.toString());
 						break loop;
 					}
 				}
 			}
 		});
-		
 		System.out.println("\t\\-> Done.");
 		System.out.println();
 	}

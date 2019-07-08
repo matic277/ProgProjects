@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import Dictionaries.DictionaryCollection;
 import StreamConsumer.StreamHandler;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
 
 public class Main {
 	
@@ -13,8 +15,9 @@ public class Main {
 		// nice to have them already built
 		DictionaryCollection.getDictionaryCollection();
 		
-		// twitter stream collector
+
 		StreamHandler stream = new StreamHandler();
+
 		
 		// debugging purpose thread
 		new Thread() {
@@ -50,7 +53,7 @@ public class Main {
 		
 
 		
-		test();
+		//test();
 	}
 	
 	public static void test() {

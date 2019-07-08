@@ -11,6 +11,12 @@ public class NegationwordDictionary extends AbsDictionary {
 		checkIntegrity();
 	}
 	
+	private void checkIntegrity() {
+		// does not contain '
+		String strangeChars = " ¨!\"#$%&/()=?*ÐŠÈÆŽŠðšæèž:;_~¡^¢°²`ÿ´½¨¸+-*\"<>-¤ßè×÷\\â€¦™«";
+		super.checkIntegrity(strangeChars);
+	}
+
 	@Override
 	public void processLine(String line) {
 		// data structure: word

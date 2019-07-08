@@ -4,14 +4,21 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
 
 import Tokenizer.Tweet;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.auth.AccessToken;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 public class StreamHandler {
@@ -35,6 +42,7 @@ public class StreamHandler {
 		readKeysFromFile();
 		openAndListenStream();
 	}
+
 	
 	public void openAndListenStream() {
 		// Twitter4J setup
@@ -43,8 +51,9 @@ public class StreamHandler {
                 .setOAuthConsumerSecret(apiKeys[1])
                 .setOAuthAccessToken(apiKeys[2])
                 .setOAuthAccessTokenSecret(apiKeys[3])
-                .setTweetModeExtended(true);
-
+                .setTweetModeExtended(true)
+        		.setJSONStoreEnabled(true);
+     
         TwitterStream twitterStream = new TwitterStreamFactory(configurationBuilder.build()).getInstance();
         
         // thread pool
@@ -61,6 +70,7 @@ public class StreamHandler {
         // note that not all tweets have location metadata set.
         // twitterStream.filter(tweetFilterQuery);
         twitterStream.sample();
+        
 	}
 	
 	private static int index = 0;

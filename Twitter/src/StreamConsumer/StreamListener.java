@@ -5,6 +5,7 @@ import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
+import twitter4j.json.DataObjectFactory;
 
 public class StreamListener implements StatusListener {
 	
@@ -25,6 +26,10 @@ public class StreamListener implements StatusListener {
         } else {
      	   tweet = status.getText();
         }
+        
+        // getting RAW json string, still, emoticons are questionmarks
+        //String raw = DataObjectFactory.getRawJSON(status);
+        //System.out.println(raw);
 
         // add tweet to list of tweets
         ref.tweets.add(new Tweet(tweet, status.getUser().getScreenName()));
