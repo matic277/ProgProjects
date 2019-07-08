@@ -19,9 +19,8 @@ public class Tokenizer {
 	
 	private ArrayList<IWord> words;
 	
-	// don't remove ' or -
+	// don't remove ' or - or !
 	private String charsToRemove = " ¨\"#$%&/()=*ÐŠÈÆŽŠðšæèž:;,_~¡^¢°²`ÿ´½¨¸.*\"<>¤ßè×÷\\â€¦™«";
-	private String importantChars = "!?";
 
 	public Tokenizer(String cleanTweetText) {
 		this.sourceText = cleanTweetText;
@@ -54,75 +53,85 @@ public class Tokenizer {
 	}
 	
 	private void classifyWords(String[] tokens) {
-		
+		boolean containsExclamation = false;
 		for (String token : tokens)
 		{
 			
 			if (token.length() == 0) continue;
 			
+			// for checking: smiley, url, hastag or target 
 			String loweredToken = token.toLowerCase();
+			
+			// for checking: all the rest
+			String cleanedToken = cleanToken(token);
+			String cleanedLoweredToken = cleanToken(loweredToken);
+			
+			// if a token contains one or more !, then
+			// magnify its' pleasantness, also, remove
+			// any ? chars
+			containsExclamation = cleanedLoweredToken.contains("!");
+			cleanedLoweredToken = cleanedLoweredToken.replace("!", "");
+			cleanedLoweredToken = cleanedLoweredToken.replace("?", "");
+			cleanedToken = cleanedToken.replace("!", "");
+			cleanedToken = cleanedToken.replace("?", "");
+
+			// NOTE:
+			// always probe hash-table with lowered strings
+			// *cleanedLoweredToken*, but save words as they are,
+			// thats the *cleanedToken* variable
+			
 			
 			// SMILEY
 			// first, check for smileys since
 			// they have the special characters
 			if (Smiley.isType(loweredToken)) {
 				words.add(new Smiley(token));
-				continue;
 			}
 			
 			// URL
-			if (URL.isType(loweredToken)) {
+			else if (URL.isType(loweredToken)) {
 				words.add(new URL(token));
-				continue;
 			}
 			
 			// HASHTAG
-			if (Hashtag.isType(loweredToken)) {
+			else if (Hashtag.isType(loweredToken)) {
 				words.add(new Hashtag(token));
-				continue;
 			}
 			
 			// TARGET
-			if (Target.isType(loweredToken)) {
+			else if (Target.isType(loweredToken)) {
 				words.add(new Target(token));
-				continue;
 			}
 			
-			// now that we know it's not any relevant
-			// tag, we can remove strange character
-			String cleanedToken = cleanToken(token);
-			String cleanedLoweredToken = cleanToken(loweredToken);
-			
-			// NOTE:
-			// always probe hash-table with lowered strings
-			// but save words *as they are*, not lowered!
+			// using *cleanedLoweredToken* from this point forward
+			// since we know its not a target, hashtag, url or smiley
 			
 			// NEGATION WORD
-			if (NegationWord.isType(cleanedLoweredToken)) {
+			else if (NegationWord.isType(cleanedLoweredToken)) {
 				words.add(new NegationWord(cleanedToken));
-				continue;
 			}
 			
 			// ACRONYM
-			if (Acronym.isType(cleanedLoweredToken)) {
-				words.add(new Acronym(cleanedToken));
-				continue;
+			else if (Acronym.isType(cleanedLoweredToken)) {
+				Acronym acr = new Acronym(cleanedToken);
+				if (containsExclamation) acr.magnifyPleasantness();
+				words.add(acr);
 			}
 			
 			// STOP WORD
-			if (StopWord.isType(cleanedLoweredToken)) {
+			else if (StopWord.isType(cleanedLoweredToken)) {
 				words.add(new StopWord(cleanedToken));
-				continue;
 			}
 			
 			// AFFECTION WORD
-			if (AffectionWord.isType(cleanedLoweredToken)) {
-				words.add(new AffectionWord(cleanedToken));
-				continue;
+			else if (AffectionWord.isType(cleanedLoweredToken)) {
+				AffectionWord aw = new AffectionWord(cleanedToken);
+				if (containsExclamation) aw.magnifyPleasantness();
+				words.add(aw);
 			}
 			
 			// else, unknown/other word
-			words.add(new Other(cleanedToken));
+			else words.add(new Other(cleanedToken));
 		}
 	}
 }

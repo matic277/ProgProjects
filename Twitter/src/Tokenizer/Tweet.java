@@ -42,14 +42,17 @@ public class Tweet {
 		IWord word, nextWord;
 		for (int i=0; i<words.size()-1; i++) {
 			word = words.get(i);
-			nextWord = words.get(i+1);
 			
 			if (word instanceof NegationWord) {
-				if (nextWord instanceof AbsMeasurableWord) {
-					AbsMeasurableWord w = (AbsMeasurableWord) nextWord;
-					w.setFlipPleasantness();
-					words.set(i+1, w);
-					i++;
+				// find next measurable word and flip its value
+				for (int j=i+1; j<words.size(); j++) {
+					nextWord = words.get(j);
+					if (nextWord instanceof AbsMeasurableWord) {
+						AbsMeasurableWord w = (AbsMeasurableWord) nextWord;
+						w.setFlipPleasantness();
+						words.set(j, w);
+						break;
+					}
 				}
 			}
 		}
