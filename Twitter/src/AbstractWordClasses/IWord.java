@@ -1,4 +1,4 @@
-package Words;
+package AbstractWordClasses;
 
 public interface IWord {
 	

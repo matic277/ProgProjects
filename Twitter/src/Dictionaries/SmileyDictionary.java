@@ -1,7 +1,8 @@
 package Dictionaries;
 
 import java.io.IOException;
-import Words.AbsMeasurableWord;
+
+import AbstractWordClasses.AbsMeasurableWord;
 import Words.Smiley;
 
 public class SmileyDictionary extends AbsDictionary {

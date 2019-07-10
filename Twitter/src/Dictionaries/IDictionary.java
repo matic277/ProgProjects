@@ -1,6 +1,6 @@
 package Dictionaries;
 
-import Words.IWord;
+import AbstractWordClasses.IWord;
 
 public interface IDictionary {
 	

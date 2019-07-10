@@ -1,8 +1,8 @@
 package Dictionaries;
 import java.io.IOException;
 
+import AbstractWordClasses.AbsMeasurableWord;
 import Words.AffectionWord;
-import Words.AbsMeasurableWord;
 
 public class WhissellDictionary extends AbsDictionary {
 	

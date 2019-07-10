@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
-import Words.IWord;
+import AbstractWordClasses.IWord;
 
 abstract class AbsDictionary implements IDictionary {
 	

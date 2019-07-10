@@ -1,43 +1,28 @@
 package Words;
 
+import AbstractWordClasses.AbsWord;
 import Dictionaries.DictionaryCollection;
 import Dictionaries.INode;
 
-public class NegationWord implements IWord, INode {
-	
-	String sourceText;
-	
-	public NegationWord(String sourceText) {
-		this.sourceText = sourceText;
+public class NegationWord extends AbsWord implements INode {
+
+	public NegationWord(String source, String processed) {
+		super(source, processed);
+		super.tag = "NEG";
 	}
 	
 	public static boolean isType(String s) {
 		return DictionaryCollection.getDictionaryCollection().getNegationwordDictionary().contains(s);
 	}
 
-	@Override
-	public String getSourceText() {
-		return sourceText;
-	}
-
-	@Override
-	public String getTag() {
-		return "<NEG>";
-	}
-
-	@Override
+	@Override // INode
 	public boolean checkIntegrity() {
 		if (sourceText.length() < 2 || sourceText.length() > 10) return false;
 		return true;
 	}
 
-	@Override
+	@Override // INode
 	public String getString() {
 		return sourceText;
-	}
-	
-	@Override
-	public String toString() {
-		return "[" + getTag() + ", '" + sourceText + "']";
 	}
 }

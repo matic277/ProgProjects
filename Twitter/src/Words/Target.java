@@ -1,32 +1,17 @@
 package Words;
 
-public class Target implements IWord {
-	
-	String sourceWord;
-	String word;
-	
+import AbstractWordClasses.AbsWord;
+
+public class Target extends AbsWord {
+
 	public Target(String source) {
-		sourceWord = source;
-		word = sourceWord.substring(1);
+		super(source, null);
+		super.processedText = source.substring(1);
+		super.tag = "TRG";
 	}
 	
 	public static boolean isType(String s) {
 		if (s.charAt(0) == '@') return true;
 		return false;
 	}
-
-	@Override
-	public String getSourceText() {
-		return sourceWord;
-	}
-
-	@Override
-	public String getTag() {
-		return "<TRG>";
-	}
-	
-	public String toString() {
-		return "[" + getTag() + ", '" + sourceWord + "']";
-	}
-
 }

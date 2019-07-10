@@ -2,35 +2,42 @@ package Words;
 
 import java.text.DecimalFormat;
 
+import AbstractWordClasses.AbsMeasurableWord;
 import Dictionaries.DictionaryCollection;
 import Dictionaries.IDictionary;
 import Dictionaries.INode;
 
-public class Acronym extends AbsMeasurableWord implements IWord, INode {
+public class Acronym extends AbsMeasurableWord implements INode {
 	
 							// example:
-	String sourceText;		// jk
+							// jk (from super.sourceText)
 	String fullText;		// just kidding
 	String[] listOfWords;	// {just, kidding}
 	
-	double pleasantness;
-	double imagery;
-	double activation;
-
-	public Acronym(String sourceText, String fullText) {
-		this.sourceText = sourceText;
+	// use when bulding dictionary hashtable
+	// String x is useless but something is needed to differentiate
+	// between the two constructors - this is dumb, TODO: fix
+	public Acronym(String acronymn, String fullText, String x) {
+		super(acronymn, null);
+		super.tag = "ACR";
+		
 		this.fullText = fullText;
 		
 		// process the full-text pleasantness
 		// with the use of Whissell dictionary
 		calculatePleasantness();
 	}
-	public Acronym(String sourceText) {
-		this.sourceText = sourceText;
+	
+	// use when tokenizing
+	public Acronym(String source, String processed) {
+		super(source, processed);
+		super.tag = "ACR";
 		
-		Acronym a = (Acronym)DictionaryCollection.getDictionaryCollection().getAcronymDictionary().getEntry(sourceText);
+		Acronym a = (Acronym)DictionaryCollection.getDictionaryCollection().getAcronymDictionary().getEntry(processed);
 		this.fullText = a.getFullText();
 		
+		// process the full-text pleasantness
+		// with the use of Whissell dictionary
 		calculatePleasantness();
 	}
 	
@@ -101,22 +108,12 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 		// Take the pleasantness of the most pleasant word???
 	}
 
-	@Override
-	public String getSourceText() {
-		return sourceText;
-	}
-	
 	public String getFullText() {
 		return fullText;
 	}
 	
 	public String[] getListOfWords() {
 		return listOfWords;
-	}
-
-	@Override
-	public String getTag() {
-		return "<ACR>";
 	}
 
 	@Override
@@ -134,7 +131,13 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 		return -2;
 	}
 	
-	@Override
+	@Override	
+	public String toString() {
+		DecimalFormat format = new DecimalFormat("#.###");
+		return "[" + getTag() + ", " + getSentimentTag() + ", '" + sourceText + "' -> " + "'" + fullText + "'" + ", P:" + format.format(pleasantness) + "]";
+	}
+	
+	@Override // INode
 	public boolean checkIntegrity() {
 		if (sourceText.length() > 1 && checkValidValue(pleasantness)) {
 			return true;
@@ -142,30 +145,8 @@ public class Acronym extends AbsMeasurableWord implements IWord, INode {
 		return false;
 	}
 	
-	private boolean checkValidValue(double value) {
-		if (value >= -1 && value <= 1) return true;
-		return false;
-	}
-	
-	@Override
+	@Override // INode
 	public String getString() {
 		return sourceText;
-	}
-	
-	public String toString() {
-		DecimalFormat format = new DecimalFormat("#.###");
-		return "[" + getTag() + ", " + getSentimentTag() + ", '" + sourceText + "' -> " + "'" + fullText + "'" + ", P:" + format.format(pleasantness) + "]";
-	}
-
-	@Override
-	public void setPleasantness(double pleasantness) {
-		this.pleasantness = pleasantness;
-		if (this.pleasantness < -1) this.pleasantness = -1;
-		else if (this.pleasantness > 1) this.pleasantness = 1;
-	}
-	
-	@Override
-	public void setFlipPleasantness() {
-		this.pleasantness *= -1;
 	}
 }

@@ -3,8 +3,9 @@ package Tokenizer;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import Words.AbsMeasurableWord;
-import Words.IWord;
+import AbstractWordClasses.AbsMeasurableWord;
+import AbstractWordClasses.AbsWord;
+import AbstractWordClasses.IWord;
 import Words.NegationWord;
 
 
@@ -18,7 +19,7 @@ public class Tweet {
 	
 	private String username;
 
-	private ArrayList<IWord> words;
+	private ArrayList<AbsWord> words;
 	
 	private int numOfNegativeWords = 0;
 	private int numOfNeutralWords = 0;
@@ -39,7 +40,7 @@ public class Tweet {
 	private void test() {
 		// if a word has a negator in front of it,
 		// flip its pleasantness value
-		IWord word, nextWord;
+		AbsWord word, nextWord;
 		for (int i=0; i<words.size()-1; i++) {
 			word = words.get(i);
 			
@@ -60,7 +61,7 @@ public class Tweet {
 		// if a word is upper-case (or close to)
 		// magnify its pleasantness value
 		// (how close is defined in upper-case function)
-		for (IWord w : words) {
+		for (AbsWord w : words) {
 			if (w instanceof AbsMeasurableWord && isUpperCase(w.getSourceText())) {
 				AbsMeasurableWord mw = (AbsMeasurableWord) w;
 				mw.magnifyPleasantness();
@@ -70,7 +71,8 @@ public class Tweet {
 	
 	public void processTweet() {
 		Tokenizer t = new Tokenizer(sourceText);
-		words = t.tokenizeTweet();
+		t.tokenizeTweet();
+		words = t.getTokens();
 		cleanSource = t.cleanSourceText;
 		
 		test();
@@ -78,7 +80,7 @@ public class Tweet {
 	}
 	
 	private void doSomeStatistics() {
-		for (IWord word : words) {
+		for (AbsWord word : words) {
 			// AffectionWord, Hastag, Smiley, Acronym, Phrase, (Emoji)
 			if (word instanceof AbsMeasurableWord) {
 				AbsMeasurableWord mw = (AbsMeasurableWord) word;
@@ -168,23 +170,4 @@ public class Tweet {
 		s += format.format(sumOfPositiveWords) + ", " + format.format(sumOfNeutralWords) + ", " + format.format(sumOfNegativeWords);
 		return s;
 	}
-	
-	// not needed anymore?
-//	public void print() {
-//		System.out.println("Tree of tweet:");
-//		System.out.println("\t|-> Source text: '" + sourceText + "'");
-//		System.out.println("\t|-> Tokens:");
-//		
-//		for (IWord w : words) {
-//			System.out.println("\t|\t|-> " + w.toString());
-//		}
-//		
-//		System.out.println("\t|-> Stats:");
-//		System.out.println("\t\t|-> Num of neg words: " + numOfNegativeWords);
-//		System.out.println("\t\t|-> Num of neu words: " + numOfNeutralWords);
-//		System.out.println("\t\t|-> Num of pos words: " + numOfPositiveWords);
-//		System.out.println("\t\t|-> Sum of neg words: " + sumOfNegativeWords);
-//		System.out.println("\t\t|-> Sum of neu words: " + sumOfNeutralWords);
-//		System.out.println("\t\t|-> Sum of pos words: " + sumOfPositiveWords);
-//	}
 }

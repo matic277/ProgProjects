@@ -1,34 +1,29 @@
 package Words;
 
-import java.text.DecimalFormat;
-
+import AbstractWordClasses.AbsMeasurableWord;
 import Dictionaries.DictionaryCollection;
 import Dictionaries.IDictionary;
 import Dictionaries.INode;
 
-public class AffectionWord extends AbsMeasurableWord implements INode /*, IWord*/ {
+public class AffectionWord extends AbsMeasurableWord implements INode {
 	
-	String sourceText;
-	
-	public AffectionWord(String sourceText, double pleasantness, double activation, double imagery) {
-		this.sourceText = sourceText;
-		this.pleasantness = pleasantness;
-		this.activation = activation;
-		this.imagery = imagery;
-	}
-	
+	// use this class when reading from file and building hashtable
 	public AffectionWord(String sourceText, String pleasantness, String activation, String imagery) {
-		this.sourceText = sourceText;
+		super(sourceText, null);
+		
+		// -2 for normalizing from [1, 3] to [-1, 1]
 		this.pleasantness = Double.parseDouble(pleasantness) - 2;
 		this.activation = Double.parseDouble(activation) - 2;
 		this.imagery = Double.parseDouble(imagery) - 2;
 	}
 	
-	public AffectionWord(String sourceText) {
-		this.sourceText = sourceText;
+	// use this constructor when tokenizing
+	public AffectionWord(String sourceText, String processedText) {
+		super(sourceText, processedText);
+		super.tag = "AFT";
 		
 		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
-		AbsMeasurableWord word = (AbsMeasurableWord) dictionary.getEntry(sourceText);
+		AbsMeasurableWord word = (AbsMeasurableWord) dictionary.getEntry(processedText);
 		
 		this.pleasantness = word.getPleasantness();
 		this.activation = word.getActivation();
@@ -45,30 +40,19 @@ public class AffectionWord extends AbsMeasurableWord implements INode /*, IWord*
 		}
 		return false;
 	}
-	
-	private boolean checkValidValue(double value) {
-		if (value >= -1 && value <= 1) return true;
-		return false;
-	}
 
 	@Override
 	public String getString() {
 		return sourceText;
 	}
 
-	@Override
+	@Override // INode funct
 	public String getSourceText() {
 		return sourceText;
 	}
 
-	@Override
+	@Override// INode funct
 	public String getTag() {
-		return "<AFT>";
-	}
-	
-	@Override
-	public String toString() {
-		DecimalFormat format = new DecimalFormat("#.###");
-		return "[" + getTag() + ", " + getSentimentTag() + ", '" + sourceText + "', P:" + format.format(pleasantness) + ", A:" + format.format(activation) + ", I:" + format.format(imagery) + "]";
+		return super.getTag();
 	}
 }

@@ -23,6 +23,6 @@ public class AcronymDictionary extends AbsDictionary {
 		line = line.toLowerCase();
 		String[] tokens = line.split(",");
 
-		hashTable.put(tokens[0], new Acronym(tokens[0], tokens[1]));
+		hashTable.put(tokens[0], new Acronym(tokens[0], tokens[1], null));
 	}
 }

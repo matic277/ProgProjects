@@ -1,19 +1,24 @@
-package Words;
+package AbstractWordClasses;
 
+import java.text.DecimalFormat;
 
-public abstract class AbsMeasurableWord implements IWord {
+public abstract class AbsMeasurableWord extends AbsWord implements IWord {
 	
 	// magnitude, how much should
 	// pleasantness get amplified by
-	double magnitude = 1.3;
+	protected double magnitude = 1.3;
 	
-	double positiveThreshold = 0.3;
-	double neutralThreshold = -0.3;
+	protected double positiveThreshold = 0.3;
+	protected double neutralThreshold = -0.3;
 	
 	// for all: [-1, 1]
-	double pleasantness = 0;	// -1 (unpleasant) to 1 (pleasant)
-	double activation = 0;		// -1 (passive) to 1 (active)
-	double imagery = 0;			// -1 (difficult to form a mental picture of this word) to 1 (easy to form a mental picture)
+	protected double pleasantness = 0;	// (unpleasant) to (pleasant)
+	protected double activation = 0;	// passive) to (active)
+	protected double imagery = 0;		// (difficult to form a mental picture of this word) to (easy to form a mental picture)
+	
+	public AbsMeasurableWord(String source, String processed) {
+		super(source, processed);
+	}
 	
 	public boolean isPositivePleasantness() {
 		if (pleasantness > positiveThreshold) return true;
@@ -46,6 +51,11 @@ public abstract class AbsMeasurableWord implements IWord {
 		return "(NEG)";
 	}
 	
+	protected boolean checkValidValue(double value) {
+		if (value >= -1 && value <= 1) return true;
+		return false;
+	}
+	
 	public void setPleasantness(double pleasantness) {
 		this.pleasantness = pleasantness;
 		if (this.pleasantness < -1) this.pleasantness = -1;
@@ -66,5 +76,12 @@ public abstract class AbsMeasurableWord implements IWord {
 	
 	public double getImagery() {
 		return imagery;
+	}
+	
+	@Override
+	public String toString() {
+		DecimalFormat format = new DecimalFormat("#.###");
+		return "[" + getTag() + ", " + getSentimentTag() + ", src:'" + sourceText + "', prc:'" + processedText + "', P:" 
+				+ format.format(pleasantness) + ", A:" + format.format(activation) + ", I:" + format.format(imagery) + "]";
 	}
 }

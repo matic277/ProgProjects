@@ -1,24 +1,11 @@
 package Words;
 
-public class Other implements IWord {
+import AbstractWordClasses.AbsWord;
+
+public class Other extends AbsWord {
 	
-	String sourceText;
-	
-	public Other(String sourceText) {
-		this.sourceText = sourceText;
-	}
-
-	@Override
-	public String getSourceText() {
-		return sourceText;
-	}
-
-	@Override
-	public String getTag() {
-		return "<OTR>";
-	}
-
-	public String toString() {
-		return "[" + getTag() + ", '" + sourceText + "']";
+	public Other(String source, String processed) {
+		super(source, processed);
+		super.tag = "OTR";
 	}
 }

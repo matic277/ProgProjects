@@ -1,14 +1,14 @@
 package Words;
 
+import AbstractWordClasses.AbsWord;
 import Dictionaries.DictionaryCollection;
 import Dictionaries.INode;
 
-public class StopWord implements INode, IWord {
+public class StopWord extends AbsWord implements INode {
 	
-	String sourceText = "";
-	
-	public StopWord(String sourceText) {
-		this.sourceText = sourceText;
+	public StopWord(String source, String processed) {
+		super(source, processed);
+		super.tag = "STP";
 	}
 	
 	public static boolean isType(String s) {
@@ -20,24 +20,9 @@ public class StopWord implements INode, IWord {
 		if (sourceText.length() < 2 || sourceText.length() > 10) return false;
 		return true;
 	}
-
-	@Override
+	
+	@Override // INode
 	public String getString() {
 		return sourceText;
-	}
-
-	@Override
-	public String getSourceText() {
-		return sourceText;
-	}
-
-	@Override
-	public String getTag() {
-		return "<STP>";
-	}
-	
-	@Override
-	public String toString() {
-		return "[" + getTag() + ", '" + sourceText + "']";
 	}
 }

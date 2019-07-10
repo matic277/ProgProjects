@@ -1,17 +1,12 @@
 package Words;
 
-import java.text.DecimalFormat;
-
+import AbstractWordClasses.AbsMeasurableWord;
 import Dictionaries.INode;
 
 public class Phrase extends AbsMeasurableWord implements INode {
 	
-	String sourceText;
-	double pleasantness;
-	
-	public Phrase(String sourceText, double pleasantness) {
-		this.sourceText = sourceText;
-		this.pleasantness = pleasantness;
+	public Phrase(String source) {
+		super(source, null);
 	}
 
 	@Override
@@ -26,18 +21,14 @@ public class Phrase extends AbsMeasurableWord implements INode {
 		return false;
 	}
 	
-	@Override
-	public String toString() {
-		DecimalFormat format = new DecimalFormat("#.###");
-		return "[" + getTag() + ", " + getSentimentTag() + ", '" + sourceText + "', P: " + format.format(pleasantness) + "]";
-	}
-
-	@Override
-	public String getSourceText() {
-		return sourceText;
-	}
+//	@Override
+//	public String toString() {
+//		String defaultStr = super.toString();
+//		String[] t = defaultStr.split("]");
+//		return t[0] + ", " 
+//	}
 	
-	@Override
+	@Override // INode
 	public String getString() {
 		return sourceText;
 	}

@@ -1,6 +1,8 @@
 package Tokenizer;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.Format;
 
 import Dictionaries.DictionaryCollection;
 import StreamConsumer.StreamHandler;
@@ -14,7 +16,7 @@ public class Main {
 		// but when tweets start streaming in, its
 		// nice to have them already built
 		DictionaryCollection.getDictionaryCollection();
-		
+
 
 //		StreamHandler stream = new StreamHandler();
 
@@ -51,7 +53,6 @@ public class Main {
 //			
 //		}.start();
 		
-
 		
 		test();
 	}
@@ -66,6 +67,10 @@ public class Main {
 		
 		System.out.println("----- OUTPUT -----");
 		System.out.println(t.toString());
+		
+		System.out.println("----- OUTPUT2-----");
+		Classifier c = new Classifier(tweet);
+		System.out.println("Sentiment: " + c.getSentiment());
 	}
 
 }

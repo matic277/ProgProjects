@@ -24,6 +24,6 @@ public class NegationwordDictionary extends AbsDictionary {
 		String processedLine = line.toLowerCase();
 		processedLine = processedLine.replace("’", "'");
 
-		hashTable.put(processedLine, new NegationWord(processedLine));
+		hashTable.put(processedLine, new NegationWord(processedLine, null));
 	}
 }

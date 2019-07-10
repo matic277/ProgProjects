@@ -19,7 +19,7 @@ public class StopwordDictionary extends AbsDictionary {
 	
 	@Override
 	public void processLine(String line) {
-		hashTable.put(line, new StopWord(line));
+		hashTable.put(line, new StopWord(line, null));
 	}
 
 }

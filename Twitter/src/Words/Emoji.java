@@ -1,17 +1,13 @@
 package Words;
 
+import AbstractWordClasses.AbsMeasurableWord;
+
 public class Emoji extends AbsMeasurableWord {
 
-	@Override
-	public String getSourceText() {
-		// TODO Auto-generated method stub
-		return null;
+	public Emoji(String source, String processed) {
+		super(source, processed);
+		super.tag = "EMJ";
 	}
 
-	@Override
-	public String getTag() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }
