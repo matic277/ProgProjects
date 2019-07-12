@@ -30,4 +30,25 @@ public class Hashtag extends AbsMeasurableWord {
 		if (s.charAt(0) == '#') return true;
 		return false;
 	}
+
+	@Override
+	public boolean checkIntegrity() {
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		String defaultToString = super.toString();
+		String[] tokens = defaultToString.split("]");
+		return tokens[0] + ", words:" + wordsToString() + "]";
+	}
+	
+	private String wordsToString() {
+		String wordsStr = "('";
+		for (int i=0; i<words.length-1; i++) {
+			wordsStr += words[i] + "', '";
+		}
+		wordsStr += words[words.length-1] + "')";
+		return wordsStr;
+	}
 }

@@ -1,10 +1,10 @@
 package Dictionaries;
 
-import AbstractWordClasses.IWord;
+import AbstractWordClasses.AbsWord;
 
 public interface IDictionary {
 	
 	boolean contains(String key);
-	IWord getEntry(String key);
+	AbsWord getEntry(String key);
 
 }

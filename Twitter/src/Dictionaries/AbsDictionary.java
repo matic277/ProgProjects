@@ -7,11 +7,11 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
-import AbstractWordClasses.IWord;
+import AbstractWordClasses.AbsWord;
 
 abstract class AbsDictionary implements IDictionary {
 	
-	HashMap<String, INode> hashTable;
+	HashMap<String, AbsWord> hashTable;
 	
 	public AbsDictionary() { }
 	
@@ -22,7 +22,7 @@ abstract class AbsDictionary implements IDictionary {
 		// hashtable:
 		// key		-> string,
 		// value	-> node(word and statistics)
-		hashTable = new HashMap<String, INode>(hashtableSize);
+		hashTable = new HashMap<String, AbsWord>(hashtableSize);
 		
 		Stream<String> linesToRead;
 		try (Stream<String> lines = Files.lines(Paths.get(relativeFilePath), Charset.defaultCharset())) {
@@ -35,20 +35,15 @@ abstract class AbsDictionary implements IDictionary {
 		System.out.println("\t|-> Number of entries: " + hashTable.size());
 	}
 	
-	public void processLine(String line) {
-		// each dictionary that extends this
-		// abstract class must have this 
-		// function overwritten, is used by
-		// the buildHashtable function
-	}
-	
+	public abstract void processLine(String line);
+
 	protected void checkIntegrity(String strangeChars) {
 		System.out.println("\t|-> Checking integrity...");
 		hashTable.forEach((word, node) -> {
 			if (!node.checkIntegrity()) {
 				System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
 			}
-			String s = node.getString();
+			String s = node.getSourceText();
 			char[] chars = s.toCharArray();
 			
 			loop:
@@ -71,11 +66,11 @@ abstract class AbsDictionary implements IDictionary {
 	}
 
 	@Override
-	public IWord getEntry(String key) {
-		return (IWord) hashTable.get(key);
+	public AbsWord getEntry(String key) {
+		return hashTable.get(key);
 	}
 	
-	public HashMap<String, INode> getHashmap() {
+	public HashMap<String, AbsWord> getHashmap() {
 		return hashTable;
 	}
 

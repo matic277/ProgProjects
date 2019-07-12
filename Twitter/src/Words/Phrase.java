@@ -1,9 +1,8 @@
 package Words;
 
 import AbstractWordClasses.AbsMeasurableWord;
-import Dictionaries.INode;
 
-public class Phrase extends AbsMeasurableWord implements INode {
+public class Phrase extends AbsMeasurableWord {
 	
 	public Phrase(String source) {
 		super(source, null);
@@ -27,9 +26,4 @@ public class Phrase extends AbsMeasurableWord implements INode {
 //		String[] t = defaultStr.split("]");
 //		return t[0] + ", " 
 //	}
-	
-	@Override // INode
-	public String getString() {
-		return sourceText;
-	}
 }

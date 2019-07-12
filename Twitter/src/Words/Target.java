@@ -14,4 +14,9 @@ public class Target extends AbsWord {
 		if (s.charAt(0) == '@') return true;
 		return false;
 	}
+
+	@Override
+	public boolean checkIntegrity() {
+		return true;
+	}
 }

@@ -12,6 +12,8 @@ public abstract class AbsWord {
 		this.processedText = processed;
 	}
 	
+	public abstract boolean checkIntegrity();
+	
 	public String getTag() {
 		return "<" + tag + ">";
 	}

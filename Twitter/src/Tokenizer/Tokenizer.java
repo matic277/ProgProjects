@@ -1,9 +1,12 @@
 package Tokenizer;
 import java.util.ArrayList;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import AbstractWordClasses.AbsWord;
 import Words.Acronym;
 import Words.AffectionWord;
+import Words.Emoji;
 import Words.Hashtag;
 import Words.NegationWord;
 import Words.Other;
@@ -29,12 +32,58 @@ public class Tokenizer {
 		// clean strings of new line chars and stuff
 		cleanSourceText = sourceText.replaceAll("(\\n)+", " ");
 		
+		// replace emojis encoded as ?, as emoji code-points
+		findEmojis();
+		
 		// split by space and init the
 		// size of list of words
 		String[] tokens = cleanSourceText.split(" ");		
-		words = new ArrayList<AbsWord>(tokens.length);
+		words = new ArrayList<AbsWord>(tokens.length);	
 		
 		classifyWords(tokens);
+	}
+	
+	private void findEmojis() {
+		String src = cleanSourceText;
+//        System.out.println(src);
+//		
+//        src.codePoints().filter(cp -> cp >= 256).forEach(cp -> {
+//            System.out.printf("0x%X = %s%n",
+//                cp, Character.getName(cp));
+//        });
+        
+        IntStream s = src.codePoints();
+        int[] arr = s.toArray();
+        
+        String str = "";
+        int pointsI = 0;
+        for (int i=0; i<arr.length; i++) {
+        	if(arr[i] >= 256) {
+        		str += " 0x" + Integer.toHexString(arr[i]).toLowerCase() + " ";
+        		// points.get(pointsI)
+        		pointsI++;
+        	} else {
+        		str += (char)arr[i];
+        	}
+        }
+
+        // change these to normal characters:
+        // U+8217 - RIGHT SINGLE QUOTATION MARK
+        // U+201C - LEFT DOUBLE QUOTATION MARK
+        // U+201D - RIGHT DOUBLE QUOTATION MARK
+        // U+2018 - LEFT SINGLE QUOTATION MARK
+        // (0x instead od U+)
+        
+        str = str.replace("0x8217", "'");
+        str = str.replace("0x201C", "'");
+        str = str.replace("0x201D", "\"");
+        str = str.replace("0x2018", "\"");
+        
+//        System.out.println("-----OUTPUT: ");
+//        
+//        System.out.println(str);
+        
+        cleanSourceText = str;
 	}
 	
 	private String completelyCleanToken(String token) {
@@ -71,13 +120,14 @@ public class Tokenizer {
 			/*
 			TYPE CHECKING:
 			Remove all suspect characters from *rawToken*, but don't
-			remove "-". These two are somewhat important.
+			remove "-".
 			Use *checkToken1* and *checkToken2* for checking types!
+			Use *rawToken* when checking for emojis!
 			*/
 		
 			String checkToken1 = cleanToken1(rawToken).toLowerCase();	// without - 
 			String checkToken2 = cleanToken2(rawToken).toLowerCase(); 	// with - 
-
+			
 			// SMILEY
 			// first, check for smileys since
 			// they have the special characters
@@ -100,8 +150,17 @@ public class Tokenizer {
 				words.add(new Target(rawToken));
 			}
 			
+			// EMOJI
+			else if (Emoji.isType(rawToken)) {
+				words.add(new Emoji(rawToken, null));
+			}
 			
 			
+			
+			
+			// from here on out, the order of type checking is important
+			// always check first for negation words or stop-words, since
+			// Whissell dictionary contains some of them
 			
 			// NEGATION WORD
 			else if (NegationWord.isType(checkToken1)) {
@@ -143,89 +202,6 @@ public class Tokenizer {
 			else words.add(new Other(rawToken, null));
 		}
 	}
-	
-//	private void classifyWords(String[] tokens) {
-//		boolean containsExclamation = false;
-//		for (String token : tokens)
-//		{
-//			
-//			if (token.length() == 0) continue;
-//			
-//			// for checking: smiley, url, hastag or target 
-//			String loweredToken = token.toLowerCase();
-//			
-//			// for checking: all the rest
-//			String cleanedToken = cleanToken(token);
-//			String cleanedLoweredToken = cleanToken(loweredToken);
-//			
-//			// if a token contains one or more !, then
-//			// magnify its' pleasantness, also, remove
-//			// any ? chars
-//			containsExclamation = cleanedLoweredToken.contains("!");
-//			cleanedLoweredToken = cleanedLoweredToken.replace("!", "");
-//			cleanedLoweredToken = cleanedLoweredToken.replace("?", "");
-//			cleanedToken = cleanedToken.replace("!", "");
-//			cleanedToken = cleanedToken.replace("?", "");
-//
-//			// NOTE:
-//			// always probe hash-table with lowered strings
-//			// *cleanedLoweredToken*, but save words as they are,
-//			// thats the *cleanedToken* variable
-//			
-//			
-//			// SMILEY
-//			// first, check for smileys since
-//			// they have the special characters
-//			if (Smiley.isType(loweredToken)) {
-//				words.add(new Smiley(token));
-//			}
-//			
-//			// URL
-//			else if (URL.isType(loweredToken)) {
-//				words.add(new URL(token));
-//			}
-//			
-//			// HASHTAG
-//			else if (Hashtag.isType(loweredToken)) {
-//				words.add(new Hashtag(token));
-//			}
-//			
-//			// TARGET
-//			else if (Target.isType(loweredToken)) {
-//				words.add(new Target(token));
-//			}
-//			
-//			// using *cleanedLoweredToken* from this point forward
-//			// since we know its not a target, hashtag, url or smiley
-//			
-//			// NEGATION WORD
-//			else if (NegationWord.isType(cleanedLoweredToken)) {
-//				words.add(new NegationWord(cleanedToken));
-//			}
-//			
-//			// ACRONYM
-//			else if (Acronym.isType(cleanedLoweredToken)) {
-//				Acronym acr = new Acronym(cleanedToken);
-//				if (containsExclamation) acr.magnifyPleasantness();
-//				words.add(acr);
-//			}
-//			
-//			// STOP WORD
-//			else if (StopWord.isType(cleanedLoweredToken)) {
-//				words.add(new StopWord(cleanedToken));
-//			}
-//			
-//			// AFFECTION WORD
-//			else if (AffectionWord.isType(cleanedLoweredToken)) {
-//				AffectionWord aw = new AffectionWord(cleanedToken);
-//				if (containsExclamation) aw.magnifyPleasantness();
-//				words.add(aw);
-//			}
-//			
-//			// else, unknown/other word
-//			else words.add(new Other(cleanedToken));
-//		}
-//	}
 	
 	public ArrayList<AbsWord> getTokens() {
 		return words;

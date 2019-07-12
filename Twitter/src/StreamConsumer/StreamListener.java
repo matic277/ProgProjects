@@ -1,5 +1,7 @@
 package StreamConsumer;
 
+import java.lang.Character.UnicodeBlock;
+
 import Tokenizer.Tweet;
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -15,6 +17,10 @@ public class StreamListener implements StatusListener {
 		this.ref = ref;
 	}
 	
+	boolean containsEmoji(String s) {
+	    return s.codePoints().anyMatch(cp -> UnicodeBlock.of(cp).equals(UnicodeBlock.EMOTICONS));
+	}
+	
 	@Override
 	public void onStatus(Status status) {
         // throw away non-english tweets
@@ -26,6 +32,23 @@ public class StreamListener implements StatusListener {
         } else {
      	   tweet = status.getText();
         }
+
+        
+//        String jsonString = tweet;
+//        
+//        System.out.println("---------------------------------");
+//        jsonString.codePoints()
+//        .filter(cp -> cp >= 256)
+//        .forEach(cp -> {
+//            System.out.printf("U+%X = %s%n",
+//                cp, Character.getName(cp));
+//        });
+//        System.out.println(tweet);
+
+        
+        
+        
+        
         
         // getting RAW json string, still, emoticons are questionmarks
         //String raw = DataObjectFactory.getRawJSON(status);

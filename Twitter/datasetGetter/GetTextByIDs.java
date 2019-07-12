@@ -29,12 +29,21 @@ public class GetTextByIDs {
 	static final Twitter twitter = new TwitterFactory().getInstance();
 	
 	static ArrayList<String> ids = new ArrayList<String>(6000);
-	static ArrayList<String> combined = new ArrayList<String>(6000);
 	static ArrayList<String> tweets = new ArrayList<String>(6000);
 	
-	static String tweetsoutput2 = "combined.txt";
+	static String tweetsoutput = "combinedENGLISHONLY.txt";
 	
 	public static void main(String[] args) {
+		
+		new Thread(() -> {
+			sleep(10*1000);
+			while (true) {
+				System.out.println(" -> processed: " + tweets.size() + "/"+ids.size());
+				if (!tweets.isEmpty()) System.out.println(" -> example:"+ tweets.get(tweets.size()-1));
+				sleep(60 * 3 * 1000);
+			}
+		}).start();
+		
 		readIds();
 		configureStream();
 		
@@ -43,9 +52,9 @@ public class GetTextByIDs {
 	}
 	
 	public static void writeToFile() {
-		System.out.print("\t|-> Logger writing file: '"+tweetsoutput2+"'... ");
+		System.out.print("\t|-> Logger writing file: '"+tweetsoutput+"'... ");
 		
-		File file = new File(tweetsoutput2);
+		File file = new File(tweetsoutput);
 		BufferedWriter writer = null;
 		
 		// this is only appending text to the file
@@ -53,8 +62,8 @@ public class GetTextByIDs {
 		try {
 			writer = new BufferedWriter(new FileWriter(file, true));
 			
-			for (int i=0; i<combined.size(); i++) {
-				writer.write(combined.get(i));
+			for (int i=0; i<tweets.size(); i++) {
+				writer.write(tweets.get(i));
 				writer.newLine();
 			}
 			writer.flush();
@@ -66,15 +75,15 @@ public class GetTextByIDs {
 		}
 
 		System.out.println("File written.");
+		System.out.println("\t|-> Lines written: " + tweets.size());
 	}
 
 	public static void readIds() {
 		System.out.print("Reading IDs....");
-		try (Stream<String> lines = Files.lines(Paths.get("C:\\Users\\V2\\Desktop\\tweets.txt"), Charset.defaultCharset())) {
+		try (Stream<String> lines = Files.lines(Paths.get("C:\\Users\\V2\\Desktop\\incompleteDataset2.txt"))) {
 			lines.forEachOrdered(line -> {
 				String[] tokens = line.split(",");
-				ids.add(tokens[1]);
-				combined.add(line);
+				ids.add(tokens[0]+","+tokens[1]);
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -100,63 +109,69 @@ public class GetTextByIDs {
 	
 	public static void query() {
 		for (int i=0; i<ids.size(); ) {
-			if (getLimit() < 1) {
+			int remaining = getRemaining();
+			if (remaining < 1) {
 				System.out.println("Limit reached, sleeping");
-				System.out.println("Current processed: " + tweets.size() + "/" + ids.size());
-				sleep(5 * 60 * 1000); // sleep for 5 min
+//				System.out.println("Current processed: " + tweets.size() + "/" + ids.size());
+				sleep(5 * 62 * 1000); // sleep for 5 min
 				continue;
 			}
 			
-			try {
-	            Status status = twitter.showStatus(Long.parseLong(ids.get(i)));
-	            if (status == null) { // 
-	            	tweets.add(ids.get(i) + "," + "null");
-	                combined.add(combined.get(i) + "," + "null");
+			try
+			{	
+				String[] tokens = ids.get(i).split(","); // 0=sentiment, 1=id
+	            Status status = twitter.showStatus(Long.parseLong(tokens[1]));
+	            if (status == null) {
+	            	System.out.println(" -> ("+i+") status is null, not adding, remaining: + " + remaining);
 	            } else {
 	            	String tweet = "";
 	                if (status.isRetweet()) {
-	              	   tweet = status.getRetweetedStatus().getText();
-	                 } else {
-	              	   tweet = status.getText();
-	                 }
-	                tweets.add(ids.get(i) + "," + tweet);
-	                combined.add(combined.get(i) + "," + tweet);
+	                	tweet = status.getRetweetedStatus().getText();
+	                } else {
+	                	 tweet = status.getText();
+	                }
+	                if (status.getLang().equals("en")) {
+	                	System.out.println(" -> ("+i+") english tweet, adding, remaining: " + remaining);
+	                	tweets.add(tokens[0] + "," + tokens[1] + "," + tweet);
+	                } else {
+	                	System.out.println(" -> ("+i+") non-english tweet, not adding, remaining: " + remaining);
+	                }
 	            }
-	        } catch (Exception e) {
-	        	System.out.println(i+"/"+ids.size()+", Something went wrong for id: "+ ids.get(i));
-	        	tweets.add(ids.get(i) + "," + "error");
-                combined.add(combined.get(i) + "," + "error");
+			}
+			catch (TwitterException e) {
+	        	System.out.println(" -> ("+i+") something went wrong for id: "+ ids.get(i));
+	        	//e.printStackTrace();
 	        }
 			i++;
-			sleep(333); // sleep alittle
+			sleep(333); // sleep a little
 		}
 	}
 	
 	// returns true if user is out of queries
 	// returns false if there is more than 1 query left
-	public static int getLimit() {
+	public static int getRemaining() {
 		String key = "/statuses/show/:id";
-		Map<String, RateLimitStatus> map;
+		Map<String, RateLimitStatus> map = null;
+		RateLimitStatus rate = null;
 		try {
 			map = twitter.getRateLimitStatus();
-			RateLimitStatus rate = map.get(key);
+			rate = map.get(key);
 			return rate.getRemaining();
 		} catch (TwitterException e) {
-			System.out.println("Couldnt get map or limit has been reach, returning 0");
+			System.out.print(" -> Couldnt get map or limit has been reached, returning 0");
+			if (map == null) System.out.print(" map was null ");
+			else System.out.print(" map wasnt null ");
+			if (rate == null) System.out.println("rate was null");
+			else System.out.println("rate wasnt null");
 			return 0;
-			
 		}
 	}
 	
 	public static void sleep(int t) {
-		try {
-			Thread.sleep((long)t);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		try { Thread.sleep((long)t); }
+		catch (InterruptedException e) { e.printStackTrace(); }
 	}
 
-	
 	private static int index = 0;
 	public static void readKeysFromFile() {
 		try (Stream<String> lines = Files.lines(Paths.get(relativeFilePath_apiKeys), Charset.defaultCharset())) {

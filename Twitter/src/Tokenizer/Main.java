@@ -1,13 +1,10 @@
 package Tokenizer;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.Format;
 
 import Dictionaries.DictionaryCollection;
+import Dictionaries.EmojiDictionary;
 import StreamConsumer.StreamHandler;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 
 public class Main {
 	
@@ -19,9 +16,8 @@ public class Main {
 
 
 //		StreamHandler stream = new StreamHandler();
-
-		
-		// debugging purpose thread
+//		
+//		// debugging purpose thread
 //		new Thread() {
 //			public void run() {
 //				System.out.println("debugger started");
@@ -52,13 +48,13 @@ public class Main {
 //			}
 //			
 //		}.start();
-		
+
 		
 		test();
 	}
 	
 	public static void test() {
-		String tweet = "This is not a  brand new, nice! test tweet. www.sample.si @testTweet :)";
+		String tweet = "This is not a 0x1f609 brand new, nice! test tweet. www.sample.si @testTweet #manyWordsToSplitHere #one :)";
 		
 		//tweet = "not good lol :/";
 		

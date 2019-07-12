@@ -2,10 +2,9 @@ package Words;
 
 import AbstractWordClasses.AbsMeasurableWord;
 import Dictionaries.DictionaryCollection;
-import Dictionaries.IDictionary;
-import Dictionaries.INode;
+import Dictionaries.WhissellDictionary;
 
-public class AffectionWord extends AbsMeasurableWord implements INode {
+public class AffectionWord extends AbsMeasurableWord {
 	
 	// use this class when reading from file and building hashtable
 	public AffectionWord(String sourceText, String pleasantness, String activation, String imagery) {
@@ -22,8 +21,8 @@ public class AffectionWord extends AbsMeasurableWord implements INode {
 		super(sourceText, processedText);
 		super.tag = "AFT";
 		
-		IDictionary dictionary = DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
-		AbsMeasurableWord word = (AbsMeasurableWord) dictionary.getEntry(processedText);
+		WhissellDictionary dictionary = (WhissellDictionary) DictionaryCollection.getDictionaryCollection().getWhissellDictionary();
+		AbsMeasurableWord word = dictionary.getEntry(processedText);
 		
 		this.pleasantness = word.getPleasantness();
 		this.activation = word.getActivation();
@@ -34,25 +33,11 @@ public class AffectionWord extends AbsMeasurableWord implements INode {
 		return DictionaryCollection.getDictionaryCollection().getWhissellDictionary().contains(s);
 	}
 	
+	@Override
 	public boolean checkIntegrity() {
 		if (sourceText.length() > 1 && checkValidValue(pleasantness) && checkValidValue(activation) && checkValidValue(imagery)) {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public String getString() {
-		return sourceText;
-	}
-
-	@Override // INode funct
-	public String getSourceText() {
-		return sourceText;
-	}
-
-	@Override// INode funct
-	public String getTag() {
-		return super.getTag();
 	}
 }

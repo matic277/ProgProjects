@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import AbstractWordClasses.AbsMeasurableWord;
 import AbstractWordClasses.AbsWord;
-import AbstractWordClasses.IWord;
+import Words.Emoji;
 import Words.NegationWord;
 
 
@@ -59,10 +59,10 @@ public class Tweet {
 		}
 		
 		// if a word is upper-case (or close to)
-		// magnify its pleasantness value
+		// magnify its pleasantness value, except for emojis
 		// (how close is defined in upper-case function)
 		for (AbsWord w : words) {
-			if (w instanceof AbsMeasurableWord && isUpperCase(w.getSourceText())) {
+			if (w instanceof AbsMeasurableWord && !(w instanceof Emoji) && isUpperCase(w.getSourceText())) {
 				AbsMeasurableWord mw = (AbsMeasurableWord) w;
 				mw.magnifyPleasantness();
 			}
@@ -71,7 +71,10 @@ public class Tweet {
 	
 	public void processTweet() {
 		Tokenizer t = new Tokenizer(sourceText);
+//		System.out.println("------------------------");
+//		System.out.println(username);
 		t.tokenizeTweet();
+		
 		words = t.getTokens();
 		cleanSource = t.cleanSourceText;
 		
@@ -134,6 +137,10 @@ public class Tweet {
 	
 	public String getCleanSource() {
 		return cleanSource;
+	}
+	
+	public ArrayList<AbsWord> getTokens() {
+		return this.words;
 	}
 	
 	public String toString() {

@@ -2,10 +2,9 @@ package Words;
 
 import AbstractWordClasses.AbsMeasurableWord;
 import Dictionaries.DictionaryCollection;
-import Dictionaries.INode;
 import Dictionaries.SmileyDictionary;
 
-public class Smiley extends AbsMeasurableWord implements INode {
+public class Smiley extends AbsMeasurableWord {
 	
 	// when creating dictionary hashtable
 	public Smiley(String source, String plesantness) {
@@ -31,10 +30,5 @@ public class Smiley extends AbsMeasurableWord implements INode {
 	public boolean checkIntegrity() {
 		if (sourceText.length() > 1 && pleasantness >= -1 && pleasantness <= 1) return true;
 		return false;
-	}
-
-	@Override // INode
-	public String getString() {
-		return sourceText;
 	}
 }

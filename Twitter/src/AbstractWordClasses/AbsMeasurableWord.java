@@ -2,7 +2,7 @@ package AbstractWordClasses;
 
 import java.text.DecimalFormat;
 
-public abstract class AbsMeasurableWord extends AbsWord implements IWord {
+public abstract class AbsMeasurableWord extends AbsWord {
 	
 	// magnitude, how much should
 	// pleasantness get amplified by

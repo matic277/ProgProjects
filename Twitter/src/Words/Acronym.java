@@ -5,9 +5,8 @@ import java.text.DecimalFormat;
 import AbstractWordClasses.AbsMeasurableWord;
 import Dictionaries.DictionaryCollection;
 import Dictionaries.IDictionary;
-import Dictionaries.INode;
 
-public class Acronym extends AbsMeasurableWord implements INode {
+public class Acronym extends AbsMeasurableWord {
 	
 							// example:
 							// jk (from super.sourceText)
@@ -137,16 +136,11 @@ public class Acronym extends AbsMeasurableWord implements INode {
 		return "[" + getTag() + ", " + getSentimentTag() + ", '" + sourceText + "' -> " + "'" + fullText + "'" + ", P:" + format.format(pleasantness) + "]";
 	}
 	
-	@Override // INode
+	@Override 
 	public boolean checkIntegrity() {
 		if (sourceText.length() > 1 && checkValidValue(pleasantness)) {
 			return true;
 		}
 		return false;
-	}
-	
-	@Override // INode
-	public String getString() {
-		return sourceText;
 	}
 }

@@ -9,13 +9,15 @@ public class DictionaryCollection {
 	private final String relativeFilePath_Stopwords = "dictionary/stopwords.txt";
 	private final String relativeFilePath_Smileys = "dictionary/smileys.txt";
 	private final String relativeFilePath_Negationwords = "dictionary/negationwords.txt";
-	private final String relativeFilePath_Acronym = "dictionary/acronyms.txt";
+	private final String relativeFilePath_Acronyms = "dictionary/acronyms.txt";
+	private final String relativeFilePath_Emojis = "dictionary/emojis.txt";
 
 	private WhissellDictionary whissell;
 	private StopwordDictionary stopwords;
 	private SmileyDictionary smileys;
 	private NegationwordDictionary negationwords;
-	private AcronymDictionary acronym;
+	private AcronymDictionary acronyms;
+	private EmojiDictionary emojis;
 	
 	private static DictionaryCollection dictionaries;
 	
@@ -29,6 +31,7 @@ public class DictionaryCollection {
 			dictionaries.constructWhissellDictionary();
 			dictionaries.constructNegationwordDictionary();
 			dictionaries.constructAcronymDictionary();
+			dictionaries.constructEmojiDictionary();
 			return dictionaries;
 		}
 		return dictionaries;
@@ -55,7 +58,12 @@ public class DictionaryCollection {
 	}
 	
 	private void constructAcronymDictionary() {
-		try { acronym = new AcronymDictionary(relativeFilePath_Acronym); }
+		try { acronyms = new AcronymDictionary(relativeFilePath_Acronyms); }
+		catch (IOException e) { e.printStackTrace(); }
+	}
+	
+	private void constructEmojiDictionary() {
+		try { emojis = new EmojiDictionary(relativeFilePath_Emojis); }
 		catch (IOException e) { e.printStackTrace(); }
 	}
 	
@@ -72,6 +80,9 @@ public class DictionaryCollection {
 		return negationwords;
 	}
 	public IDictionary getAcronymDictionary() {
-		return acronym;
+		return acronyms;
+	}
+	public IDictionary getEmojiDictionary() {
+		return emojis;
 	}
 }
