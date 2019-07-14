@@ -13,7 +13,7 @@ public class Emoji extends AbsMeasurableWord {
 		super.tag = "EMJ";
 		
 		EmojiDictionary emojiDictionary = (EmojiDictionary) DictionaryCollection.getDictionaryCollection().getEmojiDictionary();
-		this.processedText = emojiDictionary.getEntry(source).getProcessedText();
+		this.processedText = emojiDictionary.getEntry(source).getProcessedText().replace(" ", "-");
 		this.pleasantness = emojiDictionary.getEntry(source).getPleasantness();
 	}
 	

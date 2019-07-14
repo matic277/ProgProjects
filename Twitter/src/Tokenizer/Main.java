@@ -1,10 +1,18 @@
 package Tokenizer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
+import AbstractWordClasses.AbsWord;
 import Dictionaries.DictionaryCollection;
 import Dictionaries.EmojiDictionary;
+import NGram.NGram;
+import NGram.NGramBuilder;
 import StreamConsumer.StreamHandler;
+import Words.Emoji;
+import Words.Smiley;
+import Words.Target;
+import Words.URL;
 
 public class Main {
 	
@@ -54,19 +62,37 @@ public class Main {
 	}
 	
 	public static void test() {
-		String tweet = "This is not a 0x1f609 brand new, nice! test tweet. www.sample.si @testTweet #manyWordsToSplitHere #one :)";
-		
-		//tweet = "not good lol :/";
-		
-		Tweet t = new Tweet(tweet, "TEST_TWEET");
-		t.processTweet();
-		
-		System.out.println("----- OUTPUT -----");
-		System.out.println(t.toString());
-		
-		System.out.println("----- OUTPUT2-----");
-		Classifier c = new Classifier(tweet);
-		System.out.println("Sentiment: " + c.getSentiment());
+		NGramBuilder nb = new NGramBuilder(2);
+//		String tweet = "This is not a 0x1f609 brand new, nice! test tweet. www.sample.si @testTweet #manyWordsToSplitHere #one :)";
+//		
+//		//tweet = "not good lol :/";
+//		
+//		Tweet t = new Tweet(tweet, "TEST_TWEET");
+//		t.processTweet();
+//		
+//		System.out.println("----- OUTPUT -----");
+//		System.out.println(t.toString());
+//		
+//		System.out.println("----- OUTPUT2-----");
+//		Classifier c = new Classifier(tweet);
+//		System.out.println("Sentiment: " + c.getSentiment());
+//		
+//		
+//		ArrayList<String> string = new ArrayList<String>(20);
+//		ArrayList<AbsWord> words = t.getTokens();
+//		words.forEach(w -> {
+//			if (w instanceof Emoji) return;
+//			if (w instanceof URL) return;
+//			if (w instanceof Target) return;
+//			string.add((w.getProcessedText() == null)? w.getSourceText() : w.getProcessedText());
+//		});
+//		
+//		string.forEach(s -> System.out.print(s + " "));
+//		System.out.println();
+//		
+//		NGram ngram = new NGram(3, string);
+//		
+//		ngram.orderAndPrintProbabilities();
 	}
 
 }

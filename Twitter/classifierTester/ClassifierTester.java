@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import Tokenizer.Classifier;
+import Tokenizer.Tweet;
 
 
 public class ClassifierTester {
@@ -17,21 +18,30 @@ public class ClassifierTester {
 	
 	public static void main(String[] args) {
 		readDataset();
-
 		int correctlyClassified = 0;
-		for (int i=0; i<annotatedTweets.size(); i++) {
-			TweetInstance tweet = annotatedTweets.get(i);
-			Classifier c = new Classifier(tweet.text);
+		double increaseValue = -0.05;
+
+//		while (Tweet.negativeThreshold >= -1) {
 			
-			int sentiment = c.getSentiment();
-			if (tweet.sentiment == sentiment) {
-				correctlyClassified++;
+			for (int i=0; i<annotatedTweets.size(); i++) {
+				TweetInstance tweet = annotatedTweets.get(i);
+				Classifier c = new Classifier(tweet.text);
+				
+				int sentiment = c.getSentiment();
+				if (tweet.sentiment == sentiment) {
+					correctlyClassified++;
+				}
 			}
-		}
-		System.out.println(correctlyClassified + "/" + annotatedTweets.size() + " -> " + ((double)correctlyClassified/annotatedTweets.size()));
+//			System.out.println("For value " + Tweet.negativeThreshold);
+			System.out.println(correctlyClassified + "/" + annotatedTweets.size() + " -> " + ((double)correctlyClassified/annotatedTweets.size()));
+//			System.out.println();
+//			Tweet.negativeThreshold += increaseValue;
+//			correctlyClassified = 0;
+//		}
 	}
 	
 	public static void readDataset() {
+		System.out.print("Reading dataset....");
 		try (Stream<String> lines = Files.lines(Paths.get(datasetPath), Charset.defaultCharset())) {
 			lines.forEachOrdered(line -> {
 				// sentiment,tweetID,tweetText
@@ -41,6 +51,7 @@ public class ClassifierTester {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println(" done.");
 	}
 }
 

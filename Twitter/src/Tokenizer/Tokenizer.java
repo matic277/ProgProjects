@@ -199,7 +199,7 @@ public class Tokenizer {
 			}
 			
 			// else, unknown/other word
-			else words.add(new Other(rawToken, null));
+			else words.add(new Other(rawToken, checkToken2));
 		}
 	}
 	

@@ -34,7 +34,7 @@ public class Tweet {
 	
 	public Tweet(String sourceText, String username) {
 		this.sourceText = sourceText;
-		this.username = username;
+		this.username = (username == null)? "{UNKNOWN}" : username;
 	}
 	
 	private void test() {
@@ -123,13 +123,31 @@ public class Tweet {
 	// placeholder function for sentiment, returning biggest
 	// number of numOf_x_Words
 	public int getSentiment() {
-		if (numOfNegativeWords > numOfNeutralWords)
-			if (numOfNegativeWords > numOfPositiveWords) return -1;
-			else return 1;
-		if (numOfNeutralWords > numOfPositiveWords)
-			return 0;
-		return 1;
+//		if (numOfNegativeWords > numOfNeutralWords)
+//			if (numOfNegativeWords > numOfPositiveWords) return -1;
+//			else return 1;
+//		if (numOfNeutralWords > numOfPositiveWords)
+//			return 0;
+//		return 1;
+		
+		double sentiment = 0;
+		AbsWord w;
+		for (int i=0; i<words.size(); i++) {
+			w = words.get(i);
+			if (w instanceof AbsMeasurableWord) {
+				AbsMeasurableWord mw = (AbsMeasurableWord) w;
+				sentiment += mw.getPleasantness();
+			}
+		}
+
+		
+		
+		if (sentiment >= positiveThreshold) return 1;
+		else if (sentiment <= negativeThreshold) return -1;
+		else return 0;
 	}
+	public static double positiveThreshold = 0.1;
+	public static double negativeThreshold = -0.55;
 	
 	public String getSourceText() {
 		return sourceText;
