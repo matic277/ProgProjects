@@ -23,42 +23,43 @@ public class Main {
 		DictionaryCollection.getDictionaryCollection();
 
 
-//		StreamHandler stream = new StreamHandler();
-//		
-//		// debugging purpose thread
-//		new Thread() {
-//			public void run() {
-//				System.out.println("debugger started");
-//				
-//				while (true){
-//					logTweetsIfNeccessary();
-//
-//					System.out.println("Tweets in queue:  " + stream.tweets.size());
-//					System.out.println("Processed tweets: " + stream.processedTweets.size());
-//					
-//					try { Thread.sleep(2000); }
-//					catch (InterruptedException e) { e.printStackTrace(); }
-//				}
-//			}
-//			
-//			// if there are more than _x_ tweets processed,
-//			// log them to file and clear the list
-//			public void logTweetsIfNeccessary() {
-//				if (stream.processedTweets.size() > 30) {
-//					Tweet[] tweets = stream.processedTweets.toArray(new Tweet[stream.processedTweets.size()]);
-////					new Logger(stream.processedTweets.toArray());
-//					Logger logger = new Logger(tweets);
-//					logger.saveResults();
-//					logger.saveResultsAsCsv();
-//					logger.saveResultsWithStatisticsAsCsv();
-//					stream.processedTweets.clear();
-//				}
-//			}
-//			
-//		}.start();
+		StreamHandler stream = new StreamHandler();
+		
+		// debugging purpose thread
+		new Thread() {
+			public void run() {
+				System.out.println("debugger started");
+				
+				while (true){
+					logTweetsIfNeccessary();
+
+					System.out.println("Tweets in queue:  " + stream.tweets.size());
+					System.out.println("Processed tweets: " + stream.processedTweets.size());
+					
+					try { Thread.sleep(2000); }
+					catch (InterruptedException e) { e.printStackTrace(); }
+				}
+			}
+			
+			// if there are more than x tweets processed,
+			// log them to file and clear the list
+			public void logTweetsIfNeccessary() {
+				if (stream.processedTweets.size() > 30) {
+					Tweet[] tweets = stream.processedTweets.toArray(new Tweet[stream.processedTweets.size()]);
+//					new Logger(stream.processedTweets.toArray());
+					Logger logger = new Logger(tweets);
+					logger.saveResults();
+					logger.saveResultsAsCsv();
+					logger.saveResultsWithStatisticsAsCsv();
+					stream.processedTweets.clear();
+				}
+			}
+			
+		}.start();
 
 		
-		test();
+//		test();
+		
 	}
 	
 	public static void test() {

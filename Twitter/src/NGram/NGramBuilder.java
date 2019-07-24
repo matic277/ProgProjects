@@ -6,6 +6,7 @@ import java.util.HashMap;
 import AbstractWordClasses.AbsWord;
 import Tokenizer.Tweet;
 import Words.Emoji;
+import Words.Hashtag;
 import Words.Target;
 import Words.URL;
 
@@ -34,9 +35,9 @@ public class NGramBuilder {
 		negativeTweets = reader.negativeTweets;
 		neutralTweets = reader.neutralTweets;
 		
-		positiveTable = buildNGrammableTweetString(positiveTweets);
-		negativeTable = buildNGrammableTweetString(negativeTweets);
-		neutralTable = buildNGrammableTweetString(neutralTweets);
+		positiveTable = buildNGramTable(positiveTweets);
+		negativeTable = buildNGramTable(negativeTweets);
+		neutralTable = buildNGramTable(neutralTweets);
 		
 		frequentPositive = getFrequentNGrams(positiveTable);
 		frequentNeutral = getFrequentNGrams(negativeTable);
@@ -61,7 +62,7 @@ public class NGramBuilder {
 		return listFrequent;
 	}
 	
-	public HashMap<String, Gram> buildNGrammableTweetString(ArrayList<String> dirtyTweets) {
+	public HashMap<String, Gram> buildNGramTable(ArrayList<String> dirtyTweets) {
 		HashMap<String, Gram>[] tables = new HashMap[dirtyTweets.size()];
 		
 		for (int i=0; i<dirtyTweets.size(); i++) {
@@ -75,6 +76,7 @@ public class NGramBuilder {
 				if (w instanceof Emoji) return;
 				if (w instanceof URL) return;
 				if (w instanceof Target) return;
+				if (w instanceof Hashtag) return;
 				NGrammableList.add((w.getProcessedText() == null)? w.getSourceText() : w.getProcessedText());
 			});
 			
@@ -92,15 +94,25 @@ public class NGramBuilder {
 			// release some memory by setting all other hashmaps to null?
 			tables[i] = null;
 		}
+		
+		// recalculate probabilities
+		int totalNGrams = 0;
+		for (Gram g : tables[0].values()) totalNGrams += g.occurrences;
+		final int totalNGrams_ = totalNGrams;
+		tables[0].forEach((s, g) -> g.probability = (g.occurrences / totalNGrams_) * 100);
+		
 		return tables[0];
 	}
 	
 	private void print(ArrayList<Gram> list, HashMap<String, Gram> table, String info) {
+		int totalNGrams = 0;
+		for (Gram g : table.values()) totalNGrams += g.occurrences;
 		System.out.println("Top "+mostFrequentListSize+" "+n+"-grams from "+info+" tweets:");
 		list.forEach(g -> System.out.println("\t|-> " + g.toString()));
 		System.out.println("\t|");
 		System.out.println("\t|-> Stats:");
-		System.out.println("\t|\t|-> Number of n-grams:" + table.size());
+		System.out.println("\t\t|-> Number of unique n-grams:" + table.size());
+		System.out.println("\t\t|-> Number of n-grams:" + totalNGrams);
 		System.out.println();
 	}
 

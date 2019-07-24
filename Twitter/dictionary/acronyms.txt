@@ -36,6 +36,7 @@ lit,good amazing
 af,as fuck
 fu,fuck you
 fk,fuck
+fw,fuck with
 tf,what the fuck
 bae,babe girlfriend
 dae,does anybody else

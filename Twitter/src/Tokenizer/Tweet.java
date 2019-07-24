@@ -1,6 +1,7 @@
 package Tokenizer;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 
 import AbstractWordClasses.AbsMeasurableWord;
@@ -163,6 +164,10 @@ public class Tweet {
 	
 	public String toString() {
 		DecimalFormat format = new DecimalFormat("#.###");
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		format.setDecimalFormatSymbols(symbols);
+		
 		String s = "";
 		s += "---------------------------\n";
 		s += "Poster: " + username + "\n";
@@ -182,7 +187,7 @@ public class Tweet {
 		s += "\t|-> Sum of neg words: " + format.format(sumOfNegativeWords) + "\n";
 		s += "\t|-> Sum of neu words: " + format.format(sumOfNeutralWords) + "\n";
 		s += "\t\\-> Sum of pos words: " + format.format(sumOfPositiveWords) + "\n";
-			
+		
 		s += "---------------------------\n";
 		
 		return s;
@@ -190,9 +195,12 @@ public class Tweet {
 	
 	public String getStatistics() {
 		DecimalFormat format = new DecimalFormat("#.####");
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		format.setDecimalFormatSymbols(symbols);
 		String s = "";
 		s = numOfPositiveWords + "," + numOfNeutralWords + "," + numOfNegativeWords + ",";
-		s += format.format(sumOfPositiveWords) + ", " + format.format(sumOfNeutralWords) + ", " + format.format(sumOfNegativeWords);
+		s += format.format(sumOfPositiveWords) + "," + format.format(sumOfNeutralWords) + "," + format.format(sumOfNegativeWords);
 		return s;
 	}
 }
