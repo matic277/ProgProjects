@@ -1,4 +1,4 @@
-package NGram;
+package ngramStatistics;
 
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -22,7 +22,7 @@ public class DatasetReader {
 	}
 	
 	private void readFromFile() {
-		System.out.print("Reading dataset....");
+		System.out.print("Reading dataset '" + relativeDatasetPath + "'...");
 		try (Stream<String> lines = Files.lines(Paths.get(relativeDatasetPath), Charset.defaultCharset())) {
 			lines.forEachOrdered(line -> {
 				// sentiment,tweetID,tweetText

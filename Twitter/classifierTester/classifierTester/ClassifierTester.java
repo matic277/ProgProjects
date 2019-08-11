@@ -1,13 +1,11 @@
+package classifierTester;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import Tokenizer.Classifier;
-import Tokenizer.Tweet;
 
 
 public class ClassifierTester {

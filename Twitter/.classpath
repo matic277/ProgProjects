@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="datasetGetter"/>
-	<classpathentry kind="src" path="classifierTester"/>
+	<classpathentry kind="src" path="ngramStatistics"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="C:/git/ProgProjects/Twitter/twitter4j/twitter4j-async-4.0.7.jar"/>
 	<classpathentry kind="lib" path="C:/git/ProgProjects/Twitter/twitter4j/twitter4j-core-4.0.7.jar"/>
 	<classpathentry kind="lib" path="C:/git/ProgProjects/Twitter/twitter4j/twitter4j-examples-4.0.7.jar"/>
 	<classpathentry kind="lib" path="C:/git/ProgProjects/Twitter/twitter4j/twitter4j-stream-4.0.7.jar"/>
+	<classpathentry kind="src" path="classifierTester"/>
+	<classpathentry kind="src" path="datasetGetter"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

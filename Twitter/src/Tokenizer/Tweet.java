@@ -162,6 +162,7 @@ public class Tweet {
 		return this.words;
 	}
 	
+	@Override
 	public String toString() {
 		DecimalFormat format = new DecimalFormat("#.###");
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols();

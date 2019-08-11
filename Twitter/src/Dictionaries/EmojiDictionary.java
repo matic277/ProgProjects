@@ -26,6 +26,7 @@ public class EmojiDictionary extends AbsDictionary {
 		hashTable.put(tokens[0], new Emoji(tokens[0], tokens[1], tokens[2]));
 	}
 
+	@Override
 	public AbsMeasurableWord getEntry(String key) {
 		return (AbsMeasurableWord) hashTable.get(key);
 	}

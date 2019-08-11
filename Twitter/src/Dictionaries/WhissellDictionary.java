@@ -31,6 +31,7 @@ public class WhissellDictionary extends AbsDictionary {
 		super.checkIntegrity(strangeChars);
 	}
 
+	@Override
 	public AbsMeasurableWord getEntry(String key) {
 		return (AbsMeasurableWord) hashTable.get(key);
 	}

@@ -1,10 +1,5 @@
 package Tokenizer;
 
-import java.util.ArrayList;
-
-import AbstractWordClasses.AbsWord;
-import Words.Other;
-
 public class Classifier {
 	
 	Tweet tweet;

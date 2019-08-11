@@ -20,6 +20,7 @@ public class DictionaryCollection {
 	private EmojiDictionary emojis;
 	
 	private static DictionaryCollection dictionaries;
+	static boolean printingMode = true;
 	
 	private DictionaryCollection() { }
 	
@@ -84,5 +85,9 @@ public class DictionaryCollection {
 	}
 	public IDictionary getEmojiDictionary() {
 		return emojis;
+	}
+	
+	public static void setPrintingOption(boolean option) {
+		printingMode = option;
 	}
 }

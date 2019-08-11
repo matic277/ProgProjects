@@ -29,6 +29,7 @@ public class SmileyDictionary extends AbsDictionary {
 		hashTable.put(tokens[0], new Smiley(tokens[0], tokens[1]));
 	}
 	
+	@Override
 	public AbsMeasurableWord getEntry(String key) {
 		return (AbsMeasurableWord) hashTable.get(key);
 	}

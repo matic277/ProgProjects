@@ -1,8 +1,6 @@
 package Tokenizer;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 import AbstractWordClasses.AbsWord;
 import Words.Acronym;
 import Words.AffectionWord;

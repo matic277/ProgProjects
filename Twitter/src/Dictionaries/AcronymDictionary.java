@@ -18,6 +18,7 @@ public class AcronymDictionary extends AbsDictionary {
 		super.checkIntegrity(strangeChars);
 	}
 	
+	@Override
 	public void processLine(String line) {
 		// data: acronym,full text
 		line = line.toLowerCase();

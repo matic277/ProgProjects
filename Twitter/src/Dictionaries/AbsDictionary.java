@@ -9,15 +9,15 @@ import java.util.stream.Stream;
 
 import AbstractWordClasses.AbsWord;
 
-abstract class AbsDictionary implements IDictionary {
+public abstract class AbsDictionary implements IDictionary {
 	
 	HashMap<String, AbsWord> hashTable;
 	
 	public AbsDictionary() { }
 	
 	protected void buildHashtable(String relativeFilePath, String dictionaryName, int skipToLine, int hashtableSize) throws IOException {
-		System.out.println("Creating dictionary of " + dictionaryName + "...");
-		System.out.println("\t|-> Creating hashtable...");
+		if (DictionaryCollection.printingMode) System.out.println("Creating dictionary of " + dictionaryName + "...");
+		if (DictionaryCollection.printingMode) System.out.println("\t|-> Creating hashtable...");
 		
 		// hashtable:
 		// key		-> string,
@@ -31,17 +31,18 @@ abstract class AbsDictionary implements IDictionary {
 				line -> processLine(line)
 			);
 		}
-		System.out.println("\t|-> Done.");
-		System.out.println("\t|-> Number of entries: " + hashTable.size());
+		if (DictionaryCollection.printingMode) System.out.println("\t|-> Done.");
+		if (DictionaryCollection.printingMode) System.out.println("\t|-> Number of entries: " + hashTable.size());
+		
 	}
 	
 	public abstract void processLine(String line);
 
 	protected void checkIntegrity(String strangeChars) {
-		System.out.println("\t|-> Checking integrity...");
+		if (DictionaryCollection.printingMode) System.out.println("\t|-> Checking integrity...");
 		hashTable.forEach((word, node) -> {
 			if (!node.checkIntegrity()) {
-				System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
+				if (DictionaryCollection.printingMode) System.out.println("\t|\t|-> Maybe a bad node: " + node.toString());
 			}
 			String s = node.getSourceText();
 			char[] chars = s.toCharArray();
@@ -50,14 +51,14 @@ abstract class AbsDictionary implements IDictionary {
 			for (int i=0; i<strangeChars.length(); i++) {
 				for (int j=0; j<chars.length; j++) {
 					if (chars[j] == strangeChars.charAt(i)) {
-						System.out.println("\t|\t|-> Maybe a bad node (suspect char: '"+ chars[j]+"'): "+ node.toString());
+						if (DictionaryCollection.printingMode) System.out.println("\t|\t|-> Maybe a bad node (suspect char: '"+ chars[j]+"'): "+ node.toString());
 						break loop;
 					}
 				}
 			}
 		});
-		System.out.println("\t\\-> Done.");
-		System.out.println();
+		if (DictionaryCollection.printingMode) System.out.println("\t\\-> Done.");
+		if (DictionaryCollection.printingMode) System.out.println();
 	}
 
 	@Override

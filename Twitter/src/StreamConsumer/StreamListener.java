@@ -7,7 +7,6 @@ import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
-import twitter4j.json.DataObjectFactory;
 
 public class StreamListener implements StatusListener {
 	
@@ -33,23 +32,6 @@ public class StreamListener implements StatusListener {
      	   tweet = status.getText();
         }
 
-        
-//        String jsonString = tweet;
-//        
-//        System.out.println("---------------------------------");
-//        jsonString.codePoints()
-//        .filter(cp -> cp >= 256)
-//        .forEach(cp -> {
-//            System.out.printf("U+%X = %s%n",
-//                cp, Character.getName(cp));
-//        });
-//        System.out.println(tweet);
-
-        
-        
-        
-        
-        
         // getting RAW json string, still, emoticons are questionmarks
         //String raw = DataObjectFactory.getRawJSON(status);
         //System.out.println(raw);
@@ -69,10 +51,15 @@ public class StreamListener implements StatusListener {
         //ref.queue_size.incrementAndGet();
 	}
 
+	@Override
 	public void onTrackLimitationNotice(int arg0) {}
+	@Override
 	public void onDeletionNotice(StatusDeletionNotice arg0) {}
+	@Override
 	public void onScrubGeo(long arg0, long arg1) {}
+	@Override
 	public void onStallWarning(StallWarning arg0) {}
+	@Override
 	public void onException(Exception arg0) { System.out.println("Exception!" + arg0.getStackTrace()); }
 
 }

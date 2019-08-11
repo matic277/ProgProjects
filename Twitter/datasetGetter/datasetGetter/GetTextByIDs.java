@@ -1,3 +1,4 @@
+package datasetGetter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,17 +8,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
-import StreamConsumer.StreamListener;
 import twitter4j.RateLimitStatus;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -168,7 +165,7 @@ public class GetTextByIDs {
 	}
 	
 	public static void sleep(int t) {
-		try { Thread.sleep((long)t); }
+		try { Thread.sleep(t); }
 		catch (InterruptedException e) { e.printStackTrace(); }
 	}
 
