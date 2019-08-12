@@ -35,7 +35,8 @@ public class DatasetReader {
 				for (int i=2; i<tokens.length; i++) {
 					tweet += tokens[i];
 				}
-				
+				tweet = tweet.replace("   ", " ");
+				tweet = tweet.replace("  ", " ");
 				if (sentiment.equals("1")) positiveTweets.add(tweet);
 				else if (sentiment.equals("0")) neutralTweets.add(tweet);
 				else if (sentiment.equals("-1")) negativeTweets.add(tweet);

@@ -1,6 +1,9 @@
 package Tokenizer;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
+import AbstractWordClasses.AbsWord;
 import Dictionaries.DictionaryCollection;
 import StreamConsumer.StreamHandler;
 import ngramStatistics.NGramBuilder;
@@ -8,6 +11,7 @@ import ngramStatistics.NGramBuilder;
 public class Main {
 	
 	public static void main(String[] args) throws IOException {
+		DictionaryCollection.getDictionaryCollection();
 		// build dictionaries first, not necessary
 		// but when tweets start streaming in, its
 		// nice to have them already built
@@ -54,7 +58,20 @@ public class Main {
 	}
 	
 	public static void test() {
-		NGramBuilder nb = new NGramBuilder(2);
+//		NGramBuilder nb = new NGramBuilder(2);
+		
+		
+		
+		String tweet = "my friend thank you nice real estate";
+		Tweet t = new Tweet(tweet, "TEST_TWEET");
+		t.processTweet();
+		System.out.println(t.getNGramFeatures());
+		
+//		NGram n = new NGram(1, tweet.split(" "));
+//		System.out.println("----");
+//		n.getListOfNGrams().forEach(g -> System.out.println(g.ngram));
+//		System.out.println("----");
+		
 //		String tweet = "This is not a 0x1f609 brand new, nice! test tweet. www.sample.si @testTweet #manyWordsToSplitHere #one :)";
 //		
 //		//tweet = "not good lol :/";

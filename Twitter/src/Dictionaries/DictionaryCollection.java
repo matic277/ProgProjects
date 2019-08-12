@@ -18,9 +18,10 @@ public class DictionaryCollection {
 	private NegationwordDictionary negationwords;
 	private AcronymDictionary acronyms;
 	private EmojiDictionary emojis;
+	private NGramDictionary ngrams;
 	
 	private static DictionaryCollection dictionaries;
-	static boolean printingMode = true;
+	static boolean printingMode = false;
 	
 	private DictionaryCollection() { }
 	
@@ -33,6 +34,7 @@ public class DictionaryCollection {
 			dictionaries.constructNegationwordDictionary();
 			dictionaries.constructAcronymDictionary();
 			dictionaries.constructEmojiDictionary();
+			dictionaries.constructNGramDictionary();
 			return dictionaries;
 		}
 		return dictionaries;
@@ -68,6 +70,11 @@ public class DictionaryCollection {
 		catch (IOException e) { e.printStackTrace(); }
 	}
 	
+	private void constructNGramDictionary() {
+		try { ngrams = new NGramDictionary(); }
+		catch (IOException e) { e.printStackTrace(); }
+	}
+	
 	public IDictionary getSmileyDictionary() {
 		return smileys;
 	}
@@ -85,6 +92,9 @@ public class DictionaryCollection {
 	}
 	public IDictionary getEmojiDictionary() {
 		return emojis;
+	}
+	public IDictionary getNGramDictionary() {
+		return ngrams;
 	}
 	
 	public static void setPrintingOption(boolean option) {

@@ -58,31 +58,35 @@ public class NGramBuilder {
 		print2(stopGramFreeSet_neutral, "stop-gram-free neutral");
 		print2(stopGramFreeSet_negative, "stop-gram-free negative");
 		
+//		print(sortedPositive, positiveTable, "positive");
+//		print(sortedNeutral, neutralTable, "neutral");
+//		print(sortedNegative, negativeTable, "negative");
+		
 		populateDatasetUniqueNGrams(
 			stopGramFreeSet_positive,
 			stopGramFreeSet_neutral,
 			stopGramFreeSet_negative
 		);
-		
-//		if (positiveTable.containsKey("a fuuuuuuuuunnny") || negativeTable.containsKey("a fuuuuuuuuunnny")) {
-//			System.out.println("negative: " + negativeTable.containsKey("a fuuuuuuuuunnny"));
-//			System.out.println("positive: " + positiveTable.containsKey("a fuuuuuuuuunnny"));
-//		}
-			
-//		stopGramFreeSet_neutral.forEach(gram -> {
-//			if (!(positiveTable.containsKey(gram.ngram) && negativeTable.containsKey(gram.ngram))) {
-//				System.out.println("UNIQUE: " + gram.ngram);
-//			}
-//		});
 
-		
 		print2(uniqueToPositive, "stop-gram-free unique to positive");
 		print2(uniqueToNeutral, "stop-gram-free unique to neutral");
 		print2(uniqueToNegative, "stop-gram-free unique to negative");
 		
-//		print(sortedPositive, positiveTable, "positive");
-//		print(sortedNeutral, neutralTable, "neutral");
-//		print(sortedNegative, negativeTable, "negative");
+		
+		
+		
+		
+		DatasetWriter writer = new DatasetWriter();
+		try {
+			writer.writeFile(uniqueToPositive, "datasets/ngrams/OrderedUniquePositive_unigrams.txt");
+			writer.writeFile(uniqueToNeutral, "datasets/ngrams/OrderedUniqueNeutral_unigrams.txt");
+			writer.writeFile(uniqueToNegative, "datasets/ngrams/OrderedUniqueNegative_unigrams.txt");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 	
@@ -146,9 +150,6 @@ public class NGramBuilder {
 				format.format(100-100*((double)uniqueToNegative.size() / negative.size())) +
 				"%, smaller than negative-set, from " + negative.size() + " to " + uniqueToNegative.size() + ".\n");
 	}
-	
-	
-
 
 	private ArrayList<Gram> getFrequentNGrams(HashMap<String, Gram> table) {
 		ArrayList<Gram> listFrequent = new ArrayList<Gram>(table.size());
@@ -174,7 +175,8 @@ public class NGramBuilder {
 				if (w instanceof URL) return;
 				if (w instanceof Target) return;
 				if (w instanceof Hashtag) return;
-				NGrammableList.add((w.getProcessedText() == null)? w.getSourceText() : w.getProcessedText());
+				NGrammableList.add((w.getProcessedText() == null || w.getProcessedText().length() == 0)? 
+						w.getSourceText() : w.getProcessedText());
 			});
 			
 			NGram currentNGram = new NGram(n, NGrammableList);
@@ -188,8 +190,6 @@ public class NGramBuilder {
 			tables[i].forEach((k, v) -> {
 				tables[0].merge(k, v, (g1, g2) -> { g1.occurrences += g2.occurrences; return g1; });
 			});
-			// release some memory by setting all other hashmaps to null?
-			tables[i] = null;
 		}
 		
 		// recalculate probabilities
@@ -201,8 +201,13 @@ public class NGramBuilder {
 		return tables[0];
 	}
 	
-
-
+	private void printList(ArrayList<String> list) {
+		System.out.print("List of words: $");
+		for (int i=0; i<list.size()-1; i++) {
+			System.out.print(list.get(i) + " ");
+		}
+		System.out.print(list.get(list.size()-1) + "$");
+	}
 	
 	
 	private void print(ArrayList<Gram> list, HashMap<String, Gram> table, String info) {

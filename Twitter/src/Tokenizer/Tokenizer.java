@@ -29,8 +29,9 @@ public class Tokenizer {
 	public void tokenizeTweet() {
 		// clean strings of new line chars and stuff
 		cleanSourceText = sourceText.replaceAll("(\\n)+", " ");
+		cleanSourceText = sourceText.trim().replaceAll(" +", " ");
 		
-		// replace emojis encoded as ?, as emoji code-points
+		// replace emojis encoded as a series of '?', as emoji code-points
 		findEmojis();
 		
 		// split by space and init the

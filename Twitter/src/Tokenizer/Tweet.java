@@ -3,11 +3,20 @@ package Tokenizer;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import AbstractWordClasses.AbsMeasurableWord;
 import AbstractWordClasses.AbsWord;
+import Dictionaries.AbsDictionary;
+import Dictionaries.DictionaryCollection;
+import Dictionaries.IDictionary;
+import Dictionaries.NGramDictionary;
 import Words.Emoji;
+import Words.Hashtag;
 import Words.NegationWord;
+import Words.Target;
+import Words.URL;
+import Words.NGramEntry;
 
 
 public class Tweet {
@@ -32,6 +41,8 @@ public class Tweet {
 	
 	// not used atm
 	private int sentiment;
+	
+	private int[] ngramFeatures;
 	
 	public Tweet(String sourceText, String username) {
 		this.sourceText = sourceText;
@@ -81,6 +92,44 @@ public class Tweet {
 		
 		test();
 		doSomeStatistics();
+		buildNGramFeatures();
+	}
+	
+	private void buildNGramFeatures() {
+		ArrayList<String> ngramWords = new ArrayList<String>(words.size());
+		words.forEach(w -> {
+			if (w instanceof Emoji) return;
+			if (w instanceof URL) return;
+			if (w instanceof Target) return;
+			if (w instanceof Hashtag) return;
+			ngramWords.add((w.getProcessedText() == null || w.getProcessedText().length() == 0)? 
+					w.getSourceText() : w.getProcessedText());
+		});
+		
+		NGramDictionary dictionary = (NGramDictionary) DictionaryCollection.getDictionaryCollection().getNGramDictionary();
+		
+		ArrayList<Integer> featureSeq = new ArrayList<Integer>(90);
+		
+		for (int i=1; i<4; i++) {
+			NGram ngram = new NGram(i, ngramWords);
+			ArrayList<Gram> list = ngram.getListOfNGrams();
+			list.forEach(g -> {
+				System.out.println(" -> checking for: " + g.ngram);
+				if (dictionary.contains(g.ngram)) {
+					NGramEntry entry = (NGramEntry) dictionary.getEntry(g.ngram);
+					featureSeq.add(entry.getSequenceNumber());
+				}
+			});
+		}
+		
+		int[] featureList = new int[90];
+		for (int i=0; i<featureList.length; i++) {
+			if (featureSeq.contains(new Integer(i)))
+				featureList[i] = 1;
+			else
+				featureList[i] = 0;
+		}
+		this.ngramFeatures = featureList;
 	}
 	
 	private void doSomeStatistics() {
@@ -187,10 +236,20 @@ public class Tweet {
 		s += "\t|-> Num of pos words: " + numOfPositiveWords + "\n";
 		s += "\t|-> Sum of neg words: " + format.format(sumOfNegativeWords) + "\n";
 		s += "\t|-> Sum of neu words: " + format.format(sumOfNeutralWords) + "\n";
-		s += "\t\\-> Sum of pos words: " + format.format(sumOfPositiveWords) + "\n";
+		s += "\t|-> Sum of pos words: " + format.format(sumOfPositiveWords) + "\n";
+		s += "\t\\-> NGram features:  " + getNGramFeatures();
 		
 		s += "---------------------------\n";
 		
+		return s;
+	}
+	
+	public String getNGramFeatures() {
+		String s = "";
+		for (int i=0; i<ngramFeatures.length-1; i++) {
+			s += ngramFeatures[i] + ",";
+		}
+		s+= ngramFeatures[ngramFeatures.length - 1];
 		return s;
 	}
 	
