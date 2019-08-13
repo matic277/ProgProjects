@@ -11,6 +11,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
 
 import Tokenizer.Tweet;
+import datasetCollector2.Listener;
+import twitter4j.FilterQuery;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -33,7 +35,7 @@ public class StreamHandler {
 	
 	public ConcurrentLinkedDeque<Tweet> tweets = new ConcurrentLinkedDeque<Tweet>();
 	public ConcurrentLinkedDeque<Tweet> processedTweets = new ConcurrentLinkedDeque<Tweet>();
-	
+
 	public StreamHandler() {
 		// create a pool with max 4 threads
 		// executing at once, this can and
@@ -60,16 +62,17 @@ public class StreamHandler {
         // executor = Executors.newWorkStealingPool();
         // queue_size = new AtomicInteger(0);
         
-        listener = new StreamListener(this);
+//        listener = new StreamListener(this);
+        Listener listener = new Listener();
         twitterStream.addListener(listener);
         
         // query filter
-        // FilterQuery tweetFilterQuery = new FilterQuery();
-        // tweetFilterQuery.track(new String[]{"work"}); // OR on keywords
+         FilterQuery tweetFilterQuery = new FilterQuery();
+         tweetFilterQuery.track(new String[]{":)", ":("}); // OR on keywords
         
         // note that not all tweets have location metadata set.
-        // twitterStream.filter(tweetFilterQuery);
-        twitterStream.sample();
+        twitterStream.filter(tweetFilterQuery);
+//        twitterStream.sample();
         
 	}
 	

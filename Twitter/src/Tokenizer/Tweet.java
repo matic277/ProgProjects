@@ -83,8 +83,6 @@ public class Tweet {
 	
 	public void processTweet() {
 		Tokenizer t = new Tokenizer(sourceText);
-//		System.out.println("------------------------");
-//		System.out.println(username);
 		t.tokenizeTweet();
 		
 		words = t.getTokens();
@@ -107,14 +105,13 @@ public class Tweet {
 		});
 		
 		NGramDictionary dictionary = (NGramDictionary) DictionaryCollection.getDictionaryCollection().getNGramDictionary();
-		
-		ArrayList<Integer> featureSeq = new ArrayList<Integer>(90);
+		int numberOfFeatures = dictionary.getHashmap().size();
+		ArrayList<Integer> featureSeq = new ArrayList<Integer>(numberOfFeatures);
 		
 		for (int i=1; i<4; i++) {
 			NGram ngram = new NGram(i, ngramWords);
 			ArrayList<Gram> list = ngram.getListOfNGrams();
 			list.forEach(g -> {
-				System.out.println(" -> checking for: " + g.ngram);
 				if (dictionary.contains(g.ngram)) {
 					NGramEntry entry = (NGramEntry) dictionary.getEntry(g.ngram);
 					featureSeq.add(entry.getSequenceNumber());
@@ -122,7 +119,7 @@ public class Tweet {
 			});
 		}
 		
-		int[] featureList = new int[90];
+		int[] featureList = new int[numberOfFeatures];
 		for (int i=0; i<featureList.length; i++) {
 			if (featureSeq.contains(new Integer(i)))
 				featureList[i] = 1;

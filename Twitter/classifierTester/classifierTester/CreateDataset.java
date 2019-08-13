@@ -22,20 +22,12 @@ public class CreateDataset {
 		readDataset();
 		processDataset();
 		saveResults();
-		
-		DecimalFormat format = new DecimalFormat("#.####");
-		DecimalFormatSymbols s = new DecimalFormatSymbols();
-		s.setDecimalSeparator('.');
-		format.setDecimalFormatSymbols(s);
-		double d = 0.241555;
-		System.out.println(format.format(d));
-		
 	}
 	
 	public static void saveResults() {
 		System.out.print("Writing file... ");
 		
-		File file = new File("C:/Users/V2/Desktop/data/output.txt");
+		File file = new File("output/output.txt");
 		BufferedWriter writer = null;
 		
 		try {
@@ -64,7 +56,7 @@ public class CreateDataset {
 			Tweet pt = new Tweet(t.text, null);
 			pt.processTweet();
 			String s = "";
-			s += pt.getStatistics();
+			s += pt.getStatistics() + "," + pt.getNGramFeatures();
 			s+= "," + t.sentiment;
 			ptweets.add(s);
 		});

@@ -1,4 +1,4 @@
-package datasetGetter;
+package datasetCollector1;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,6 +18,12 @@ import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 
+/*
+ * Collects all tweets using twitter API, from 
+ * fil that Aaarpov shared, which only contain
+ * sentiment info and tweetID for every instance.
+ * Writes a file, contatning sentiment,tweetID,tweet.
+ */
 public class GetTextByIDs {
 	
 	static String relativeFilePath_apiKeys = "apikeys/keys.txt";

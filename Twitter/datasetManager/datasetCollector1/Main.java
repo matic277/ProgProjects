@@ -1,4 +1,4 @@
-package datasetGetter;
+package datasetCollector1;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -9,6 +9,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
+
+/*
+ * Constructs an emoji dictionary from a file
+ * that contains emoji info. Keeps only relevant stuff,
+ * like emoji unicode codepoints, sentiment values and 
+ * short descriptions. Source file does not exist anymore
+ * and is replaced by the output of this program.
+ */
 public class Main {
 	
 	// constructing the emoji dictionary

@@ -18,34 +18,6 @@ public class Logger{
 		System.out.println("\nLogger created, number of tweets waiting to log: " + tweets.length);
 	}
 	
-	public void saveResults() {
-		System.out.print("\t|-> Logger writing file: '"+relativePath_OutputFile+"'... ");
-		
-		File file = new File(relativePath_OutputFile);
-		BufferedWriter writer = null;
-		
-		// this is only appending text to the file
-		// no need to worry about overwriting
-		try {
-			writer = new BufferedWriter(new FileWriter(file, true));
-			
-			for (int i=0; i<tweets.length; i++) {
-				writer.write("Tweet no."+i);
-				writer.newLine();
-				writer.write(tweets[i].toString());
-				writer.newLine();
-			}
-			writer.flush();
-			writer.close();
-			
-		} catch (IOException e) {
-			System.out.println("Error at writing file!\n");
-			e.printStackTrace();
-		}
-
-		System.out.println("File written.");
-	}
-	
 	public void saveResultsAsCsv() {
 		System.out.print("\t|-> Logger writing file: '"+relativePath_OutputFile2+"'... ");
 		

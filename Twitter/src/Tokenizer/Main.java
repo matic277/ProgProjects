@@ -62,10 +62,10 @@ public class Main {
 		
 		
 		
-		String tweet = "my friend thank you nice real estate";
+		String tweet = "my friend   thank you nice real \n estate";
 		Tweet t = new Tweet(tweet, "TEST_TWEET");
 		t.processTweet();
-		System.out.println(t.getNGramFeatures());
+		System.out.println(t.cleanSource);
 		
 //		NGram n = new NGram(1, tweet.split(" "));
 //		System.out.println("----");

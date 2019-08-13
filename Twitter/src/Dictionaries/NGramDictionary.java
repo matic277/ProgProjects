@@ -38,7 +38,7 @@ public class NGramDictionary extends AbsDictionary {
 		"datasets/ngrams/OrderedUniqueNegative_trigrams.txt"
 	};
 	
-	final int linesToRead = 3;
+	final int linesToRead = 10;
 	final int hashtableSize = linesToRead * filePaths.length;
 	
 	public NGramDictionary() throws IOException {
@@ -78,18 +78,15 @@ public class NGramDictionary extends AbsDictionary {
 		}
 		
 		if (DictionaryCollection.printingMode) System.out.println("\t|-> Done.");
-		if (DictionaryCollection.printingMode) System.out.println("\t|-> Number of entries: " + hashTable.size());
+		if (DictionaryCollection.printingMode) System.out.println("\t\\-> Number of entries: " + hashTable.size());
 		
-		for (AbsWord g : hashTable.values()) {
-			System.out.println(g.toString());
-		}
+//		for (AbsWord g : hashTable.values()) {
+//			System.out.println(g.toString());
+//		}
 		
 	}
 
 	@Override
-	public void processLine(String line) {
-		
-
-	}
+	public void processLine(String line) { }
 
 }
