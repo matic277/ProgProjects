@@ -18,20 +18,20 @@ public class NGramBuilder {
 	
 	ArrayList<String> positiveTweets;
 	ArrayList<String> negativeTweets;
-	ArrayList<String> neutralTweets;
+	//ArrayList<String> neutralTweets;
 	
 	HashMap<String, Gram> positiveTable;
 	HashMap<String, Gram> negativeTable;
-	HashMap<String, Gram> neutralTable;
+//	HashMap<String, Gram> neutralTable;
 	
 	final int printingSize = 10;	// how many lines to print when printing frequent ngrams, -1 prints all
 	
 	ArrayList<Gram> sortedPositive;
-	ArrayList<Gram> sortedNeutral;
+//	ArrayList<Gram> sortedNeutral;
 	ArrayList<Gram> sortedNegative;
 	
 	ArrayList<Gram> uniqueToPositive;
-	ArrayList<Gram> uniqueToNeutral;
+//	ArrayList<Gram> uniqueToNeutral;
 	ArrayList<Gram> uniqueToNegative;
 	
 	public NGramBuilder(int n) {
@@ -40,22 +40,22 @@ public class NGramBuilder {
 		DatasetReader reader = new DatasetReader();
 		positiveTweets = reader.positiveTweets;
 		negativeTweets = reader.negativeTweets;
-		neutralTweets = reader.neutralTweets;
+//		neutralTweets = reader.neutralTweets;
 		
 		positiveTable = buildNGramTable(positiveTweets);
 		negativeTable = buildNGramTable(negativeTweets);
-		neutralTable = buildNGramTable(neutralTweets);
+//		neutralTable = buildNGramTable(neutralTweets);
 		
 		sortedPositive = getFrequentNGrams(positiveTable);
-		sortedNeutral = getFrequentNGrams(neutralTable);
+//		sortedNeutral = getFrequentNGrams(neutralTable);
 		sortedNegative = getFrequentNGrams(negativeTable);
 		
 		ArrayList<Gram> stopGramFreeSet_positive = excludeStopNgrams(sortedPositive);
-		ArrayList<Gram> stopGramFreeSet_neutral = excludeStopNgrams(sortedNeutral);
+//		ArrayList<Gram> stopGramFreeSet_neutral = excludeStopNgrams(sortedNeutral);
 		ArrayList<Gram> stopGramFreeSet_negative = excludeStopNgrams(sortedNegative);
 		
 		print2(stopGramFreeSet_positive, "stop-gram-free positive");
-		print2(stopGramFreeSet_neutral, "stop-gram-free neutral");
+//		print2(stopGramFreeSet_neutral, "stop-gram-free neutral");
 		print2(stopGramFreeSet_negative, "stop-gram-free negative");
 		
 //		print(sortedPositive, positiveTable, "positive");
@@ -64,12 +64,12 @@ public class NGramBuilder {
 		
 		populateDatasetUniqueNGrams(
 			stopGramFreeSet_positive,
-			stopGramFreeSet_neutral,
+//			stopGramFreeSet_neutral,
 			stopGramFreeSet_negative
 		);
 
 		print2(uniqueToPositive, "stop-gram-free unique to positive");
-		print2(uniqueToNeutral, "stop-gram-free unique to neutral");
+//		print2(uniqueToNeutral, "stop-gram-free unique to neutral");
 		print2(uniqueToNegative, "stop-gram-free unique to negative");
 		
 		
@@ -78,9 +78,9 @@ public class NGramBuilder {
 		
 		DatasetWriter writer = new DatasetWriter();
 		try {
-			writer.writeFile(uniqueToPositive, "datasets/ngrams/OrderedUniquePositive_unigrams.txt");
-			writer.writeFile(uniqueToNeutral, "datasets/ngrams/OrderedUniqueNeutral_unigrams.txt");
-			writer.writeFile(uniqueToNegative, "datasets/ngrams/OrderedUniqueNegative_unigrams.txt");
+			writer.writeFile(uniqueToPositive, "datasets/ngrams2/OrderedUniquePositive_trigrams.txt");
+//			writer.writeFile(uniqueToNeutral, "datasets/ngrams/OrderedUniqueNeutral_unigrams.txt");
+			writer.writeFile(uniqueToNegative, "datasets/ngrams2/OrderedUniqueNegative_trigrams.txt");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -122,30 +122,30 @@ public class NGramBuilder {
 		return subSet;
 	}
 	
-	private void populateDatasetUniqueNGrams(ArrayList<Gram> positive, ArrayList<Gram> neutral, ArrayList<Gram> negative) {
+	private void populateDatasetUniqueNGrams(ArrayList<Gram> positive, /*ArrayList<Gram> neutral,*/ ArrayList<Gram> negative) {
 		uniqueToPositive = new ArrayList<Gram>(positive.size());
-		uniqueToNeutral = new ArrayList<Gram>(neutral.size());
+//		uniqueToNeutral = new ArrayList<Gram>(neutral.size());
 		uniqueToNegative = new ArrayList<Gram>(negative.size());
 		// check against entries in hash-tables
 		positive.forEach(gram -> {
-			if (!neutralTable.containsKey(gram.ngram) && !negativeTable.containsKey(gram.ngram))
+			if (/*!neutralTable.containsKey(gram.ngram) && */!negativeTable.containsKey(gram.ngram))
 				uniqueToPositive.add(gram);
 		});
-		neutral.forEach(gram -> {
-			if (!positiveTable.containsKey(gram.ngram) && !negativeTable.containsKey(gram.ngram))
-				uniqueToNeutral.add(gram);
-		});
+//		neutral.forEach(gram -> {
+//			if (!positiveTable.containsKey(gram.ngram) && !negativeTable.containsKey(gram.ngram))
+//				uniqueToNeutral.add(gram);
+//		});
 		negative.forEach(gram -> {
-			if (!neutralTable.containsKey(gram.ngram) && !positiveTable.containsKey(gram.ngram))
+			if (/*!neutralTable.containsKey(gram.ngram) &&*/ !positiveTable.containsKey(gram.ngram))
 				uniqueToNegative.add(gram);
 		});
 		DecimalFormat format = new DecimalFormat("#.##");
 		System.out.println("Unique-to-positive-set is " + 
 				format.format(100-100*((double)uniqueToPositive.size() / positive.size())) +
 				"%, smaller than positive-set, from " + positive.size() + " to " + uniqueToPositive.size() + ".\n");
-		System.out.println("Unique-to-neutral-set is " + 
-				format.format(100-100*((double)uniqueToNeutral.size() / neutral.size())) +
-				"%, smaller than neutral-set, from " + neutral.size() + " to " + uniqueToNeutral.size() + ".\n");
+//		System.out.println("Unique-to-neutral-set is " + 
+//				format.format(100-100*((double)uniqueToNeutral.size() / neutral.size())) +
+//				"%, smaller than neutral-set, from " + neutral.size() + " to " + uniqueToNeutral.size() + ".\n");
 		System.out.println("Unique-to-negative-set is " + 
 				format.format(100-100*((double)uniqueToNegative.size() / negative.size())) +
 				"%, smaller than negative-set, from " + negative.size() + " to " + uniqueToNegative.size() + ".\n");

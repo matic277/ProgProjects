@@ -67,16 +67,16 @@ public class Tokenizer {
         }
 
         // change these to normal characters:
-        // U+8217 - RIGHT SINGLE QUOTATION MARK
         // U+201C - LEFT DOUBLE QUOTATION MARK
         // U+201D - RIGHT DOUBLE QUOTATION MARK
         // U+2018 - LEFT SINGLE QUOTATION MARK
+        // U+2019 - RIGHT SINGLE QUOTATION MARK
         // (0x instead od U+)
         
-        str = str.replace("0x8217", "'");
-        str = str.replace("0x201C", "'");
+        str = str.replace("0x201C", "\"");
         str = str.replace("0x201D", "\"");
-        str = str.replace("0x2018", "\"");
+        str = str.replace("0x2018", "'");
+        str = str.replace("0x2019", "'");
         
 //        System.out.println("-----OUTPUT: ");
 //        

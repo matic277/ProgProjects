@@ -8,7 +8,8 @@ import java.util.stream.Stream;
 
 public class DatasetReader {
 	
-	String relativeDatasetPath = "datasets/processedDatasetEnglishTweetsOnly.txt";
+	String relativeDatasetPath = //"datasets/processedDatasetEnglishTweetsOnly.txt";
+			"output/tweets.txt";
 	ArrayList<String> positiveTweets;
 	ArrayList<String> neutralTweets;
 	ArrayList<String> negativeTweets;	
