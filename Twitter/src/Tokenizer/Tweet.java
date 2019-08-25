@@ -186,15 +186,46 @@ public class Tweet {
 				sentiment += mw.getPleasantness();
 			}
 		}
-
+	
+		// 3 way
+		if (sentiment >= positiveThreshold) return 1;
+		else if (sentiment <= negativeThreshold) return -1;
+		else return 0;
 		
-		
+		// 2 way
+//		return (sentiment > threshold)? 1 : -1;
+	}
+	public static double positiveThreshold = 0.1;
+	public static double negativeThreshold = -0.55;
+	public static double threshold = -3;
+	
+	public int getSentimentThreeWay() {
+		double sentiment = 0;
+		AbsWord w;
+		for (int i=0; i<words.size(); i++) {
+			w = words.get(i);
+			if (w instanceof AbsMeasurableWord) {
+				AbsMeasurableWord mw = (AbsMeasurableWord) w;
+				sentiment += mw.getPleasantness();
+			}
+		}
 		if (sentiment >= positiveThreshold) return 1;
 		else if (sentiment <= negativeThreshold) return -1;
 		else return 0;
 	}
-	public static double positiveThreshold = 0.1;
-	public static double negativeThreshold = -0.55;
+	
+	public int getSentimentTwoWay() {
+		double sentiment = 0;
+		AbsWord w;
+		for (int i=0; i<words.size(); i++) {
+			w = words.get(i);
+			if (w instanceof AbsMeasurableWord) {
+				AbsMeasurableWord mw = (AbsMeasurableWord) w;
+				sentiment += mw.getPleasantness();
+			}
+		}
+		return (sentiment > threshold)? 1 : -1;
+	}
 	
 	public String getSourceText() {
 		return sourceText;
