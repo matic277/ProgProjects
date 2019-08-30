@@ -39,8 +39,7 @@ public class Tweet {
 	private double sumOfNeutralWords = 0;
 	private double sumOfPositiveWords = 0;
 	
-	// not used atm
-	private int sentiment;
+	private double sentimentValue;
 	
 	private int[] ngramFeatures;
 	
@@ -91,6 +90,22 @@ public class Tweet {
 		test();
 		doSomeStatistics();
 		buildNGramFeatures();
+		setSentimentValue();
+	}
+	
+	// this method and getSentiment() are badly "designed"
+	// TODO fix
+	private void setSentimentValue() {
+		double sentiment = 0;
+		AbsWord w;
+		for (int i=0; i<words.size(); i++) {
+			w = words.get(i);
+			if (w instanceof AbsMeasurableWord) {
+				AbsMeasurableWord mw = (AbsMeasurableWord) w;
+				sentiment += mw.getPleasantness();
+			}
+		}
+		sentimentValue = sentiment;
 	}
 	
 	private void buildNGramFeatures() {
@@ -197,7 +212,7 @@ public class Tweet {
 	}
 	public static double positiveThreshold = 0.1;
 	public static double negativeThreshold = -0.55;
-	public static double threshold = -3;
+	public static double threshold = 0.5;
 	
 	public int getSentimentThreeWay() {
 		double sentiment = 0;
@@ -237,6 +252,10 @@ public class Tweet {
 	
 	public ArrayList<AbsWord> getTokens() {
 		return this.words;
+	}
+	
+	public double getSentimentValue() {
+		return this.sentimentValue;
 	}
 	
 	@Override

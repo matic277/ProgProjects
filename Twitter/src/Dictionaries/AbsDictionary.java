@@ -32,8 +32,7 @@ public abstract class AbsDictionary implements IDictionary {
 			);
 		}
 		if (DictionaryCollection.printingMode) System.out.println("\t|-> Done.");
-		if (DictionaryCollection.printingMode) System.out.println("\t|-> Number of entries: " + hashTable.size());
-		
+		if (DictionaryCollection.printingMode) System.out.println("\t|-> Number of entries: " + hashTable.size());	
 	}
 	
 	public abstract void processLine(String line);

@@ -128,8 +128,6 @@ public class Tokenizer {
 			String checkToken2 = cleanToken2(rawToken).toLowerCase(); 	// with - 
 			
 			// SMILEY
-			// first, check for smileys since
-			// they have the special characters
 			if (Smiley.isType(rawToken)) {
 				words.add(new Smiley(rawToken));
 			}

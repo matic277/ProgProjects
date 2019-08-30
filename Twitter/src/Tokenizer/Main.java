@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import AbstractWordClasses.AbsWord;
 import Dictionaries.DictionaryCollection;
 import StreamConsumer.StreamHandler;
+import TreeDrawer.Frame;
+import Window.MainWindow;
 import ngramStatistics.NGramBuilder;
 
 public class Main {
@@ -53,19 +55,21 @@ public class Main {
 //		}.start();
 
 		
-		test();
+//		test();
+		
+		MainWindow mw = new MainWindow();
 
 	}
-	
+
 	public static void test() {
 //		NGramBuilder nb = new NGramBuilder(2);
 		
+//		Frame f = new Frame(null);
 		
-		
-		String tweet = "my friend   thank you nice real \n estate";
-		Tweet t = new Tweet(tweet, "TEST_TWEET");
-		t.processTweet();
-		System.out.println(t.cleanSource);
+//		String tweet = "my friend   thank you nice real \n estate";
+//		Tweet t = new Tweet(tweet, "TEST_TWEET");
+//		t.processTweet();
+//		System.out.println(t.cleanSource);
 		
 //		NGram n = new NGram(1, tweet.split(" "));
 //		System.out.println("----");

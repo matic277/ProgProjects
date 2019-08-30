@@ -23,7 +23,7 @@ public class Hashtag extends AbsMeasurableWord {
 		// then find the most polarizing word and return its value??
 		// (return the value of the most positive word or the most negative word)
 		// TODO: implement something
-		
+		this.pleasantness = 0;
 	}
 	
 	public static boolean isType(String s) {
@@ -34,6 +34,10 @@ public class Hashtag extends AbsMeasurableWord {
 	@Override
 	public boolean checkIntegrity() {
 		return true;
+	}
+	
+	public String[] getListOfWords() {
+		return words;
 	}
 	
 	@Override
