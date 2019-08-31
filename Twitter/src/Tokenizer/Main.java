@@ -13,7 +13,6 @@ import ngramStatistics.NGramBuilder;
 public class Main {
 	
 	public static void main(String[] args) throws IOException {
-		DictionaryCollection.getDictionaryCollection();
 		// build dictionaries first, not necessary
 		// but when tweets start streaming in, its
 		// nice to have them already built

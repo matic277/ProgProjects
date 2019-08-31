@@ -57,6 +57,8 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	QueryWindow queryWindow;
 	DictionaryWindow dictionaryWindow;
 	
+	ArrayList<String> queryFilters;
+	
 	Color labelColor = Color.white;
 	Color bgColor = new Color(214,217,223);
 	
@@ -186,7 +188,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		// query button
 		Button b1 = new Button("Query");
 		b1.addActionListener(this);
-		b1.setAction(() -> queryWindow = new QueryWindow(this));
+		b1.setAction(() -> queryWindow = new QueryWindow(this, queryFilters));
 		buttons.set(0, b1);
 		
 		// dictionaries
@@ -284,7 +286,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 				// bound
 				//g.fillRect(movableBoundBounds.x, movableBoundBounds.y, movableBoundBounds.width, movableBoundBounds.height);
 				
-				super.repaint(1000/30);
+				super.repaint(1000/3);
 			}
 		};
 		this.add(panel);
@@ -318,8 +320,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		IComponentFunction component = (IComponentFunction) event.getSource();
-		component.performAction();
+		((IComponentFunction) event.getSource()).performAction();
 	}
 
 	@Override
@@ -359,13 +360,16 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setQueryList(ArrayList<String> list) {
+		queryFilters = (list != null)? list : null;
 	}
 }
 
