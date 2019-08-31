@@ -5,6 +5,8 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import common.FileReader;
+
 public class Main {
 	
 	public static void main(String[] args) {
@@ -13,17 +15,17 @@ public class Main {
 		int ngramSize = 3;
 		int nthreads = 4;
 		
+		// https://sherlock-holm.es/stories/html/advs.html#Chapter-1
+		String holeslong = "resources/holmes_5mb.txt";
+		String holmesshort = "resources/holmes.txt";
 		
-		long readTime = System.currentTimeMillis();
-		Text tx = new Text();
-		System.out.println("File '"+tx.relativeFilePath+"' read in: " + (System.currentTimeMillis() - readTime)/1000.0 + "s");
-
-		ArrayList<String> words = tx.getWords();
+		FileReader fr = new FileReader(holeslong);
+		ArrayList<String> words = fr.getWords();
 		
-		System.out.println("Ammount of words (tokenized by spaces and newlines): " + words.size());
+		System.out.println("Ammount of words: " + words.size());
 		
 		long ngramTime = System.currentTimeMillis();
-		System.out.println("\nProcessing text for " + ngramSize + "-grams:");
+		System.out.println("Processing text for " + ngramSize + "-grams:");
 
 		// ---
 		Worker[] workers = initWorkers(ngramSize, nthreads, words);
@@ -34,10 +36,11 @@ public class Main {
 		printStats(list);
 		
 		
-		System.out.println("\t|-> Processing ngrams took(with sorting by ngram frequency) " + ((System.currentTimeMillis() - ngramTime)/1000.0) + "s");
+		System.out.println("\t|-> Processing ngrams took(with sorting by ngram frequency) " 
+				+ ((System.currentTimeMillis() - ngramTime)/1000.0) + "s");
 		
-		System.out.println("\nTotal time spent: " + ((System.currentTimeMillis() - totalTime)/1000.0) + "s");
-		
+		System.out.println("\nTotal time spent: " 
+				+ ((System.currentTimeMillis() - totalTime)/1000.0) + "s");	
 		
 		double sum = 0;
 		for (Gram g : list) sum += g.probability;
@@ -78,13 +81,8 @@ public class Main {
 		}
 		System.out.print("\t|-> Threads started and running...");
 		for (int i=0; i<threads.length; i++) threads[i].start();
-		for (int i=0; i<threads.length; i++) {
-			try {
-				threads[i].join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		for (int i=0; i<threads.length; i++) 
+			try { threads[i].join(); } catch (InterruptedException e) { e.printStackTrace(); }
 		System.out.println(" done in: " + ((System.currentTimeMillis() - t1)/1000.0) + "s");
 	}
 

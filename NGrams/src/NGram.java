@@ -1,8 +1,11 @@
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NGram {
+	
+	// SINGLE THREADED
 	
 	int n;
 	
@@ -14,18 +17,23 @@ public class NGram {
 	HashMap<String, Gram> table;
 	ArrayList<Gram> list;
 	
-	public NGram(int n, String[] words) {
-		this.wordsarr = words;
+	boolean print = true;
+	long t;
+	
+	public NGram(int n, String[] words, boolean printingOption) {
 		this.n = n;
+		this.print = printingOption;
+		this.wordsarr = words;
 		this.table = new HashMap<String, Gram>(words.length);
 		this.list = new ArrayList<Gram>(words.length);
 		this.numberOfGrams = words.length - n;
 		
 		computeNGramsFromStringArray();
 	}
-	public NGram(int n, ArrayList<String> words) {
-		this.wordslist = words;
+	public NGram(int n, ArrayList<String> words,  boolean printingOption) {
 		this.n = n;
+		this.print = printingOption;
+		this.wordslist = words;
 		this.table = new HashMap<String, Gram>(words.size());
 		this.list = new ArrayList<Gram>(words.size());
 		this.numberOfGrams = words.size() - n;
@@ -34,6 +42,11 @@ public class NGram {
 	}
 	
 	public void computeNGramsFromArrayList() {
+		if (print) {
+			System.out.println("Creating " + n + "-grams...");
+			t = System.currentTimeMillis();
+		}
+		
 		for (int i=0; i<wordslist.size()-n; i++) {
 			String ngram = "";
 			for (int j=0; j<n-1; j++) {
@@ -43,17 +56,26 @@ public class NGram {
 			
 			Gram gram = new Gram(ngram);
 			
-			if (table.containsKey(ngram)) {
-				table.get(ngram).occurrences++;
-			} else {
-				table.put(ngram, gram);
-			}
+			table.computeIfPresent(ngram, (k, v) -> {v.occurrences++; return v;});
+			table.putIfAbsent(ngram, gram);
 		}
 		
-//		orderAndPrintProbabilities();
+		if (print) {
+			t = System.currentTimeMillis() - t;
+			System.out.println("\t|-> Time spent: " + t + "ms");
+			System.out.println("\t|-> Number of unique n-grams: " + table.size());
+		}
+		
+		calculateProbabilities();
+		sort();
 	}
 	
 	public void computeNGramsFromStringArray() {
+		if (print) {
+			System.out.println("Creating " + n + "-grams...");
+			t = System.currentTimeMillis();
+		}
+
 		for (int i=0; i<wordsarr.length-n; i++) {
 			String ngram = "";
 			for (int j=0; j<n-1; j++) {
@@ -63,39 +85,68 @@ public class NGram {
 			
 			Gram gram = new Gram(ngram);
 			
-			if (table.containsKey(ngram)) {
-				table.get(ngram).occurrences++;
-			} else {
-				table.put(ngram, gram);
-			}
+			table.computeIfPresent(ngram, (k, v) -> {v.occurrences++; return v;});
+			table.putIfAbsent(ngram, gram);
 		}
+		
+		if (print) {
+			t = System.currentTimeMillis() - t;
+			System.out.println("\t|-> Time spent: " + t + "ms");
+			System.out.println("\t|-> Number of unique n-grams: " + table.size());
+		}
+		
 		calculateProbabilities();
-//		orderAndPrintProbabilities();
+		sort();
 	}
 
 	private void calculateProbabilities() {
+		if (print) {
+			System.out.print("\t|-> Calculating probabilities... ");
+			t = System.currentTimeMillis();
+		}
+		
 		// loop through table entries and set probability
 		// and add them to list (this could be done better?)
 		table.forEach((key, value) -> {
 			value.probability = (value.occurrences / numberOfGrams) * 100.0;
 			list.add(value);
 		});
+	
+		if (print) {
+			t = System.currentTimeMillis() - t;
+			System.out.println(" done in: " + t + "ms");	
+		}
 	}
 	
-	private void orderAndPrintProbabilities() {
+	private void sort() {
+		if (print) {
+			System.out.print("\t|-> Sorting by occurrences... ");
+			t = System.currentTimeMillis();
+		}
+		
 		// sort list based on occurrences (or probabilities)
 		list.sort((g1, g2) -> {
 			return Double.compare(g2.occurrences, g1.occurrences);
 		});
 		
-		System.out.println("\nTop 20 most frequent " + n + "-grams:");
-		for (int i=0; i<20; i++) {
-			System.out.println(list.get(i).toString());
+		if (print) {
+			t = System.currentTimeMillis() - t;
+			System.out.println(" done in: " + t + "ms");	
+		}
+	}
+	
+	public void printCommon(int n) {
+		
+		System.out.println("\nTop " + n + " most frequent " + this.n + "-grams:");
+		System.out.println("\t|-> [n-gram, occurrences, probability]");
+		for (int i=0; i<n; i++) {
+			System.out.println("\t|-> " + list.get(i).toString());
 		}
 		
-		System.out.println("\nTop 20 least frequent " + n + "-grams:");
-		for (int i=list.size()-20; i<list.size(); i++) {
-			System.out.println(list.get(i).toString());
+		System.out.println("\nTop " + n + " least frequent " + this.n + "-grams:");
+		System.out.println("\t|-> [n-gram, occurrences, probability]");
+		for (int i=list.size()-1; i>list.size()-n; i--) {
+			System.out.println("\t|-> " + list.get(i).toString());
 		}
 	}
 }

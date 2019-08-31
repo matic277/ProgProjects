@@ -7,6 +7,8 @@ import java.util.function.Predicate;
 
 public class NGram {
 	
+	// MULTI THREAED
+	
 	int n; // ngram size
 	int start, end;
 	
@@ -38,49 +40,10 @@ public class NGram {
 			ngram += wordslist.get(i+n-1);
 			
 			Gram gram = new Gram(ngram);
-			
-//			if (table.containsKey(ngram)) {
-//				table.get(ngram).occurrences++;
-//			} else {
-//				table.put(ngram, gram);
-//			}
+
 			table.computeIfPresent(ngram, (k, v) -> {v.occurrences++; return v;});
 			table.putIfAbsent(ngram, gram);
 		}
-		// no need to calculate probabilities or
-		// sort, do that when combining these tables
-		// in main
-		
-		//calculateProbabilities();
-		//orderAndPrintProbabilities();
-	}
-
-//	private void calculateProbabilities() {
-//		// loop through table entries and set probability
-//		// and add them to list (this could be done better?)
-//		table.forEach((key, value) -> {
-//			value.probability = (value.occurrences / numberOfGrams) * 100.0;
-//			list.add(value);
-//		});
-//	}
-
-	private void orderAndPrintProbabilities() {
-		// sort list based on occurrences (or probabilities)
-		list.sort((g1, g2) -> {
-			return Double.compare(g2.occurrences, g1.occurrences);
-		});
-		
-//		System.out.println("\nTop 20 most frequent " + n + "-grams:");
-//		for (int i=0; i<20; i++) {
-//			if (i >= list.size()) break;
-//			System.out.println(list.get(i).toString());
-//		}
-//		
-//		System.out.println("\nTop 20 least frequent " + n + "-grams:");
-//		for (int i=list.size()-1; i>list.size()-20; i--) {
-//			if (i < 0) break;
-//			System.out.println(list.get(i).toString());
-//		}
 	}
 	
 	public void printngrams() {
