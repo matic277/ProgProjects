@@ -17,7 +17,7 @@ public abstract class AbsWord {
 	public String getTag() {
 		return "<" + tag + ">";
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[" + getTag() + ", src:'" + sourceText + "', prc:'" + processedText + "']";

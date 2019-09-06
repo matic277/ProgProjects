@@ -15,6 +15,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,16 +28,17 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import StreamConsumer.StreamHandler;
+
 public class MainWindow extends JFrame implements ComponentListener, ActionListener, MouseMotionListener, MouseListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7576066237767094230L;
 
 	JPanel panel;
 	
 	int width, height;
+	
+	public static StreamHandler stream;
 	
 	ArrayList<Button> buttons;
 	ArrayList<JLabel> labels;	
@@ -58,13 +60,14 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	DictionaryWindow dictionaryWindow;
 	
 	ArrayList<String> queryFilters;
+	ArrayList<String> queryFileFilters;
 	
 	Color labelColor = Color.white;
-	Color bgColor = new Color(214,217,223);
+	Color bgColor = Color.decode("#f2f2f2");
 	
 	public MainWindow() {
-		width = 800;
-		height = 600;
+		width = 720;
+		height = 500;
 		
 		try { UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel"); }
 		catch (Exception e) { e.printStackTrace(); }
@@ -77,7 +80,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		buttonSpacing = 15;
 		
 		buttonSize = new Dimension(110, 30);
-		topPanelSize = new Dimension(0, 200);
+		topPanelSize = new Dimension(0, 150);
 		
 		topPanel = new Rectangle();
 		leftPanel = new Rectangle();
@@ -86,7 +89,34 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 
 		positionPanels();
 		initButtons();
+		positionButtons();
 		initPanel();
+		
+		new Thread(() -> {
+			while (true) {
+				try { Thread.sleep(3000); }
+				catch (InterruptedException e) { e.printStackTrace(); }
+				if (stream != null && !stream.processedTweets.isEmpty()) {
+					// "latest" processed tweet
+					String tweet = stream.processedTweets.getLast().getSourceText();
+					// get rid of '...' when printing label, split text into new lines
+					String[] tokens = tweet.split(" ");
+					tweet = "<html>";
+					tweet += tokens[0] + " ";
+					for (int i=1; i<tokens.length; i++) {
+						if (i%10 == 0) tweet += tokens[i] + "<br>";
+						else tweet += tokens[i] + " ";
+					}
+					tweet += "</html>";
+					labels.get(labels.size() - 1).setText(tweet);
+					
+					// tweets list size
+					
+					labels.get(labels.size() - 3).setText(" Tweet pool size: " + stream.processedTweets.size());
+				} 
+				else continue;
+			}
+		}).start();
 	}
 	
 	private void positionPanels() {
@@ -233,8 +263,16 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 			buttonSize.width,
 			buttonSize.height
 		);
+		stop.setEnabled(false);
 		stop.addActionListener(this);
-		stop.setAction(() -> {});
+		stop.setAction(() -> {
+			stream.stopStream();
+			buttons.forEach(b -> {
+				if (b.getText().equals("Start")) b.setEnabled(true);
+				if (b.getText().equals("Query")) b.setEnabled(true);
+			});
+			stop.setEnabled(false);
+		});
 		buttons.set(2, stop);
 		
 		// start button
@@ -246,7 +284,18 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 			buttonSize.height
 		);
 		start.addActionListener(this);
-		start.setAction(() -> {});
+		start.setAction(() -> {
+			ArrayList<String> q;
+			q = queryFileFilters;
+			q = (queryFilters != null)? queryFilters : queryFileFilters;
+			stream = new StreamHandler(q, null);
+			start.setEnabled(false);
+			buttons.forEach(b -> {
+				if (b.getText().equals("Start")) b.setEnabled(false);
+				if (b.getText().equals("Query")) b.setEnabled(false);
+				if (b.getText().equals("Stop")) b.setEnabled(!b.isEnabled());
+			});
+		});
 		buttons.set(3, start);
 		
 		// movable bound
@@ -261,6 +310,56 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		movableBound.addMouseMotionListener(this);
 
 		labels.set(1, movableBound);
+		
+		JLabel label = new JLabel("Twitter tool");
+		label.setBounds(		
+			topPanel.x + buttonSpacing,
+			topPanel.y + buttonSpacing,
+			topPanel.width - 2*buttonSpacing,
+			(topPanel.height - 2*buttonSpacing)/2
+		);
+		labels.add(label);
+		label.setFont(new Font(label.getFont().getName(), Font.PLAIN, 40));
+		
+		// labels in right panel
+
+		// current tweet stream labels
+		JLabel stat = new JLabel(" Tweet pool size: 0");
+		JLabel title = new JLabel(" Latest processed tweet:");
+		JLabel tweet = new JLabel();
+		
+		stat.setBounds(
+			rightPanel.x + buttonSpacing,
+			rightPanel.y + buttonSpacing,
+			rightPanel.width - (2 * buttonSpacing),
+			buttonSize.height
+		);
+		title.setBounds(
+			rightPanel.x + buttonSpacing,
+			stat.getBounds().y + stat.getBounds().height + buttonSpacing,
+			rightPanel.width - (2 * buttonSpacing),
+			buttonSize.height
+		);
+		tweet.setBounds(
+			rightPanel.x + buttonSpacing,
+			title.getBounds().y + title.getBounds().height + buttonSpacing,
+			rightPanel.width - (2 * buttonSpacing),
+			(rightPanel.y + rightPanel.height - buttonSpacing) - (title.getBounds().y + title.getBounds().height + buttonSpacing)
+		);
+		//title.getBounds().height += tweet.getBounds().height;
+		stat.setOpaque(true);
+		title.setOpaque(true);
+		tweet.setOpaque(true);
+		stat.setBackground(Color.white);
+		title.setBackground(Color.white);
+		tweet.setBackground(Color.white);
+//		stat.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+//		title.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+		tweet.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+		tweet.setFont(new Font(label.getFont().getName(), Font.PLAIN, 14));
+		labels.add(stat);
+		labels.add(title);
+		labels.add(tweet);
 	}
 	
 	private void initPanel() {
@@ -301,17 +400,20 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		this.setTitle("Main");
 		this.pack();
 		this.setVisible(true);
-		this.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setResizable(false);
+		
+		System.out.println(this.getSize().toString());
 	}
 
 	@Override
 	public void componentResized(ComponentEvent event) {
-		Dimension newSize = event.getComponent().getSize();
-		this.width = newSize.width;
-		this.height = newSize.height;
-//		System.out.println(newSize.toString());
-		positionPanels();
-		positionButtons();
+//		Dimension newSize = event.getComponent().getSize();
+//		this.width = newSize.width;
+//		this.height = newSize.height;
+////		System.out.println(newSize.toString());
+//		positionPanels();
+//		positionButtons();
 	}
 	
 	public void componentHidden(ComponentEvent arg0) {}
@@ -370,6 +472,11 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 
 	public void setQueryList(ArrayList<String> list) {
 		queryFilters = (list != null)? list : null;
+	}
+
+	public void setQueryFile(ArrayList<String> queries) {
+		queryFileFilters = queries;
+		//queries.forEach(s -> System.out.println(s));
 	}
 }
 

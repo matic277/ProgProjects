@@ -1,10 +1,4 @@
-/AbstractWordClasses/
-/Dictionaries/
+/Window/
 /StreamConsumer/
 /Tokenizer/
-/Words/
-/classifierTester/
-/datasetCollector1/
-/datasetCollector2/
-/ngramStatistics/
-/Window/
+/AbstractWordClasses/

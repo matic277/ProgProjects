@@ -27,40 +27,45 @@ public class Main {
 //				System.out.println("debugger started");
 //				
 //				while (true){
-//					logTweetsIfNeccessary();
-//
-//					System.out.println("Tweets in queue:  " + stream.tweets.size());
-//					System.out.println("Processed tweets: " + stream.processedTweets.size());
-//					
 //					try { Thread.sleep(2000); }
 //					catch (InterruptedException e) { e.printStackTrace(); }
+//					
+//					if (MainWindow.stream == null) continue;
+//					logTweetsIfNeccessary();
+//					
+//					System.out.println("Tweets in queue:  " + MainWindow.stream.tweets.size());
+//					System.out.println("Processed tweets: " + MainWindow.stream.processedTweets.size());
 //				}
 //			}
 //			
 //			// if there are more than x tweets processed,
 //			// log them to file and clear the list
 //			public void logTweetsIfNeccessary() {
-//				if (stream.processedTweets.size() > 30) {
-//					Tweet[] tweets = stream.processedTweets.toArray(new Tweet[stream.processedTweets.size()]);
-////					new Logger(stream.processedTweets.toArray());
-//					Logger logger = new Logger(tweets);
-//					logger.saveResults();
-//					logger.saveResultsAsCsv();
-//					logger.saveResultsWithStatisticsAsCsv();
-//					stream.processedTweets.clear();
+//				if (MainWindow.stream != null) {
+//					if (MainWindow.stream.processedTweets.size() > 30) {
+//						Tweet[] tweets = MainWindow.stream.processedTweets.toArray(new Tweet[] {});
+//	//					new Logger(stream.processedTweets.toArray());
+//						Logger logger = new Logger(tweets);
+//						logger.saveResults();
+//						logger.saveResultsAsCsv();
+//						logger.saveResultsWithStatisticsAsCsv();
+//						MainWindow.stream.processedTweets.clear();
+//					}
 //				}
 //			}
 //			
 //		}.start();
 
+//		MainWindow mw = new MainWindow();
 		
-//		test();
-		
-		MainWindow mw = new MainWindow();
-
+		test();
 	}
 
 	public static void test() {
+		Tweet t = new Tweet("not good test test no a a good", null);
+		t.processTweet();
+		System.out.println(t.toString());
+		
 //		NGramBuilder nb = new NGramBuilder(2);
 		
 //		Frame f = new Frame(null);

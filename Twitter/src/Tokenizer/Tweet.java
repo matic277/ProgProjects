@@ -21,6 +21,8 @@ import Words.NGramEntry;
 
 public class Tweet {
 	
+	private static final String AbsMeasurableWord = null;
+
 	// source where newline chars are removed
 	String cleanSource;
 	
@@ -56,14 +58,20 @@ public class Tweet {
 			word = words.get(i);
 			
 			if (word instanceof NegationWord) {
-				// find next measurable word and flip its value
-				for (int j=i+1; j<words.size(); j++) {
-					nextWord = words.get(j);
-					if (nextWord instanceof AbsMeasurableWord) {
-						AbsMeasurableWord w = (AbsMeasurableWord) nextWord;
+				int ii = i + 1;
+				if (ii < words.size()) {
+					if (words.get(ii) instanceof AbsMeasurableWord) {
+						AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
 						w.setFlipPleasantness();
-						words.set(j, w);
-						break;
+						continue;
+					}
+				}
+				ii++;
+				if (ii < words.size()) {
+					if (words.get(ii) instanceof AbsMeasurableWord) {
+						AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
+						w.setFlipPleasantness();
+						continue;
 					}
 				}
 			}
@@ -270,7 +278,7 @@ public class Tweet {
 		s += "Poster: " + username + "\n";
 		s += "Source tweet:\n" + sourceText + "\n\n";
 		s += "Clean tweet:\n" + cleanSource + "\n\n";
-		s += "Tree of tweet:\n";
+		s += "Tweet tokens:\n";
 		
 		for (int i=0; i<words.size()-1; i++) {
 			s += "\t|-> " + words.get(i).toString() + "\n";
@@ -286,7 +294,7 @@ public class Tweet {
 		s += "\t|-> Sum of pos words: " + format.format(sumOfPositiveWords) + "\n";
 		s += "\t\\-> NGram features:  " + getNGramFeatures();
 		
-		s += "---------------------------\n";
+		s += "\n---------------------------\n";
 		
 		return s;
 	}

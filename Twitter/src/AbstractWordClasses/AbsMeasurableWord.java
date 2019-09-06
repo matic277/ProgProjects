@@ -1,6 +1,7 @@
 package AbstractWordClasses;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 public abstract class AbsMeasurableWord extends AbsWord {
 	
@@ -81,6 +82,9 @@ public abstract class AbsMeasurableWord extends AbsWord {
 	@Override
 	public String toString() {
 		DecimalFormat format = new DecimalFormat("#.###");
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		format.setDecimalFormatSymbols(symbols);
 		return "[" + getTag() + ", " + getSentimentTag() + ", src:'" + sourceText + "', prc:'" + processedText + "', P:" 
 				+ format.format(pleasantness) + ", A:" + format.format(activation) + ", I:" + format.format(imagery) + "]";
 	}

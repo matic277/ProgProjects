@@ -33,13 +33,25 @@ public class StreamHandler {
 	//public BlockingQueue queue = new ArrayBlockingQueue(10000);
 	public StreamListener listener;
 	
+	TwitterStream twitterStream;
+	
 	public ConcurrentLinkedDeque<Tweet> tweets = new ConcurrentLinkedDeque<Tweet>();
 	public ConcurrentLinkedDeque<Tweet> processedTweets = new ConcurrentLinkedDeque<Tweet>();
+	
+	String[] queries;
 
 	public StreamHandler() {
 		// create a pool with max 4 threads
 		// executing at once, this can and
 		// should be changed in the future...
+		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
+		readKeysFromFile();
+		openAndListenStream();
+	}
+	
+	public StreamHandler(ArrayList<String> queries, String apiKeysPath) {
+		relativeFilePath_apiKeys = (apiKeysPath != null)? apiKeysPath : relativeFilePath_apiKeys;
+		this.queries = (queries != null && !queries.isEmpty())? queries.toArray(new String[] {}) : null;
 		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
 		readKeysFromFile();
 		openAndListenStream();
@@ -56,24 +68,39 @@ public class StreamHandler {
                 .setTweetModeExtended(true)
         		.setJSONStoreEnabled(true);
      
-        TwitterStream twitterStream = new TwitterStreamFactory(configurationBuilder.build()).getInstance();
+        twitterStream = new TwitterStreamFactory(configurationBuilder.build()).getInstance();
         
         // thread pool
         // executor = Executors.newWorkStealingPool();
         // queue_size = new AtomicInteger(0);
         
-//        listener = new StreamListener(this);
-        Listener listener = new Listener();
+
+        listener = new StreamListener(this);
+        // Listner used when collecting dataset
+        // Listener listener = new Listener();
         twitterStream.addListener(listener);
         
-        // query filter
-         FilterQuery tweetFilterQuery = new FilterQuery();
-         tweetFilterQuery.track(new String[]{":)", ":("}); // OR on keywords
+        // query filter stream
+        if (queries != null) {
+            FilterQuery tweetFilterQuery = new FilterQuery();
+            tweetFilterQuery.track(queries); // OR on keywords
+            twitterStream.filter(tweetFilterQuery);
+            System.out.println("\t-> Stream with query started.");
+            for (String s : queries) System.out.print(s + ", ");
+        }
         
-        // note that not all tweets have location metadata set.
-        twitterStream.filter(tweetFilterQuery);
-//        twitterStream.sample();
-        
+        // regular stream
+        else {
+        	System.out.println("\t-> Regular stream started.");
+        	twitterStream.sample();
+        }
+	}
+	
+	public void stopStream() {
+		twitterStream.removeListener(listener);
+		twitterStream.clearListeners(); // ?
+		twitterStream.cleanUp();
+		twitterStream = null; // ?
 	}
 	
 	private static int index = 0;
@@ -83,6 +110,7 @@ public class StreamHandler {
 			//System.out.println(lines.count());
 			lines.forEachOrdered(
 				line -> {
+					System.out.println(line);
 					apiKeys[index] = line;
 					index++;
 				}
@@ -91,6 +119,7 @@ public class StreamHandler {
 			System.out.println("Error reading api keys!");
 			e.printStackTrace();
 		}
+		index = 0;
 	}
 
 }
