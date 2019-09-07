@@ -20,45 +20,47 @@ public class Main {
 
 //		StreamHandler stream = new StreamHandler();
 //		
-//		// debugging purpose thread
-//		new Thread() {
-//			@Override
-//			public void run() {
-//				System.out.println("debugger started");
-//				
-//				while (true){
-//					try { Thread.sleep(2000); }
-//					catch (InterruptedException e) { e.printStackTrace(); }
-//					
-//					if (MainWindow.stream == null) continue;
-//					logTweetsIfNeccessary();
-//					
-//					System.out.println("Tweets in queue:  " + MainWindow.stream.tweets.size());
-//					System.out.println("Processed tweets: " + MainWindow.stream.processedTweets.size());
-//				}
-//			}
-//			
-//			// if there are more than x tweets processed,
-//			// log them to file and clear the list
-//			public void logTweetsIfNeccessary() {
-//				if (MainWindow.stream != null) {
-//					if (MainWindow.stream.processedTweets.size() > 30) {
-//						Tweet[] tweets = MainWindow.stream.processedTweets.toArray(new Tweet[] {});
-//	//					new Logger(stream.processedTweets.toArray());
-//						Logger logger = new Logger(tweets);
-//						logger.saveResults();
+		// debugging purpose thread
+		new Thread() {
+			@Override
+			public void run() {
+				System.out.println("debugger started");
+				
+				while (true){
+					try { Thread.sleep(2000); }
+					catch (InterruptedException e) { e.printStackTrace(); }
+					
+					if (MainWindow.stream == null) continue;
+					logTweetsIfNeccessary();
+					
+					System.out.println("Tweets in queue:  " + MainWindow.stream.tweets.size());
+					System.out.println("Processed tweets: " + MainWindow.stream.processedTweets.size());
+				}
+			}
+			
+			// if there are more than x tweets processed,
+			// log them to file and clear the list
+			public void logTweetsIfNeccessary() {
+				if (MainWindow.stream != null) {
+					if (MainWindow.stream.processedTweets.size() > 30) {
+						Tweet[] tweets = MainWindow.stream.processedTweets.toArray(new Tweet[] {});
+	//					new Logger(stream.processedTweets.toArray());
+						Logger logger = new Logger(tweets);
+						logger.saveResults();
 //						logger.saveResultsAsCsv();
 //						logger.saveResultsWithStatisticsAsCsv();
-//						MainWindow.stream.processedTweets.clear();
-//					}
-//				}
-//			}
-//			
-//		}.start();
+						if (MainWindow.two_way) logger.saveResults2way();
+						if (MainWindow.three_way) logger.saveResults3way();
+						MainWindow.stream.processedTweets.clear();
+					}
+				}
+			}
+			
+		}.start();
 
-//		MainWindow mw = new MainWindow();
+		MainWindow mw = new MainWindow();
 		
-		test();
+//		test();
 	}
 
 	public static void test() {

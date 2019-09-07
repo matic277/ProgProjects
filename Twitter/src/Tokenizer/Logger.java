@@ -12,6 +12,8 @@ public class Logger{
 	String relativePath_OutputFile = "results.txt";
 	String relativePath_OutputFile2 = "results_csv.txt";
 	String relativePath_OutputFile3 = "resultsfull_csv.txt";
+	String relativePath_OutputFile4 = "results_2way_csv.txt";
+	String relativePath_OutputFile5 = "results_3way_csv.txt";
 	
 	public Logger(Tweet[] tweets) {
 		this.tweets = tweets;
@@ -80,6 +82,56 @@ public class Logger{
 				writer.write(tweets[i].getCleanSource() + ",");
 				writer.write(tweets[i].getStatistics() + ",");
 				writer.write(tweets[i].getSentiment() + "");
+				writer.newLine();
+			}
+			writer.flush();
+			writer.close();
+			
+		} catch (IOException e) {
+			System.out.println("Error at writing file!\n");
+			e.printStackTrace();
+		}
+
+		System.out.println("File written.");
+	}
+	
+	public void saveResults2way() {
+		System.out.print("\t\\-> Logger writing file: '"+relativePath_OutputFile4+"'... ");
+		
+		File file = new File(relativePath_OutputFile4);
+		BufferedWriter writer = null;
+		
+		try {
+			writer = new BufferedWriter(new FileWriter(file, true));
+			
+			for (int i=0; i<tweets.length; i++) {
+				writer.write(tweets[i].getSentimentTwoWay() + ",");
+				writer.write(tweets[i].getCleanSource());
+				writer.newLine();
+			}
+			writer.flush();
+			writer.close();
+			
+		} catch (IOException e) {
+			System.out.println("Error at writing file!\n");
+			e.printStackTrace();
+		}
+
+		System.out.println("File written.");
+	}
+	
+	public void saveResults3way() {
+		System.out.print("\t\\-> Logger writing file: '"+relativePath_OutputFile5+"'... ");
+		
+		File file = new File(relativePath_OutputFile5);
+		BufferedWriter writer = null;
+		
+		try {
+			writer = new BufferedWriter(new FileWriter(file, true));
+			
+			for (int i=0; i<tweets.length; i++) {
+				writer.write(tweets[i].getSentimentThreeWay() + ",");
+				writer.write(tweets[i].getCleanSource());
 				writer.newLine();
 			}
 			writer.flush();

@@ -13,6 +13,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -21,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
@@ -41,11 +43,8 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	public static StreamHandler stream;
 	
 	ArrayList<Button> buttons;
-	ArrayList<JLabel> labels;	
+	ArrayList<JLabel> labels;
 	TextField input;
-	
-	JLabel movableBound;
-	Rectangle movableBoundBounds;
 
 	Dimension buttonSize;
 	Dimension topPanelSize;
@@ -61,6 +60,10 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	
 	ArrayList<String> queryFilters;
 	ArrayList<String> queryFileFilters;
+	
+	// lazy
+	public static boolean two_way = false;
+	public static boolean three_way = false;
 	
 	Color labelColor = Color.white;
 	Color bgColor = Color.decode("#f2f2f2");
@@ -89,30 +92,25 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 
 		positionPanels();
 		initButtons();
-		positionButtons();
 		initPanel();
 		
+		// label updater
 		new Thread(() -> {
 			while (true) {
 				try { Thread.sleep(3000); }
 				catch (InterruptedException e) { e.printStackTrace(); }
 				if (stream != null && !stream.processedTweets.isEmpty()) {
 					// "latest" processed tweet
-					String tweet = stream.processedTweets.getLast().getSourceText();
-					// get rid of '...' when printing label, split text into new lines
-					String[] tokens = tweet.split(" ");
-					tweet = "<html>";
-					tweet += tokens[0] + " ";
-					for (int i=1; i<tokens.length; i++) {
-						if (i%10 == 0) tweet += tokens[i] + "<br>";
-						else tweet += tokens[i] + " ";
-					}
-					tweet += "</html>";
-					labels.get(labels.size() - 1).setText(tweet);
+					String tweet = stream.processedTweets.getLast().getCleanSource();
 					
-					// tweets list size
+					// get rid of '...' (text overflow) when printing label,
+					// split text into new lines:
+					// -> this is done automatically when adding html tags
+					tweet = "<html>" + tweet + "<html>";
 					
-					labels.get(labels.size() - 3).setText(" Tweet pool size: " + stream.processedTweets.size());
+					//SwingUtilities.invokeLater(() -> {});
+					labels.get(labels.size() - 4).setText(tweet);
+					labels.get(labels.size() - 6).setText(" Tweet pool size: " + stream.processedTweets.size());
 				} 
 				else continue;
 			}
@@ -153,70 +151,16 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 			bottomPanel.y - (topPanel.height + 2*buttonSpacing) - buttonSpacing
 		);
 	}
-	
-	private void positionButtons() {
+
+	private void initButtons() {		
 		// query button
-		buttons.get(0).setBounds(
+		Button b1 = new Button("Query");
+		b1.setBounds(
 			leftPanel.x + buttonSpacing,
 			leftPanel.y + buttonSpacing,
 			buttonSize.width,
 			buttonSize.height
 		);
-		
-		// dictionaries
-		buttons.get(1).setBounds(
-			leftPanel.x + buttonSpacing,
-			leftPanel.y + buttonSize.height + (2 * buttonSpacing),
-			buttonSize.width,
-			buttonSize.height
-		);
-		
-		// api keys label and field
-		labels.get(0).setBounds(
-			leftPanel.x + buttonSpacing,
-			leftPanel.y + (buttonSize.height * 2) + (3 * buttonSpacing),
-			buttonSize.width,
-			buttonSize.height
-		);
-		labels.get(0).setOpaque(true);
-		labels.get(0).setBackground(Color.cyan);
-
-		input.setBounds(
-			labels.get(0).getBounds().x + labels.get(0).getBounds().width + buttonSpacing,
-			labels.get(0).getBounds().y,
-			(int)(buttonSize.width * 1.5),
-			buttonSize.height
-		);
-		
-		// stop button
-		buttons.get(2).setBounds(
-			bottomPanel.x + bottomPanel.width - buttonSpacing - buttonSize.width,
-			bottomPanel.y + buttonSpacing,
-			buttonSize.width,
-			buttonSize.height
-		);
-		
-		// start button
-		buttons.get(3).setBounds(
-			buttons.get(2).getBounds().x - buttonSpacing - buttonSize.width,
-			bottomPanel.y + buttonSpacing,
-			buttonSize.width,
-			buttonSize.height
-		);
-		
-		// movable bound
-		movableBoundBounds = new Rectangle(
-			leftPanel.x + leftPanel.width + 2,
-			leftPanel.y,
-			buttonSpacing - 4,
-			leftPanel.height
-		);
-		labels.get(1).setBounds(movableBoundBounds);
-	}
-	
-	private void initButtons() {		
-		// query button
-		Button b1 = new Button("Query");
 		b1.addActionListener(this);
 		b1.setAction(() -> queryWindow = new QueryWindow(this, queryFilters));
 		buttons.set(0, b1);
@@ -267,6 +211,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		stop.addActionListener(this);
 		stop.setAction(() -> {
 			stream.stopStream();
+			stream = null;
 			buttons.forEach(b -> {
 				if (b.getText().equals("Start")) b.setEnabled(true);
 				if (b.getText().equals("Query")) b.setEnabled(true);
@@ -285,6 +230,11 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		);
 		start.addActionListener(this);
 		start.setAction(() -> {
+			if(!new File(input.getText()).exists()) {
+				input.setBackground(Color.red);
+				return;
+			}
+			input.setBackground(Color.white);
 			ArrayList<String> q;
 			q = queryFileFilters;
 			q = (queryFilters != null)? queryFilters : queryFileFilters;
@@ -297,20 +247,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 			});
 		});
 		buttons.set(3, start);
-		
-		// movable bound
-		movableBoundBounds = new Rectangle(
-			leftPanel.x + leftPanel.width + 2,
-			leftPanel.y,
-			buttonSpacing - 4,
-			leftPanel.height
-		);
-		movableBound = new JLabel();
-		movableBound.setBounds(movableBoundBounds);
-		movableBound.addMouseMotionListener(this);
 
-		labels.set(1, movableBound);
-		
 		JLabel label = new JLabel("Twitter tool");
 		label.setBounds(		
 			topPanel.x + buttonSpacing,
@@ -360,6 +297,60 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		labels.add(stat);
 		labels.add(title);
 		labels.add(tweet);
+		
+		
+		// number of queries
+		JLabel qn = new JLabel(" Number of queries: /");
+		qn.setBounds(
+			b1.getBounds().x + b1.getBounds().width + buttonSpacing,
+			b1.getBounds().y,
+			(int)(buttonSize.width * 1.5),
+			buttonSize.height
+		);
+		labels.add(qn);
+		
+		// classification tasks
+		Label two = new Label("  2-way");
+		two.addMouseListener(this);
+		two.setAction(() -> {
+			if (stream != null) return;
+			two_way = !two_way;
+			if (two.getBackground().equals(Color.LIGHT_GRAY))
+				two.setBackground(Color.green);
+			else
+				two.setBackground(Color.LIGHT_GRAY);
+		});
+		two.setBounds(
+			l1.getBounds().x,
+			l1.getBounds().y + l1.getBounds().height + buttonSpacing,
+			(l1.getBounds().width - buttonSpacing) / 2,
+			l1.getBounds().height
+		);
+		two.setOpaque(true);
+		two.setBackground(Color.LIGHT_GRAY);
+		
+		Label three = new Label("  3-way");
+		three.addMouseListener(this);
+		three.setAction(() -> {
+			if (stream != null) return;
+			three_way = !three_way;
+			if (three.getBackground().equals(Color.LIGHT_GRAY))
+				three.setBackground(Color.green);
+			else
+				three.setBackground(Color.LIGHT_GRAY);
+			
+		});
+		three.setBounds(
+			two.getBounds().x + two.getBounds().width + buttonSpacing,
+			two.getBounds().y,
+			two.getBounds().width,
+			l1.getBounds().height
+		);
+		three.setOpaque(true);
+		three.setBackground(Color.LIGHT_GRAY);
+		
+		labels.add(two);
+		labels.add(three);
 	}
 	
 	private void initPanel() {
@@ -381,10 +372,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 				g.drawRect(rightPanel.x, rightPanel.y, rightPanel.width, rightPanel.height);
 				g.drawRect(topPanel.x, topPanel.y, topPanel.width, topPanel.height);
 				g.drawRect(bottomPanel.x, bottomPanel.y, bottomPanel.width, bottomPanel.height);
-				
-				// bound
-				//g.fillRect(movableBoundBounds.x, movableBoundBounds.y, movableBoundBounds.width, movableBoundBounds.height);
-				
+
 				super.repaint(1000/3);
 			}
 		};
@@ -426,13 +414,8 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent e) {
-		Point location = e.getPoint();
+	public void mouseDragged(MouseEvent arg0) {
 		
-		movableBoundBounds.x = location.x;
-		movableBound.setBounds(movableBoundBounds);
-		
-		//panel.repaint();
 	}
 
 	@Override
@@ -442,9 +425,8 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void mouseClicked(MouseEvent event) {
+		((IComponentFunction) event.getSource()).performAction();
 	}
 
 	@Override
@@ -469,14 +451,48 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	
+	// both of these methods are bad TODO fix
 	public void setQueryList(ArrayList<String> list) {
-		queryFilters = (list != null)? list : null;
+		if (list != null && !list.isEmpty()) {
+			queryFilters = list;
+			for (JLabel l : labels) {
+				if (l.getText().contains("Number of queries:")) {
+					l.setText("Number of queries: " + list.size());
+					break;
+				}
+			}
+		} else {
+			for (JLabel l : labels) {
+				if (l.getText().contains("Number of queries:")) {
+					l.setText("Number of queries: /");
+					break;
+				}
+			}
+			queryFilters = null;
+		}
+		
 	}
 
 	public void setQueryFile(ArrayList<String> queries) {
-		queryFileFilters = queries;
-		//queries.forEach(s -> System.out.println(s));
+		if (queries != null && !queries.isEmpty()) {
+			queryFileFilters = queries;
+			for (JLabel l : labels) {
+				if (l.getText().contains("Number of queries:")) {
+					l.setText("Number of queries: " + queries.size());
+					break;
+				}
+			}
+		} else {
+			for (JLabel l : labels) {
+				if (l.getText().contains("Number of queries:")) {
+					l.setText("Number of queries: /");
+					break;
+				}
+			}
+			queryFileFilters = null;
+		}
 	}
 }
 

@@ -39,13 +39,13 @@ public class StreamListener implements StatusListener {
         // add tweet to list of tweets
         ref.tweets.add(new Tweet(tweet, status.getUser().getScreenName()));
         
-        // take the tweet that has been in the list of the longest and process it
+        // take the tweet that has been in the list the longest and process it
         // there are two queues, one of tweets and one of executors, make sure
         // the executors one is as close to empty as possible, so that there
         // is only one queue (stupid but whatever)
         // calling .pollFirst() method means the tweet gets removed from the 
         // list as well
-        if (!ref.tweets.isEmpty() && ref.executor.getQueue().size() == 0)
+        //if (!ref.tweets.isEmpty() && ref.executor.getQueue().size() == 0)
         	ref.executor.submit(new Consumer(ref.tweets.pollFirst(), ref));
         
         //ref.queue_size.incrementAndGet();

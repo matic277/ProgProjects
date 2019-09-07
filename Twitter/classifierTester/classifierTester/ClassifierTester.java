@@ -25,6 +25,10 @@ public class ClassifierTester {
 	
 	public static void main(String[] args) {
 		
+		datasetPath = //"datasets/processedDatasetEnglishTweetsOnly.txt";
+				"output/tweets.txt";
+		readAndCreateDatasets();
+		
 		// for when testing 2-way classification
 		// on first dataset (datasets/englishtweetsonly.txt or something like that)
 		// when doing this comment readAndCreateDatasets(); in 2way() method
@@ -34,9 +38,9 @@ public class ClassifierTester {
 
 //		threeWay();
 		
-//		twoWay();
+		twoWay();
 		
-//		testDataset();
+		testDataset();
 		
 		
 		
@@ -44,11 +48,10 @@ public class ClassifierTester {
 //		testAgain();
 		
 		
-		datasetPath = //"datasets/processedDatasetEnglishTweetsOnly.txt";
-				"output/tweets.txt";
-		readAndCreateDatasets();
+
+//		readAndCreateDatasets();
 		
-		DataVisualizer vis = new DataVisualizer(annotatedTweets);
+		//DataVisualizer vis = new DataVisualizer(annotatedTweets);
 	}
 
 	public static void testDataset() {
@@ -220,10 +223,14 @@ public class ClassifierTester {
 				String sentiment = tokens[0];
 				String tweet = "";
 				
-				if (sentiment.equals("-1"))  return;
+				//if (sentiment.equals("-1"))  return;
 				
 				int ind = (datasetPath.contains("processedDatasetEnglishTweetsOnly"))? 2 : 1;
 				for (int i=ind; i<tokens.length; i++) tweet += tokens[i];
+				
+				// might want to remove these due to bias
+//				tweet.replace(":)", "");
+//				tweet.replace(":(", "");
 				
 				Tweet tw = new Tweet(tweet, null);
 				tw.processTweet();
