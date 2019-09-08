@@ -97,7 +97,7 @@ public class Tweet {
 		
 		test();
 		doSomeStatistics();
-		buildNGramFeatures();
+//		buildNGramFeatures();
 		setSentimentValue();
 	}
 	
@@ -286,9 +286,10 @@ public class Tweet {
 		s += "\t|-> Sum of neg words: " + format.format(sumOfNegativeWords) + "\n";
 		s += "\t|-> Sum of neu words: " + format.format(sumOfNeutralWords) + "\n";
 		s += "\t|-> Sum of pos words: " + format.format(sumOfPositiveWords) + "\n";
-		s += "\t|-> NGram features:   " + getNGramFeatures() + "\n";
+//		s += "\t|-> NGram features:   " + getNGramFeatures() + "\n";
+		s += "\t|-> Sentiment value : " + format.format(sentimentValue) + "\n";
 		s += "\t|-> 2-way class:      " + getSentimentTwoWay() + "\n";
-		s += "\t|-> 3-way class:      " + getSentimentThreeWay();
+		s += "\t\\-> 3-way class:      " + getSentimentThreeWay();
 		
 		s += "\n---------------------------\n";
 		

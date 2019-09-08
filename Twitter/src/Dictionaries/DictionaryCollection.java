@@ -34,7 +34,7 @@ public class DictionaryCollection {
 			dictionaries.constructNegationwordDictionary();
 			dictionaries.constructAcronymDictionary();
 			dictionaries.constructEmojiDictionary();
-			dictionaries.constructNGramDictionary();
+//			dictionaries.constructNGramDictionary();
 			return dictionaries;
 		}
 		return dictionaries;

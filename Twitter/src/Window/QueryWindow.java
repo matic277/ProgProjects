@@ -37,8 +37,6 @@ public class QueryWindow extends JFrame implements /*ComponentListener,*/ Action
 	int width, height;
 	
 	int buttonSpacing;
-	
-	int presetLeftPanelHeight = 200;
 
 	ArrayList<TextField> inputs;
 	ArrayList<Button> buttons;
@@ -290,11 +288,6 @@ public class QueryWindow extends JFrame implements /*ComponentListener,*/ Action
 				g.drawRect(topPanel.x, topPanel.y, topPanel.width, topPanel.height);
 				g.drawRect(bottomPanel.x, bottomPanel.y, bottomPanel.width, bottomPanel.height);
 				
-//				g.setColor(Color.red);
-//				inputs.forEach(tf -> {
-//					g.fillRect(tf.getBounds().x, tf.getBounds().y, tf.getBounds().width, tf.getBounds().height);
-//				});
-				
 				try { Thread.sleep(1000/300); }
 				catch (Exception e) { e.printStackTrace(); }
 				super.repaint();
@@ -310,10 +303,12 @@ public class QueryWindow extends JFrame implements /*ComponentListener,*/ Action
 		inputs.forEach(i -> panel.add(i));
 		panel.add(filePathInput);
 		
+		this.setResizable(false);
 		this.setTitle("Query");
 		this.pack();
 		this.setVisible(true);
 		this.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+		
 	}
 	
 	

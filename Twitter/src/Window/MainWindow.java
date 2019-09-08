@@ -31,6 +31,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import StreamConsumer.StreamHandler;
+import Tokenizer.Logger;
+import Tokenizer.Tweet;
 
 public class MainWindow extends JFrame implements ComponentListener, ActionListener, MouseMotionListener, MouseListener {
 
@@ -44,7 +46,9 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	
 	ArrayList<Button> buttons;
 	ArrayList<JLabel> labels;
-	TextField input;
+	TextField apiInput;
+	TextField outputInput;
+	String userOutputPath;
 
 	Dimension buttonSize;
 	Dimension topPanelSize;
@@ -61,7 +65,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	ArrayList<String> queryFilters;
 	ArrayList<String> queryFileFilters;
 	
-	// lazy
+	// lazy (for visibility in main debugger)
 	public static boolean two_way = false;
 	public static boolean three_way = false;
 	
@@ -70,7 +74,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 	
 	public MainWindow() {
 		width = 720;
-		height = 500;
+		height = 510;
 		
 		try { UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel"); }
 		catch (Exception e) { e.printStackTrace(); }
@@ -94,11 +98,12 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		initButtons();
 		initPanel();
 		
-		// label updater
+		// label updater and file saver
 		new Thread(() -> {
 			while (true) {
 				try { Thread.sleep(3000); }
 				catch (InterruptedException e) { e.printStackTrace(); }
+				
 				if (stream != null && !stream.processedTweets.isEmpty()) {
 					// "latest" processed tweet
 					String tweet = stream.processedTweets.getLast().getCleanSource();
@@ -109,10 +114,18 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 					tweet = "<html>" + tweet + "<html>";
 					
 					//SwingUtilities.invokeLater(() -> {});
-					labels.get(labels.size() - 4).setText(tweet);
-					labels.get(labels.size() - 6).setText(" Tweet pool size: " + stream.processedTweets.size());
+					labels.get(labels.size() - 5).setText(tweet);
+					labels.get(labels.size() - 7).setText(" Tweet pool size: " + stream.processedTweets.size());
+					// log files if necessary
+					if (stream != null && stream.processedTweets.size() > 30) {
+						Tweet[] tweets = MainWindow.stream.processedTweets.toArray(new Tweet[] {});
+						Logger logger = new Logger(tweets, userOutputPath);
+						logger.saveResults();
+						stream.processedTweets.clear();
+						if (MainWindow.two_way) logger.saveResults2way();
+						if (MainWindow.three_way) logger.saveResults3way();					
+					}
 				} 
-				else continue;
 			}
 		}).start();
 	}
@@ -189,15 +202,15 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		l1.setBackground(Color.cyan);
 		labels.set(0, l1);
 		
-		input = new TextField("./apikeys/keys.txt");
-		input.setBounds(
+		apiInput = new TextField("./apikeys/keys.txt");
+		apiInput.setBounds(
 			l1.getBounds().x + l1.getBounds().width + buttonSpacing,
 			l1.getBounds().y,
 			(int)(buttonSize.width * 1.5),
 			buttonSize.height
 		);
-		input.addActionListener(this);
-		input.setAction(() -> input.getText());
+		apiInput.addActionListener(this);
+		apiInput.setAction(() -> apiInput.getText());
 		
 		// stop button
 		Button stop = new Button("Stop");
@@ -230,11 +243,25 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		);
 		start.addActionListener(this);
 		start.setAction(() -> {
-			if(!new File(input.getText()).exists()) {
-				input.setBackground(Color.red);
+			if(!new File(apiInput.getText()).exists()) {
+				apiInput.setBackground(Color.red);
 				return;
 			}
-			input.setBackground(Color.white);
+			String defaultPath = "./";
+			userOutputPath = outputInput.getText();
+			if (!userOutputPath.endsWith("/")) userOutputPath += "/";
+			
+			if(!new File(userOutputPath).exists()) {
+				try { new File(userOutputPath).mkdirs(); }
+				catch(Exception e) { 
+					System.out.println("Error at creating directory, setting to default: '"+defaultPath+"'\n");
+					userOutputPath = defaultPath;
+					e.printStackTrace();
+					try { new File(defaultPath).mkdirs(); }
+					catch(Exception ex) { System.out.println("Couldnt set at default: '"+defaultPath+"'\n"); ex.printStackTrace(); }
+				}
+			}
+			apiInput.setBackground(Color.white);
 			ArrayList<String> q;
 			q = queryFileFilters;
 			q = (queryFilters != null)? queryFilters : queryFileFilters;
@@ -309,6 +336,27 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		);
 		labels.add(qn);
 		
+		// output paths
+		JLabel outputlabel = new JLabel(" Outoput folder path:");
+		outputlabel.setBounds(
+				l1.getBounds().x,
+				l1.getBounds().y + l1.getBounds().height + buttonSpacing,
+				buttonSize.width,
+				buttonSize.height
+		);
+		outputlabel.setOpaque(true);
+		outputlabel.setBackground(Color.LIGHT_GRAY);
+		labels.add(outputlabel);
+		
+		outputInput = new TextField("./ouputs/");
+		outputInput.setBounds(
+			outputlabel.getBounds().x + outputlabel.getBounds().width + buttonSpacing,
+			outputlabel.getBounds().y,
+			(int)(buttonSize.width * 1.5),
+			buttonSize.height
+		);
+		
+		
 		// classification tasks
 		Label two = new Label("  2-way");
 		two.addMouseListener(this);
@@ -321,10 +369,10 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 				two.setBackground(Color.LIGHT_GRAY);
 		});
 		two.setBounds(
-			l1.getBounds().x,
-			l1.getBounds().y + l1.getBounds().height + buttonSpacing,
-			(l1.getBounds().width - buttonSpacing) / 2,
-			l1.getBounds().height
+			outputlabel.getBounds().x,
+			outputlabel.getBounds().y + outputlabel.getBounds().height + buttonSpacing,
+			(outputlabel.getBounds().width - buttonSpacing) / 2,
+			outputlabel.getBounds().height
 		);
 		two.setOpaque(true);
 		two.setBackground(Color.LIGHT_GRAY);
@@ -344,7 +392,7 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 			two.getBounds().x + two.getBounds().width + buttonSpacing,
 			two.getBounds().y,
 			two.getBounds().width,
-			l1.getBounds().height
+			outputlabel.getBounds().height
 		);
 		three.setOpaque(true);
 		three.setBackground(Color.LIGHT_GRAY);
@@ -383,7 +431,8 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		
 		labels.forEach(l -> panel.add(l));
 		buttons.forEach(b -> panel.add(b));
-		panel.add(input);
+		panel.add(apiInput);
+		panel.add(outputInput);
 		
 		this.setTitle("Main");
 		this.pack();

@@ -15,9 +15,15 @@ public class Logger{
 	String relativePath_OutputFile4 = "results_2way_csv.txt";
 	String relativePath_OutputFile5 = "results_3way_csv.txt";
 	
-	public Logger(Tweet[] tweets) {
+	public Logger(Tweet[] tweets, String folderPath) {
 		this.tweets = tweets;
 		System.out.println("\nLogger created, number of tweets waiting to log: " + tweets.length);
+		
+		relativePath_OutputFile = folderPath + "results.txt";
+		relativePath_OutputFile2 = folderPath + "results_csv.txt";
+		relativePath_OutputFile3 = folderPath + "resultsfull_csv.txt";
+		relativePath_OutputFile4 = folderPath + "results_2way_csv.txt";
+		relativePath_OutputFile5 = folderPath + "results_3way_csv.txt";
 	}
 	
 	public void saveResults() {

@@ -23,9 +23,9 @@ public abstract class AbsDictionary implements IDictionary {
 		// key		-> string,
 		// value	-> node(word and statistics)
 		hashTable = new HashMap<String, AbsWord>(hashtableSize);
-		
+		//Charset.defaultCharset();
 		Stream<String> linesToRead;
-		try (Stream<String> lines = Files.lines(Paths.get(relativeFilePath), Charset.defaultCharset())) {
+		try (Stream<String> lines = Files.lines(Paths.get(relativeFilePath), Charset.forName("ISO_8859_1"))) {
 			linesToRead = lines.skip(skipToLine);
 			linesToRead.forEachOrdered(
 				line -> processLine(line)
