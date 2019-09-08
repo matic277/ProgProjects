@@ -390,8 +390,6 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
-		
-		System.out.println(this.getSize().toString());
 	}
 
 	@Override

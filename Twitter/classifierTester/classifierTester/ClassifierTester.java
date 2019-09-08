@@ -15,7 +15,7 @@ public class ClassifierTester {
 
 	static String datasetPath;
 	
-	static final double learningPercentage = 0.66;
+	static final double learningPercentage = 0.33;
 	
 	static ArrayList<ProcessedTweet> annotatedTweets = new ArrayList<ProcessedTweet>(130000);
 	static ArrayList<ProcessedTweet> learningdataset = new ArrayList<ProcessedTweet>((int)(annotatedTweets.size()*learningPercentage*1.2));
@@ -27,14 +27,17 @@ public class ClassifierTester {
 		
 		datasetPath = //"datasets/processedDatasetEnglishTweetsOnly.txt";
 				"output/tweets.txt";
-		readAndCreateDatasets();
+
 		
-		// for when testing 2-way classification
-		// on first dataset (datasets/englishtweetsonly.txt or something like that)
-		// when doing this comment readAndCreateDatasets(); in 2way() method
+		// when testing 2-way classification on first dataset 
+		// (datasets/englishtweetsonly.txt or something like that),
+		// comment readAndCreateDatasets(); in twoWay() method
 		// keep the line that sets the datasetpath beucase i was lazy when writing
 		// this class - TODO fix that
-//		special();
+		
+		special();
+		
+//		readAndCreateDatasets();
 
 //		threeWay();
 		
@@ -42,7 +45,7 @@ public class ClassifierTester {
 		
 		testDataset();
 		
-		
+		testFmeasure(true);
 		
 		
 //		testAgain();
@@ -51,7 +54,56 @@ public class ClassifierTester {
 
 //		readAndCreateDatasets();
 		
-		//DataVisualizer vis = new DataVisualizer(annotatedTweets);
+//		DataVisualizer vis = new DataVisualizer(annotatedTweets);
+	}
+	
+	public static void testFmeasure(boolean twoway) {
+		System.out.println("\n--- F1 measure ---");
+		int nnegative = 0, npositive = 0;
+		for (ProcessedTweet t : testingdataset) {
+			if (t.annotatedSentiment == 1) npositive++;
+			else nnegative++;
+		}
+		System.out.println("\t|-> Number of positive tweets: " + npositive);
+		System.out.println("\t|-> Number of negative tweets: " + nnegative);
+		
+		if (twoway) {
+
+			double TP = 0, TN = 0;
+			double FP = 0, FN = 0;
+			
+			for (ProcessedTweet t : testingdataset)
+			{
+				// True Positives (TP)
+				// False Positives (FP)
+				if (t.annotatedSentiment == 1) {
+					if (t.annotatedSentiment == t.tweet.getSentimentTwoWay()) TP++;
+					else FP++;
+				}
+				
+				// True Negatives (TN)
+				// False Negatives (FN) 
+				else {
+					if (t.annotatedSentiment == t.tweet.getSentimentTwoWay()) TN++;
+					else FN++;
+				}
+			}
+			
+			// accuracy
+			double accuracy = (TP+TN) / (TP+FP+FN+TN);
+			double precision = TP / (TP+FP);
+			double recall = TP / (TP+FN);
+			
+			double f1 = 2*(recall * precision) / (recall + precision);
+			
+			DecimalFormat format = new DecimalFormat("#.####");
+			
+			System.out.println("\t|");
+			System.out.println("\t|-> Accuracy: " + format.format(accuracy));
+			System.out.println("\t|-> Precision: " + format.format(precision));
+			System.out.println("\t|-> Recall: " + format.format(recall));
+			System.out.println("\t|-> F1-measure: " + format.format(f1));
+		}		
 	}
 
 	public static void testDataset() {

@@ -99,12 +99,12 @@ public class DataVisualizer implements ComponentListener {
 			}
 		}
 		
-		System.out.println("Smallest sentiment: " + smallestValue);
-		System.out.println("Biggest sentiment: " + biggestValue);
+//		System.out.println("Smallest sentiment: " + smallestValue);
+//		System.out.println("Biggest sentiment: " + biggestValue);
 		
 		int numberOfSteps = 1 + (int) Math.round((Math.abs(biggestValue) + Math.abs(smallestValue)));
 		
-		System.out.println(" -> steps: " + numberOfSteps);
+//		System.out.println(" -> steps: " + numberOfSteps);
 		
 		int markerWidth = 3;
 		int markerHeight = 6;
