@@ -15,7 +15,7 @@ public class ClassifierTester {
 
 	static String datasetPath;
 	
-	static final double learningPercentage = 0.33;
+	static final double learningPercentage = 0.0;
 	
 	static ArrayList<ProcessedTweet> annotatedTweets = new ArrayList<ProcessedTweet>(130000);
 	static ArrayList<ProcessedTweet> learningdataset = new ArrayList<ProcessedTweet>((int)(annotatedTweets.size()*learningPercentage*1.2));
@@ -25,25 +25,21 @@ public class ClassifierTester {
 	
 	public static void main(String[] args) {
 		
-		datasetPath = //"datasets/processedDatasetEnglishTweetsOnly.txt";
-				"output/tweets.txt";
+		datasetPath = 
+//				"datasets/processedDatasetEnglishTweetsOnly.txt";
+//				"output/tweets.txt";
+				"datasets/manually_GO_et_al_testSet.txt";
 
 		
-		// when testing 2-way classification on first dataset 
-		// (datasets/englishtweetsonly.txt or something like that),
-		// comment readAndCreateDatasets(); in twoWay() method
-		// keep the line that sets the datasetpath beucase i was lazy when writing
-		// this class - TODO fix that
+//		special();
 		
-		special();
-		
-//		readAndCreateDatasets();
+		readAndCreateDatasets();
 
-//		threeWay();
+//		threeWayLearning();
 		
-		twoWay();
+//		twoWayLearning();
 		
-		testDataset();
+//		testDataset(true);
 		
 		testFmeasure(true);
 		
@@ -59,16 +55,17 @@ public class ClassifierTester {
 	
 	public static void testFmeasure(boolean twoway) {
 		System.out.println("\n--- F1 measure ---");
-		int nnegative = 0, npositive = 0;
+		int nnegative = 0, npositive = 0, nneutral = 0;
 		for (ProcessedTweet t : testingdataset) {
 			if (t.annotatedSentiment == 1) npositive++;
+			else if (t.annotatedSentiment == 0) nneutral++;
 			else nnegative++;
 		}
 		System.out.println("\t|-> Number of positive tweets: " + npositive);
+		System.out.println("\t|-> Number of neutral tweets: " + nneutral);
 		System.out.println("\t|-> Number of negative tweets: " + nnegative);
 		
 		if (twoway) {
-
 			double TP = 0, TN = 0;
 			double FP = 0, FN = 0;
 			
@@ -103,20 +100,33 @@ public class ClassifierTester {
 			System.out.println("\t|-> Precision: " + format.format(precision));
 			System.out.println("\t|-> Recall: " + format.format(recall));
 			System.out.println("\t|-> F1-measure: " + format.format(f1));
-		}		
+		} else {
+			// 3way
+			System.out.println("\t|-> Not implemented for 3-way");
+		}
 	}
 
-	public static void testDataset() {
+	public static void testDataset(boolean twoway) {
 		System.out.println("\n--- TESTING PHASE ---");
 		System.out.println("\t|-> Size of testing dataset: " + testingdataset.size());
-		System.out.print("\t|-> Testing with thresholds: ("+Tweet.positiveThreshold+", "+Tweet.threshold+", "+Tweet.negativeThreshold+"))...");
 		
+		if (twoway)
+			System.out.print("\t|-> Testing with threshold: (" + Result.format.format(Tweet.threshold) + "))...");
+		else
+			System.out.print("\t|-> Testing with thresholds: ("+
+					Result.format.format(Tweet.positiveThreshold)+", "+Result.format.format(Tweet.threshold)+", "+
+					Result.format.format(Tweet.negativeThreshold)+"))...");
+				
 		// get sentiment and see if it matches
 		int correctlyClassified = 0;
 		double accuracy;
 		for (ProcessedTweet t : testingdataset) {
-			int sentiment = (datasetPath.contains("Only"))? t.tweet.getSentimentThreeWay() : t.tweet.getSentimentTwoWay();
+			int sentiment = (twoway)? t.tweet.getSentimentTwoWay() :t.tweet.getSentimentThreeWay();
 			if (sentiment == t.annotatedSentiment) correctlyClassified++;
+			else {
+//				System.out.println("\nmine, theirs, tweet:");
+//				System.out.println(sentiment + ", " + t.annotatedSentiment + ", " + t.tweet.getCleanSource());
+			}
 		}
 		
 		accuracy = (double) correctlyClassified / testingdataset.size();
@@ -125,27 +135,9 @@ public class ClassifierTester {
 		
 		System.out.println("\t|-> Fraction of correctly classified: " + correctlyClassified + "/" +testingdataset.size());
 		System.out.println("\t|-> Accuracy -> " + Result.format.format(accuracy));
-		
-		// guessing
-//		correctlyClassified = 0;
-//		for (ProcessedTweet t : testingdataset) {
-//			if (t.)
-//		}
-//		
-//		int p = 0, n = 0, neg = 0;
-//		for (ProcessedTweet t : annotatedTweets) 
-//			if (t.annotatedSentiment == 1) 
-//				p++; 
-//			else if (t.annotatedSentiment == 0) n++;
-//			else neg++;
-//		
-//		System.out.println("poz, neu, neg -> " + p + ", " + n + ", " + neg);
 	}
 	
-	private static void twoWay() {
-		datasetPath = "output/tweets.txt";
-//		readAndCreateDatasets();
-		
+	private static void twoWayLearning() {
 		System.out.println("\n--- LEARNING PHASE ---");
 		
 		int correctlyClassified = 0;
@@ -197,11 +189,7 @@ public class ClassifierTester {
 		System.out.println("\t|-> Best threshold -> " + Result.format.format(Tweet.threshold));
 	}
 	
-	private static void threeWay() {
-		// read entire dataset
-		datasetPath = "datasets/processedDatasetEnglishTweetsOnly.txt";
-		readAndCreateDatasets();
-		
+	private static void threeWayLearning() {
 		System.out.println("\n--- LEARNING PHASE ---");
 		
 		int correctlyClassified = 0;
@@ -271,18 +259,23 @@ public class ClassifierTester {
 				
 				// za file tweets.txt
 				// sentiment,tweetText
+				
+				//za file go_et_all_test
+				// sentiment,tweet
 				String[] tokens = line.split(",");
 				String sentiment = tokens[0];
 				String tweet = "";
 				
-				//if (sentiment.equals("-1"))  return;
+//				if (sentiment.equals("0"))  return;
 				
 				int ind = (datasetPath.contains("processedDatasetEnglishTweetsOnly"))? 2 : 1;
-				for (int i=ind; i<tokens.length; i++) tweet += tokens[i];
+				for (int i=ind; i<tokens.length; i++) tweet += ", " + tokens[i];
 				
 				// might want to remove these due to bias
 //				tweet.replace(":)", "");
 //				tweet.replace(":(", "");
+				
+				//System.out.println("tweet, senti: " + sentiment + " - " + tweet);
 				
 				Tweet tw = new Tweet(tweet, null);
 				tw.processTweet();

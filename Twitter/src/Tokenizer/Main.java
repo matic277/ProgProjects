@@ -58,13 +58,13 @@ public class Main {
 //			
 //		}.start();
 //
-		MainWindow mw = new MainWindow();
+//		MainWindow mw = new MainWindow();
 		
-//		test();
+		test();
 	}
 
 	public static void test() {
-		Tweet t = new Tweet("This is a test tweet :)😊\n www.link.com \n #hashtagSampleTest. Not    bad.", null);
+		Tweet t = new Tweet("This is a test tweet lol :)😊\n www.link.com \n #hashtagSampleTest. Not    bad.", null);
 //		Tweet t = new Tweet("||", null);
 		t.processTweet();
 		System.out.println(t.toString());
