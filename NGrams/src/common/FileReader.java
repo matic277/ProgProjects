@@ -19,6 +19,11 @@ public class FileReader {
 	// spaces: 772905
 	// words: spaces + 1  + lines + 1
 	
+	// https://sherlock-holm.es/stories/html/advs.html#Chapter-1
+	public static String holeslong = "resources/holmes_5mb.txt";
+	public static String holmesshort = "resources/holmes.txt";
+	public static String test = "resources/test.txt";
+	
 	public FileReader(String path) {
 		this.path = path;
 		lines = new ArrayList<String>(78000);
