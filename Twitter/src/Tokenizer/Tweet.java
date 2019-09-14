@@ -21,17 +21,18 @@ import Words.NGramEntry;
 
 public class Tweet {
 	
-	private static final String AbsMeasurableWord = null;
-
+	// source with original text
+	String sourceText;
+			
 	// source where newline chars are removed
 	String cleanSource;
 	
-	// source with original text
-	String sourceText;
+	// sentences, words are classified
+	ArrayList<Sentence> sentences;
 	
 	private String username;
 
-	private ArrayList<AbsWord> words;
+//	private ArrayList<AbsWord> words;
 	
 	private int numOfNegativeWords = 0;
 	private int numOfNeutralWords = 0;
@@ -51,132 +52,166 @@ public class Tweet {
 	}
 	
 	private void test() {
-		// if a word has a negator in front of it,
-		// flip its pleasantness value
-		AbsWord word, nextWord;
-		for (int i=0; i<words.size()-1; i++) {
-			word = words.get(i);
+		boolean changedWordsSentiment = false;
+		for (Sentence s : sentences)
+		{
+			ArrayList<AbsWord> words = s.getWords();
+			// if a word has a negator in front of it,
+			// flip its pleasantness value
+			for (int i=0; i<words.size()-1; i++) {
+				AbsWord word = words.get(i);
+				
+				if (word instanceof NegationWord) {
+					int ii = i + 1;
+					if (ii < words.size()) {
+						if (words.get(ii) instanceof AbsMeasurableWord) {
+							AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
+							w.setFlipPleasantness();
+							changedWordsSentiment = true;
+							continue;
+						}
+					}
+					ii++;
+					if (ii < words.size()) {
+						if (words.get(ii) instanceof AbsMeasurableWord) {
+							AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
+							w.setFlipPleasantness();
+							changedWordsSentiment = true;
+							continue;
+						}
+					}
+				}
+			}
 			
-			if (word instanceof NegationWord) {
-				int ii = i + 1;
-				if (ii < words.size()) {
-					if (words.get(ii) instanceof AbsMeasurableWord) {
-						AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
-						w.setFlipPleasantness();
-						continue;
-					}
-				}
-				ii++;
-				if (ii < words.size()) {
-					if (words.get(ii) instanceof AbsMeasurableWord) {
-						AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
-						w.setFlipPleasantness();
-						continue;
-					}
+
+			
+			// if a word is upper-case (or close to)
+			// magnify its pleasantness value, except for emojis
+			// (how close is defined in upper-case function)
+			for (AbsWord w : words) {
+				if (w instanceof AbsMeasurableWord && !(w instanceof Emoji) && isUpperCase(w.getSourceText())) {
+					AbsMeasurableWord mw = (AbsMeasurableWord) w;
+					mw.magnifyPleasantness();
+					changedWordsSentiment = true;
 				}
 			}
-		}
-		
-		// if a word is upper-case (or close to)
-		// magnify its pleasantness value, except for emojis
-		// (how close is defined in upper-case function)
-		for (AbsWord w : words) {
-			if (w instanceof AbsMeasurableWord && !(w instanceof Emoji) && isUpperCase(w.getSourceText())) {
-				AbsMeasurableWord mw = (AbsMeasurableWord) w;
-				mw.magnifyPleasantness();
+			
+			if (changedWordsSentiment) {
+				changedWordsSentiment = false;
+				s.calculateSentiment();
 			}
+			
+			// if a sentence contains ! or ?
+			// magnify its sentiment value
+			if (s.getSentence().endsWith("?") || s.getSentence().endsWith("!"))
+				s.magnifySentiment();
 		}
 	}
 	
 	public void processTweet() {
-		Tokenizer t = new Tokenizer(sourceText);
-		t.tokenizeTweet();
+		String processedText;
+		Tokenizer t = new Tokenizer();
 		
-		words = t.getTokens();
-		cleanSource = t.cleanSourceText;
+		processedText = t.findEmojis(sourceText);
+		cleanSource = processedText = t.trimIntoSingleLine(processedText);
+		
+		// at this point, text is in single line
+		// and emojis are represented as unicodes
+		sentences = t.splitIntoSentences(processedText);
+
 		
 		test();
 		doSomeStatistics();
-//		buildNGramFeatures();
-		setSentimentValue();
+		
+		// calculate sentiment after fully processing
+		// sentences (like executing function *test*)
+		calculateSentiment();
+		
+		
+//		Tokenizer t = new Tokenizer(sourceText);
+//		t.tokenizeTweet();
+//		
+//		words = t.getTokens();
+//		cleanSource = t.cleanSourceText;
+//		
+//		test();
+//		doSomeStatistics();
+////		buildNGramFeatures();
+//		setSentimentValue();
 	}
 	
 	// this method and getSentiment() are badly "designed"
 	// TODO fix
-	private void setSentimentValue() {
+	private void calculateSentiment() {
 		double sentiment = 0;
-		AbsWord w;
-		for (int i=0; i<words.size(); i++) {
-			w = words.get(i);
-			if (w instanceof AbsMeasurableWord) {
-				AbsMeasurableWord mw = (AbsMeasurableWord) w;
-				sentiment += mw.getPleasantness();
-			}
-		}
-		sentimentValue = sentiment;
+		for (Sentence s : sentences) sentiment += s.getSentiment();
+		this.sentimentValue = sentiment;
 	}
 	
-	private void buildNGramFeatures() {
-		ArrayList<String> ngramWords = new ArrayList<String>(words.size());
-		words.forEach(w -> {
-			if (w instanceof Emoji) return;
-			if (w instanceof URL) return;
-			if (w instanceof Target) return;
-			if (w instanceof Hashtag) return;
-			ngramWords.add((w.getProcessedText() == null || w.getProcessedText().length() == 0)? 
-					w.getSourceText() : w.getProcessedText());
-		});
-		
-		NGramDictionary dictionary = (NGramDictionary) DictionaryCollection.getDictionaryCollection().getNGramDictionary();
-		int numberOfFeatures = dictionary.getHashmap().size();
-		ArrayList<Integer> featureSeq = new ArrayList<Integer>(numberOfFeatures);
-		
-		for (int i=1; i<4; i++) {
-			NGram ngram = new NGram(i, ngramWords);
-			ArrayList<Gram> list = ngram.getListOfNGrams();
-			list.forEach(g -> {
-				if (dictionary.contains(g.ngram)) {
-					NGramEntry entry = (NGramEntry) dictionary.getEntry(g.ngram);
-					featureSeq.add(entry.getSequenceNumber());
-				}
-			});
-		}
-		
-		int[] featureList = new int[numberOfFeatures];
-		for (int i=0; i<featureList.length; i++) {
-			if (featureSeq.contains(new Integer(i)))
-				featureList[i] = 1;
-			else
-				featureList[i] = 0;
-		}
-		this.ngramFeatures = featureList;
-	}
+//	private void buildNGramFeatures() {
+//		ArrayList<String> ngramWords = new ArrayList<String>(words.size());
+//		words.forEach(w -> {
+//			if (w instanceof Emoji) return;
+//			if (w instanceof URL) return;
+//			if (w instanceof Target) return;
+//			if (w instanceof Hashtag) return;
+//			ngramWords.add((w.getProcessedText() == null || w.getProcessedText().length() == 0)? 
+//					w.getSourceText() : w.getProcessedText());
+//		});
+//		
+//		NGramDictionary dictionary = (NGramDictionary) DictionaryCollection.getDictionaryCollection().getNGramDictionary();
+//		int numberOfFeatures = dictionary.getHashmap().size();
+//		ArrayList<Integer> featureSeq = new ArrayList<Integer>(numberOfFeatures);
+//		
+//		for (int i=1; i<4; i++) {
+//			NGram ngram = new NGram(i, ngramWords);
+//			ArrayList<Gram> list = ngram.getListOfNGrams();
+//			list.forEach(g -> {
+//				if (dictionary.contains(g.ngram)) {
+//					NGramEntry entry = (NGramEntry) dictionary.getEntry(g.ngram);
+//					featureSeq.add(entry.getSequenceNumber());
+//				}
+//			});
+//		}
+//		
+//		int[] featureList = new int[numberOfFeatures];
+//		for (int i=0; i<featureList.length; i++) {
+//			if (featureSeq.contains(new Integer(i)))
+//				featureList[i] = 1;
+//			else
+//				featureList[i] = 0;
+//		}
+//		this.ngramFeatures = featureList;
+//	}
 	
 	private void doSomeStatistics() {
-		for (AbsWord word : words) {
-			// AffectionWord, Hastag, Smiley, Acronym, Phrase, (Emoji)
-			if (word instanceof AbsMeasurableWord) {
-				AbsMeasurableWord mw = (AbsMeasurableWord) word;
-				double pleasantness = mw.getPleasantness();
-				
-				if (mw.isNegativePleasantness()) {
-					numOfNegativeWords++;
-					sumOfNegativeWords += pleasantness;
-				} else if (mw.isNeutralPleasantness()) {
-					numOfNeutralWords++;
-					sumOfNeutralWords += pleasantness;
+		for (Sentence s : sentences)
+		{
+			for (AbsWord word : s.getWords()) {
+				// AffectionWord, Hastag, Smiley, Acronym, Phrase, (Emoji)
+				if (word instanceof AbsMeasurableWord) {
+					AbsMeasurableWord mw = (AbsMeasurableWord) word;
+					double pleasantness = mw.getPleasantness();
 					
-				} else {
-					numOfPositiveWords++;
-					sumOfPositiveWords += pleasantness;
+					if (mw.isNegativePleasantness()) {
+						numOfNegativeWords++;
+						sumOfNegativeWords += pleasantness;
+					} else if (mw.isNeutralPleasantness()) {
+						numOfNeutralWords++;
+						sumOfNeutralWords += pleasantness;
+						
+					} else {
+						numOfPositiveWords++;
+						sumOfPositiveWords += pleasantness;
+					}
 				}
-			}
-			
-			// URL, Target, StopWord, Other, NegationWord
-			else {
-				numOfNeutralWords++;
-			}
- 		}
+				
+				// URL, Target, StopWord, Other, NegationWord
+				else {
+					numOfNeutralWords++;
+				}
+	 		}
+		}
 	}
 	
 	private boolean isUpperCase(String word) {
@@ -189,59 +224,19 @@ public class Tweet {
 		double ratio = (double)uppercaseLettersNum / sourceText.length();
 		return (ratio >= 0.4);
 	}
-	
-	// placeholder function for sentiment, returning biggest
-	// number of numOf_x_Words
-	public int getSentiment() {
-		double sentiment = 0;
-		AbsWord w;
-		for (int i=0; i<words.size(); i++) {
-			w = words.get(i);
-			if (w instanceof AbsMeasurableWord) {
-				AbsMeasurableWord mw = (AbsMeasurableWord) w;
-				sentiment += mw.getPleasantness();
-			}
-		}
-	
-		// 3 way
-		if (sentiment >= positiveThreshold) return 1;
-		else if (sentiment <= negativeThreshold) return -1;
-		else return 0;
-		
-		// 2 way
-//		return (sentiment > threshold)? 1 : -1;
-	}
-	
+
 	public static double positiveThreshold = 0.1;
 	public static double negativeThreshold = -0.55;
 	public static double threshold = 0.05;
 	
 	public int getSentimentThreeWay() {
-		double sentiment = 0;
-		AbsWord w;
-		for (int i=0; i<words.size(); i++) {
-			w = words.get(i);
-			if (w instanceof AbsMeasurableWord) {
-				AbsMeasurableWord mw = (AbsMeasurableWord) w;
-				sentiment += mw.getPleasantness();
-			}
-		}
-		if (sentiment >= positiveThreshold) return 1;
-		else if (sentiment <= negativeThreshold) return -1;
+		if (sentimentValue >= positiveThreshold) return 1;
+		else if (sentimentValue <= negativeThreshold) return -1;
 		else return 0;
 	}
 	
 	public int getSentimentTwoWay() {
-		double sentiment = 0;
-		AbsWord w;
-		for (int i=0; i<words.size(); i++) {
-			w = words.get(i);
-			if (w instanceof AbsMeasurableWord) {
-				AbsMeasurableWord mw = (AbsMeasurableWord) w;
-				sentiment += mw.getPleasantness();
-			}
-		}
-		return (sentiment > threshold)? 1 : -1;
+		return (sentimentValue > threshold)? 1 : -1;
 	}
 	
 	public String getSourceText() {
@@ -252,12 +247,14 @@ public class Tweet {
 		return cleanSource;
 	}
 	
-	public ArrayList<AbsWord> getTokens() {
-		return this.words;
-	}
-	
 	public double getSentimentValue() {
 		return this.sentimentValue;
+	}
+	
+	public ArrayList<AbsWord> getWords() {
+		ArrayList<AbsWord> words = new ArrayList<AbsWord>(sentences.size() * 5);
+		for (Sentence s : sentences) words.addAll(s.getWords());
+		return words;
 	}
 	
 	@Override
@@ -272,12 +269,14 @@ public class Tweet {
 		s += "Poster: " + username + "\n";
 		s += "Source tweet:\n" + sourceText + "\n\n";
 		s += "Clean tweet:\n" + cleanSource + "\n\n";
-		s += "Tweet tokens:\n";
+		s += "Tweet Sentences:\n";
 		
-		for (int i=0; i<words.size()-1; i++) {
-			s += "\t|-> " + words.get(i).toString() + "\n";
+		for (int i=0; i<sentences.size(); i++) {
+			s += "\t|-> Sentence(" + (i+1) + ")\n";
+			s += (i == sentences.size()-1)? sentences.get(i).toStringLast() + "\n" : sentences.get(i).toString() + "\n";
 		}
-		s += "\t\\-> " + words.get(words.size()-1).toString() + "\n\n";
+		
+		s += "\n";
 		
 		s += "Some statistics:\n";
 		s += "\t|-> Num of neg words: " + numOfNegativeWords + "\n";
@@ -296,14 +295,14 @@ public class Tweet {
 		return s;
 	}
 	
-	public String getNGramFeatures() {
-		String s = "";
-		for (int i=0; i<ngramFeatures.length-1; i++) {
-			s += ngramFeatures[i] + ",";
-		}
-		s+= ngramFeatures[ngramFeatures.length - 1];
-		return s;
-	}
+//	public String getNGramFeatures() {
+//		String s = "";
+//		for (int i=0; i<ngramFeatures.length-1; i++) {
+//			s += ngramFeatures[i] + ",";
+//		}
+//		s+= ngramFeatures[ngramFeatures.length - 1];
+//		return s;
+//	}
 	
 	public String getStatistics() {
 		DecimalFormat format = new DecimalFormat("#.####");

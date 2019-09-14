@@ -15,7 +15,7 @@ public class ClassifierTester {
 
 	static String datasetPath;
 	
-	static final double learningPercentage = 0.0;
+	static final double learningPercentage = 0.5;
 	
 	static ArrayList<ProcessedTweet> annotatedTweets = new ArrayList<ProcessedTweet>(130000);
 	static ArrayList<ProcessedTweet> learningdataset = new ArrayList<ProcessedTweet>((int)(annotatedTweets.size()*learningPercentage*1.2));
@@ -35,13 +35,13 @@ public class ClassifierTester {
 		
 		readAndCreateDatasets();
 
-//		threeWayLearning();
+		threeWayLearning();
 		
 //		twoWayLearning();
 		
-//		testDataset(true);
+		testDataset(false);
 		
-		testFmeasure(true);
+//		testFmeasure(false);
 		
 		
 //		testAgain();
@@ -279,6 +279,11 @@ public class ClassifierTester {
 				
 				Tweet tw = new Tweet(tweet, null);
 				tw.processTweet();
+				
+//				if (new Random().nextDouble() < 0.1) {
+//					System.out.println("\nsrc -> " + tweet);
+//					System.out.println(tw.toString() + "\n");
+//				}
 				
 				annotatedTweets.add(new ProcessedTweet(tw, Integer.parseInt(sentiment)));
 			});

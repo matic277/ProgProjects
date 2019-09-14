@@ -59,7 +59,7 @@ public class Frame implements ComponentListener {
 		String tweet = "This is a 0x1f609 brand nice test tweet. lol www.url.si :) #OneTwo";
 		Tweet t = new Tweet(tweet, null);
 		t.processTweet();
-		Root r = new Root(t.getTokens(), width, height, g);
+		Root r = new Root(t.getWords(), width, height, g);
 		System.out.println(r.getMaxDepth());
 		System.out.println(t.toString());
 	}

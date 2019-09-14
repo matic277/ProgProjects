@@ -1,5 +1,6 @@
 package Tokenizer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.stream.IntStream;
 import AbstractWordClasses.AbsWord;
 import Words.Acronym;
@@ -14,44 +15,139 @@ import Words.Target;
 import Words.URL;
 
 public class Tokenizer {
-	
-	String sourceText;
-	String cleanSourceText;
-	
-	private ArrayList<AbsWord> words;
-	
-	private String suspects = "-'!? ¨\"#$%&/()=*ÐŠÈÆŽŠðšæèž:;,_~¡^¢°²`ÿ´½¨¸.*\"<>¤ßè×÷\\â€¦™«";
 
-	public Tokenizer(String cleanTweetText) {
-		this.sourceText = cleanTweetText;
+	private String suspects = "-'!? ¨\"#$%&/()=*ÐŠÈÆŽŠðšæèž:;,_~¡^¢°²`ÿ´½¨¸.*\"<>¤ßè×÷\\â€¦™«";
+	private String[] sentenceSeparatorsRegEx = new String[] {"\\.", "\\!", "\\?"};
+	private String[] sentenceSeparators = new String[] {".", "!", "?"};
+
+
+//	public Tokenizer(String cleanTweetText) {
+//		this.sourceText = cleanTweetText;
+//	}
+	
+	
+	public Tokenizer() { }
+	
+	public String trimIntoSingleLine(String str) {
+		// clean strings of new line chars and stuff
+		str = str.replaceAll("(\\n)+", " ");
+		str = str.replaceAll("(\\.)+", ".");
+		str = str.replaceAll("(\\!)+", "!");
+		str = str.replaceAll("(\\?)+", "?");
+		str = str.replaceAll("(\\n)+", " ");
+		str = str.trim().replaceAll("( )+", " ");
+		return str;
 	}
 	
 	public void tokenizeTweet() {
-		// clean strings of new line chars and stuff
-		cleanSourceText = sourceText.replaceAll("(\\n)+", " ");
-		cleanSourceText = cleanSourceText.trim().replaceAll("( )+", " ");
+		// replace emojis (appearing as a seq. of '?') as emoji code-points
+//		findEmojis();
 		
-		// replace emojis encoded as a series of '?', as emoji code-points
-		findEmojis();
+////		{
+////			// split by space and init the
+//			// size of list of words
+//			String[] tokens = cleanSourceText.split(" ");		
+//			words = new ArrayList<AbsWord>(tokens.length);	
+//			
+//			classifyWords(tokens);
+////		}
 		
-		// split by space and init the
-		// size of list of words
-		String[] tokens = cleanSourceText.split(" ");		
-		words = new ArrayList<AbsWord>(tokens.length);	
-		
-		classifyWords(tokens);
+//		splitIntoSentences();	
 	}
 	
-	private void findEmojis() {
-		String src = cleanSourceText;
+	public ArrayList<Sentence> splitIntoSentences(String singleLineTrimmedText) {
+		// split by sentences
+		ArrayList<StringBuilder> sentences = new ArrayList<StringBuilder>(5);
+		String[] words = singleLineTrimmedText.split(" ");
+				
+		StringBuilder sentence = new StringBuilder();
+		for (String w : words) {
+			if (containsSentenceSeparator(w)) {
+				String[] tokens1 = (isSentenceSeparator(w))?
+						new String[] {w, ""} : getWordsSplitBySeparators(w);
+							
+//				System.out.print("got: " + tokens1.length + " - tested for: '" + w + "'\n -> results :");
+//				for (String t : tokens1) System.out.print("'"+t + "', ");
+//				System.out.println("\n");
+				
+				sentences.add(sentence.append(tokens1[0]));
+				sentence = new StringBuilder();
+				sentence.append(tokens1[1] + " ");
+			} else {
+				sentence.append(w + " ");
+			}
+		}
+		
+		// add last sentence, which might not have a sentence separator
+		// in the end, but it also might be empty
+		if (!sentence.toString().matches("( )*")) sentences.add(sentence);
+		
+		// remove sentences that contain only spaces and sentence separators
+		sentences.removeIf(sb -> {
+			String str = sb.toString().trim();
+			for (String sep : sentenceSeparators) {
+				if (str.equals(sep)) return true;
+			}
+			return false;
+		});
+		
+		// fix extra leading and trailing spaces
+		sentences.forEach(s -> {
+			String str = s.toString().trim();
+			s.setLength(0);
+			s.append(str);
+		});
+		
+//		System.out.println("number of sentences: " + sentences.size());
+//		sentences.forEach(sb -> System.out.println("-> '" + sb.toString() + "'"));
+		
+		
+		ArrayList<Sentence> sentences2 = new ArrayList<Sentence>(sentences.size());
+		for (StringBuilder sb : sentences) sentences2.add(new Sentence(sb.toString()));
+		return sentences2;
+	}
+	
+	// TODO: wildly inefficient function.. fix
+	// case: ... word!This is ....
+	// no space at start of new sentence...
+	// return: {word, This}
+	private String[] getWordsSplitBySeparators(String str) {
+		if (str.endsWith("!?"))return new String[] { str.split("\\!\\?")[0]+"!?", "" };
+		if (str.contains("!?")) return new String[] {str.split("\\!\\?")[0]+"!?", str.split("\\!\\?")[1]};
+		
+		for (String s : sentenceSeparators) {
+			if (str.endsWith(s)) return new String[] {str.split("\\"+s)[0]+s, ""};
+			if (str.startsWith(s)) return new String[] {s, str.split("\\"+s)[1]};
+			if (str.contains(s)) return new String[] {str.split("\\"+s)[0]+s, str.split("\\"+s)[1]};
+		}
+		return new String[] {"", ""};
+	}
+	
+	private boolean isSentenceSeparator(String str) {
+		for (String s : sentenceSeparators) 
+			if (str.equals(s)) return true;
+		return false;
+	}
+	
+	
+	private boolean containsSentenceSeparator(String str) {
+		
+		for (String s : sentenceSeparators) 
+			if (!URL.isType(str) && !Smiley.isType(str) && str.contains(s)) return true;
+		return false;
+	}
+	
+	public String findEmojis(String singleLineTrimmedText) {
+		//String src = singleLineTrimmedText;
+		
 //        System.out.println(src);
-//		
+//			
 //        src.codePoints().filter(cp -> cp >= 256).forEach(cp -> {
 //            System.out.printf("0x%X = %s%n",
 //                cp, Character.getName(cp));
 //        });
         
-        IntStream s = src.codePoints();
+        IntStream s = singleLineTrimmedText.codePoints();
         int[] arr = s.toArray();
         
         String str = "";
@@ -82,16 +178,10 @@ public class Tokenizer {
 //        
 //        System.out.println(str);
         
-        cleanSourceText = str;
+//        cleanSourceText = str;
+        return str;
 	}
-	
-	private String completelyCleanToken(String token) {
-		for (int i=0; i<suspects.length(); i++) {
-			token = token.replace(suspects.charAt(i) + "", "");
-		}
-		return token;
-	}
-	
+
 	// don't remove -
 	private String cleanToken1(String token) {
 		String chars = suspects.replace("-", "");
@@ -108,7 +198,10 @@ public class Tokenizer {
 		return token;
 	}
 	
-	private void classifyWords(String[] tokens) {
+	// input should be a tokenized (by spaces)
+	// string that is in a single line
+	public ArrayList<AbsWord> classifyAndGetWords(String[] tokens) {
+		ArrayList<AbsWord> words = new ArrayList<AbsWord>(tokens.length);
 		for (String token : tokens)
 		{
 			
@@ -151,9 +244,7 @@ public class Tokenizer {
 			else if (Emoji.isType(rawToken)) {
 				words.add(new Emoji(rawToken, null));
 			}
-			
-			
-			
+
 			
 			// from here on out, the order of type checking is important
 			// always check first for negation words or stop-words, since
@@ -198,9 +289,15 @@ public class Tokenizer {
 			// else, unknown/other word
 			else words.add(new Other(rawToken, checkToken2));
 		}
-	}
-	
-	public ArrayList<AbsWord> getTokens() {
 		return words;
 	}
+	
+//	
+//	public ArrayList<AbsWord> getTokens() {
+//		return words;
+//	}
+//	
+//	public ArrayList<Sentence> getSentences() {
+//		return sentences;
+//	}
 }
