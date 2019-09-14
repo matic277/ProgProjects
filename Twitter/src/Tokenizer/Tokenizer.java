@@ -112,7 +112,8 @@ public class Tokenizer {
 	// no space at start of new sentence...
 	// return: {word, This}
 	private String[] getWordsSplitBySeparators(String str) {
-		if (str.endsWith("!?"))return new String[] { str.split("\\!\\?")[0]+"!?", "" };
+		if (str.contentEquals("!?")) return new String[] {"!?", ""};
+		if (str.endsWith("!?")) return new String[] { str.split("\\!\\?")[0]+"!?", "" };
 		if (str.contains("!?")) return new String[] {str.split("\\!\\?")[0]+"!?", str.split("\\!\\?")[1]};
 		
 		for (String s : sentenceSeparators) {

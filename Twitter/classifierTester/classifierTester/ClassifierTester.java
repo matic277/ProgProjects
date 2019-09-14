@@ -15,7 +15,7 @@ public class ClassifierTester {
 
 	static String datasetPath;
 	
-	static final double learningPercentage = 0.5;
+	static final double learningPercentage = 0.0;
 	
 	static ArrayList<ProcessedTweet> annotatedTweets = new ArrayList<ProcessedTweet>(130000);
 	static ArrayList<ProcessedTweet> learningdataset = new ArrayList<ProcessedTweet>((int)(annotatedTweets.size()*learningPercentage*1.2));
@@ -27,22 +27,22 @@ public class ClassifierTester {
 		
 		datasetPath = 
 //				"datasets/processedDatasetEnglishTweetsOnly.txt";
-//				"output/tweets.txt";
-				"datasets/manually_GO_et_al_testSet.txt";
+				"output/tweets.txt";
+//				"datasets/manually_GO_et_al_testSet.txt";
 
 		
 //		special();
 		
 		readAndCreateDatasets();
 
-		threeWayLearning();
+//		threeWayLearning();
 		
 //		twoWayLearning();
 		
-		testDataset(false);
+		testDataset(true);
 		
-//		testFmeasure(false);
-		
+		testFmeasure(true);
+//		
 		
 //		testAgain();
 		
