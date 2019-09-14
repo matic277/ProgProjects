@@ -14,12 +14,8 @@ public class Main {
 		
 		int ngramSize = 3;
 		int nthreads = 4;
-		
-		// https://sherlock-holm.es/stories/html/advs.html#Chapter-1
-		String holeslong = "resources/holmes_5mb.txt";
-		String holmesshort = "resources/holmes.txt";
-		
-		FileReader fr = new FileReader(holeslong);
+	
+		FileReader fr = new FileReader(FileReader.holmesshort);
 		ArrayList<String> words = fr.getWords();
 		
 		System.out.println("Ammount of words: " + words.size());

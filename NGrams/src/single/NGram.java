@@ -1,7 +1,10 @@
+package single;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import common.Gram;
 
 public class NGram {
 	
@@ -14,7 +17,7 @@ public class NGram {
 	
 	final int numberOfGrams;
 	
-	HashMap<String, Gram> table;
+	public HashMap<String, Gram> table;
 	ArrayList<Gram> list;
 	
 	boolean print = true;
@@ -67,7 +70,7 @@ public class NGram {
 		}
 		
 		calculateProbabilities();
-		sort();
+		//sort();
 	}
 	
 	public void computeNGramsFromStringArray() {
@@ -96,7 +99,7 @@ public class NGram {
 		}
 		
 		calculateProbabilities();
-		sort();
+		//sort();
 	}
 
 	private void calculateProbabilities() {
@@ -149,26 +152,8 @@ public class NGram {
 			System.out.println("\t|-> " + list.get(i).toString());
 		}
 	}
-}
-
-class Gram {
 	
-	String[] words;
-	String ngram;
-	
-	double occurrences = 1;
-	double probability = 0;
-	
-	public Gram(String[] words) {
-		this.words = words;
-	}
-	public Gram(String ngram) {
-		this.ngram = ngram;
-	}
-	
-	@Override
-	public String toString() {
-		DecimalFormat f = new DecimalFormat("#.#######");
-		return "['" + ngram + "', " + (int)occurrences + ", " + f.format(probability) + "%]";
+	public void getWordsStringArray() {
+		
 	}
 }
