@@ -110,7 +110,7 @@ public class Tokenizer {
 	// TODO: wildly inefficient function.. fix
 	// case: ... word!This is ....
 	// no space at start of new sentence...
-	// return: {word, This}
+	// return: {word!, This}
 	private String[] getWordsSplitBySeparators(String str) {
 		if (str.contentEquals("!?")) return new String[] {"!?", ""};
 		if (str.endsWith("!?")) return new String[] { str.split("\\!\\?")[0]+"!?", "" };

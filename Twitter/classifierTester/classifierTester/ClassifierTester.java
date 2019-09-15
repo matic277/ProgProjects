@@ -4,26 +4,31 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import Dictionaries.DictionaryCollection;
 import Tokenizer.Classifier;
 import Tokenizer.Tweet;
 
-
 public class ClassifierTester {
 
-	static String datasetPath;
+	public static String datasetPath;
 	
-	static final double learningPercentage = 0.0;
+	static final double learningPercentage = 0.33;
 	
-	static ArrayList<ProcessedTweet> annotatedTweets = new ArrayList<ProcessedTweet>(130000);
-	static ArrayList<ProcessedTweet> learningdataset = new ArrayList<ProcessedTweet>((int)(annotatedTweets.size()*learningPercentage*1.2));
-	static ArrayList<ProcessedTweet> testingdataset = new ArrayList<ProcessedTweet>((int)(annotatedTweets.size()*(1-learningPercentage)*1.2));
+	static ArrayList<String> file = new ArrayList<String>(130000);
+	static List<ProcessedTweet> annotatedTweets;
+	
+	static ArrayList<ProcessedTweet> learningdataset;
+	static ArrayList<ProcessedTweet> testingdataset;
 	
 	public static final Random r = new Random();
 	
 	public static void main(String[] args) {
+		DictionaryCollection.getDictionaryCollection();
 		
 		datasetPath = 
 //				"datasets/processedDatasetEnglishTweetsOnly.txt";
@@ -33,14 +38,17 @@ public class ClassifierTester {
 		
 //		special();
 		
-		readAndCreateDatasets();
+		readDataset();
+		processDataset();
+		
+		createLearningAndTestingDataset();
 
 //		threeWayLearning();
 		
-//		twoWayLearning();
-		
+		twoWayLearning();
+//		
 		testDataset(true);
-		
+//		
 		testFmeasure(true);
 //		
 		
@@ -145,7 +153,7 @@ public class ClassifierTester {
 		ArrayList<Result> results = new ArrayList<Result>(1000);
 		
 		// learning
-		System.out.println("\t|-> Defnining threshold... ");
+		System.out.println("\t|-> Definining threshold... ");
 		int output = 0;
 		for (Tweet.threshold=-3; Tweet.threshold<3; Tweet.threshold+=increaseValue) {
 			for (int i=0; i<learningdataset.size(); i++) {
@@ -199,7 +207,7 @@ public class ClassifierTester {
 		ArrayList<Result> results = new ArrayList<Result>(1000);
 
 		// learning
-		System.out.println("\t|-> Defnining thresholds... ");
+		System.out.println("\t|-> Definining thresholds... ");
 		int output = 0;
 		for ( ; Tweet.positiveThreshold < 3; Tweet.positiveThreshold+=increaseValue) {
 			for (Tweet.negativeThreshold=-3 ; Tweet.negativeThreshold < 3; Tweet.negativeThreshold+=increaseValue) {
@@ -249,110 +257,70 @@ public class ClassifierTester {
 			+ ", " + Result.format.format(Tweet.negativeThreshold) + ")");
 	}
 
-	public static void readAndCreateDatasets() {
+	public static void readDataset() {
 		System.out.println("--- DATASET READING PROCESS ---");
-		System.out.print("\t|-> Reading and processing dataset... ");
+		System.out.print("\t|-> Reading dataset... ");
 		try (Stream<String> lines = Files.lines(Paths.get(datasetPath), Charset.defaultCharset())) {
-			lines.forEachOrdered(line -> {
-				// za file processedDatasetEnglishTweetsOnly
-				// sentiment,tweetID,tweetText
-				
-				// za file tweets.txt
-				// sentiment,tweetText
-				
-				//za file go_et_all_test
-				// sentiment,tweet
-				String[] tokens = line.split(",");
-				String sentiment = tokens[0];
-				String tweet = "";
-				
-//				if (sentiment.equals("0"))  return;
-				
-				int ind = (datasetPath.contains("processedDatasetEnglishTweetsOnly"))? 2 : 1;
-				for (int i=ind; i<tokens.length; i++) tweet += ", " + tokens[i];
-				
-				// might want to remove these due to bias
-//				tweet.replace(":)", "");
-//				tweet.replace(":(", "");
-				
-				//System.out.println("tweet, senti: " + sentiment + " - " + tweet);
-				
-				Tweet tw = new Tweet(tweet, null);
-				tw.processTweet();
-				
-//				if (new Random().nextDouble() < 0.1) {
-//					System.out.println("\nsrc -> " + tweet);
-//					System.out.println(tw.toString() + "\n");
-//				}
-				
-				annotatedTweets.add(new ProcessedTweet(tw, Integer.parseInt(sentiment)));
-			});
+			lines.forEachOrdered(line -> file.add(line));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		System.out.println(" done.");
-		System.out.println("\t|-> Original dataset size: " + annotatedTweets.size());
-		
-		// create learning dataset
-		System.out.print("\t|-> Creating learning and testing dataset... ");
-		
-		annotatedTweets.forEach(t -> {
-			if (r.nextFloat() <= learningPercentage) 
-				learningdataset.add(t);
-			else
-				testingdataset.add(t);
-		});
-		System.out.println(" done.");
-		
-		System.out.println("\t|-> Learning dataset size: " + learningdataset.size());
-		System.out.println("\t|-> Testing  dataset size: " + testingdataset.size());
-		
-		int x = testingdataset.size() + learningdataset.size();
-		int y = annotatedTweets.size();
-		if (x != y) throw new Error("ERROR: Something went wrong when creating datasets: " + x + " != " + y + "\n");
+		System.out.println("\t|-> Original dataset size: " + file.size() + "\n");
 	}
 	
-	// copy of method read and create datasets
-	public static void special() {
-		System.out.println("--- DATASET READING PROCESS ---");
-		System.out.print("\t|-> Reading and processing dataset... ");
-		datasetPath = "datasets/processedDatasetEnglishTweetsOnly.txt";
-		try (Stream<String> lines = Files.lines(Paths.get(datasetPath), Charset.defaultCharset())) {
-			lines.forEachOrdered(line -> {
-				// za file processedDatasetEnglishTweetsOnly
-				// sentiment,tweetID,tweetText
-				
-				// za file tweets.txt
-				// sentiment,tweetText
-				String[] tokens = line.split(",");
-				String sentiment = tokens[0];
-				String tweet = "";
-				
-				if (sentiment.equals("0")) return; // throw neutral tweets out
-				
-				int ind = (datasetPath.contains("processedDatasetEnglishTweetsOnly"))? 2 : 1;
-				for (int i=ind; i<tokens.length; i++) tweet += tokens[i];
-				
-				Tweet tw = new Tweet(tweet, null);
-				tw.processTweet();
-				
-				annotatedTweets.add(new ProcessedTweet(tw, Integer.parseInt(sentiment)));
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println(" done.");
-		System.out.println("\t|-> Original dataset size: " + annotatedTweets.size());
+	public static void processDataset() {
+		System.out.println("--- DATASET PROCESSING ---");
+		System.out.print("\t|-> Processing dataset... ");
 		
-		// create learning dataset
+		long t1 = System.currentTimeMillis();
+		
+		annotatedTweets = Collections.synchronizedList(new ArrayList<ProcessedTweet>());
+
+		// za file tweets.txt in go_et_all_test.txt
+		// sentiment,tweetText
+		// za file englishTweetsOnly
+		// sentiment,tweetID,tweetText
+		final int startIndex = 
+				(ClassifierTester.datasetPath.equals("datasets/processedDatasetEnglishTweetsOnly.txt"))? 2 : 1;
+		
+		// process tweets
+		file.parallelStream().forEach(s -> {
+			String[] tokens = s.split(",");
+			String sentiment = tokens[0];
+			String tweet = "";
+			
+			for (int i=startIndex; i<tokens.length; i++) tweet += ", " + tokens[i];
+			
+			Tweet t = new Tweet(tweet, "{UNKNOWN}");
+			t.processTweet();
+
+			annotatedTweets.add(new ProcessedTweet(t, Integer.parseInt(sentiment)));
+		});
+
+		System.out.println("done in: " + (System.currentTimeMillis() - t1)/1000.0 + "s.");
+		System.out.println("\t|-> Number of processed tweets: " + annotatedTweets.size() + "\n");
+		
+		int x = file.size();
+		int y = annotatedTweets.size();
+		if (x != y) 
+			throw new Error("ERROR: Something went wrong when creating datasets: " + x + " != " + y + "\n"
+				+ "-> file size: " + x + "\n-> processed size: " + y + "\n");
+	}
+	
+	public static void createLearningAndTestingDataset() {
+		System.out.println("--- CREATING LEARNING AND TESTING DATASET ---");
+		System.out.println("\t|-> Size of learning dataset: " + learningPercentage);
 		System.out.print("\t|-> Creating learning and testing dataset... ");
 		
-		annotatedTweets.forEach(t -> {
-			if (r.nextFloat() <= learningPercentage) 
-				learningdataset.add(t);
-			else
-				testingdataset.add(t);
+		learningdataset = new ArrayList<ProcessedTweet>((int)(annotatedTweets.size()*learningPercentage*1.2));
+		testingdataset = new ArrayList<ProcessedTweet>((int)(annotatedTweets.size()*learningPercentage*1.2));
+		
+		annotatedTweets.forEach(pt -> {
+			if (r.nextFloat() <= learningPercentage) learningdataset.add(pt);
+			else testingdataset.add(pt);
 		});
+		
 		System.out.println(" done.");
 		
 		System.out.println("\t|-> Learning dataset size: " + learningdataset.size());
@@ -361,10 +329,8 @@ public class ClassifierTester {
 		int x = testingdataset.size() + learningdataset.size();
 		int y = annotatedTweets.size();
 		if (x != y) throw new Error("ERROR: Something went wrong when creating datasets: " + x + " != " + y + "\n");
-		
-		for (ProcessedTweet t : annotatedTweets) if (t.annotatedSentiment == 0)
-			throw new Error("ERROR: Something went wrong when creating datasets: neutral tweet found");
 	}
+
 }
 
 class Result {
@@ -394,14 +360,3 @@ class ProcessedTweet {
 		this.annotatedSentiment = annotatedSentiment;
 	}
 }
-
-//class TweetInstance {
-//	
-//	int sentiment;
-//	String text;
-//	
-//	public TweetInstance(String text, String sentiment) {
-//		this.text = text;
-//		this.sentiment = Integer.parseInt(sentiment);
-//	}
-//}
