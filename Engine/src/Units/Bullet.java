@@ -22,7 +22,7 @@ public class Bullet extends Unit {
 
 	@Override
 	public void draw(Graphics2D g) {
-		rotateAndDraw(g, facingDirection);
+		rotateAndDraw(g);
 		//drawHitbox(g);
 	}
 }

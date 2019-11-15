@@ -15,17 +15,13 @@ import Words.Target;
 import Words.URL;
 
 public class Tokenizer {
+	
+	// Class is a collection of functions
 
 	private String suspects = "-'!? ¨\"#$%&/()=*ÐŠÈÆŽŠðšæèž:;,_~¡^¢°²`ÿ´½¨¸.*\"<>¤ßè×÷\\â€¦™«";
-	private String[] sentenceSeparatorsRegEx = new String[] {"\\.", "\\!", "\\?"};
-	private String[] sentenceSeparators = new String[] {".", "!", "?"};
+	private String[] sentSepRegEx = new String[] {"\\.", "\\!", "\\?"};
+	private String[] sentSep = new String[] {".", "!", "?"};
 
-
-//	public Tokenizer(String cleanTweetText) {
-//		this.sourceText = cleanTweetText;
-//	}
-	
-	
 	public Tokenizer() { }
 	
 	public String trimIntoSingleLine(String str) {
@@ -37,22 +33,6 @@ public class Tokenizer {
 		str = str.replaceAll("(\\n)+", " ");
 		str = str.trim().replaceAll("( )+", " ");
 		return str;
-	}
-	
-	public void tokenizeTweet() {
-		// replace emojis (appearing as a seq. of '?') as emoji code-points
-//		findEmojis();
-		
-////		{
-////			// split by space and init the
-//			// size of list of words
-//			String[] tokens = cleanSourceText.split(" ");		
-//			words = new ArrayList<AbsWord>(tokens.length);	
-//			
-//			classifyWords(tokens);
-////		}
-		
-//		splitIntoSentences();	
 	}
 	
 	public ArrayList<Sentence> splitIntoSentences(String singleLineTrimmedText) {
@@ -85,7 +65,7 @@ public class Tokenizer {
 		// remove sentences that contain only spaces and sentence separators
 		sentences.removeIf(sb -> {
 			String str = sb.toString().trim();
-			for (String sep : sentenceSeparators) {
+			for (String sep : sentSep) {
 				if (str.equals(sep)) return true;
 			}
 			return false;
@@ -103,51 +83,46 @@ public class Tokenizer {
 		
 		
 		ArrayList<Sentence> sentences2 = new ArrayList<Sentence>(sentences.size());
-		for (StringBuilder sb : sentences) sentences2.add(new Sentence(sb.toString()));
+		sentences.forEach(sb -> sentences2.add(new Sentence(sb.toString())));
 		return sentences2;
 	}
 	
-	// TODO: wildly inefficient function.. fix
 	// case: ... word!This is ....
-	// no space at start of new sentence...
 	// return: {word!, This}
 	private String[] getWordsSplitBySeparators(String str) {
+		String[] t;
 		if (str.contentEquals("!?")) return new String[] {"!?", ""};
-		if (str.endsWith("!?")) return new String[] { str.split("\\!\\?")[0]+"!?", "" };
-		if (str.contains("!?")) return new String[] {str.split("\\!\\?")[0]+"!?", str.split("\\!\\?")[1]};
 		
-		for (String s : sentenceSeparators) {
-			if (str.endsWith(s)) return new String[] {str.split("\\"+s)[0]+s, ""};
-			if (str.startsWith(s)) return new String[] {s, str.split("\\"+s)[1]};
-			if (str.contains(s)) return new String[] {str.split("\\"+s)[0]+s, str.split("\\"+s)[1]};
+		if (str.contains("!?")) {
+			t = str.split("\\!\\?");
+			if (str.endsWith("!?")) return new String[] {t[0]+"!?", ""};
+			else return new String[] {t[0]+"!?", t[1]};
+		}
+			
+		for (int i=0; i<sentSep.length; i++) {
+			if (str.contains(sentSep[i])) {
+				t = str.split(sentSepRegEx[i]);
+				if (str.endsWith(sentSep[i])) return new String[] {t[0]+sentSep[i], ""};
+				if (str.startsWith(sentSep[i])) return new String[] {sentSep[i], t[1]};
+				return new String[] {t[0]+sentSep[i], t[1]};
+			}
 		}
 		return new String[] {"", ""};
 	}
 	
 	private boolean isSentenceSeparator(String str) {
-		for (String s : sentenceSeparators) 
+		for (String s : sentSep) 
 			if (str.equals(s)) return true;
 		return false;
 	}
 	
-	
 	private boolean containsSentenceSeparator(String str) {
-		
-		for (String s : sentenceSeparators) 
+		for (String s : sentSep) 
 			if (!URL.isType(str) && !Smiley.isType(str) && str.contains(s)) return true;
 		return false;
 	}
 	
 	public String findEmojis(String singleLineTrimmedText) {
-		//String src = singleLineTrimmedText;
-		
-//        System.out.println(src);
-//			
-//        src.codePoints().filter(cp -> cp >= 256).forEach(cp -> {
-//            System.out.printf("0x%X = %s%n",
-//                cp, Character.getName(cp));
-//        });
-        
         IntStream s = singleLineTrimmedText.codePoints();
         int[] arr = s.toArray();
         
@@ -169,17 +144,10 @@ public class Tokenizer {
         // U+2018 - LEFT SINGLE QUOTATION MARK
         // U+2019 - RIGHT SINGLE QUOTATION MARK
         // (0x instead od U+)
-        
         str = str.replace("0x201C", "\"");
         str = str.replace("0x201D", "\"");
         str = str.replace("0x2018", "'");
         str = str.replace("0x2019", "'");
-        
-//        System.out.println("-----OUTPUT: ");
-//        
-//        System.out.println(str);
-        
-//        cleanSourceText = str;
         return str;
 	}
 
@@ -292,13 +260,4 @@ public class Tokenizer {
 		}
 		return words;
 	}
-	
-//	
-//	public ArrayList<AbsWord> getTokens() {
-//		return words;
-//	}
-//	
-//	public ArrayList<Sentence> getSentences() {
-//		return sentences;
-//	}
 }

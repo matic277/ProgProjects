@@ -66,7 +66,7 @@ public class Tweet {
 					if (ii < words.size()) {
 						if (words.get(ii) instanceof AbsMeasurableWord) {
 							AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
-							w.setFlipPleasantness();
+							w.flipPleasantness();
 							changedWordsSentiment = true;
 							continue;
 						}
@@ -75,7 +75,7 @@ public class Tweet {
 					if (ii < words.size()) {
 						if (words.get(ii) instanceof AbsMeasurableWord) {
 							AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
-							w.setFlipPleasantness();
+							w.flipPleasantness();
 							changedWordsSentiment = true;
 							continue;
 						}

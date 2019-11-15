@@ -63,8 +63,8 @@ public abstract class AbsMeasurableWord extends AbsWord {
 		else if (this.pleasantness > 1) this.pleasantness = 1;
 	}
 	
-	public void setFlipPleasantness() {
-		pleasantness *= -1;
+	public void flipPleasantness() {
+		pleasantness = -pleasantness;
 	}
 	
 	public double getPleasantness() {

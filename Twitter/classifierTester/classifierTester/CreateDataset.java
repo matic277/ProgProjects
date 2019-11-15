@@ -56,7 +56,7 @@ public class CreateDataset {
 			Tweet pt = new Tweet(t.text, null);
 			pt.processTweet();
 			String s = "";
-			s += pt.getStatistics() + "," + pt.getNGramFeatures();
+//			s += pt.getStatistics() + "," + pt.getNGramFeatures();
 			s+= "," + t.sentiment;
 			ptweets.add(s);
 		});

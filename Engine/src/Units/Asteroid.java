@@ -30,7 +30,7 @@ public class Asteroid extends Unit {
 
 	@Override
 	public void draw(Graphics2D g) {
-		rotateAndDraw(g, facingDirection);
+		rotateAndDraw(g);
 		drawHP(g);
 	}
 	

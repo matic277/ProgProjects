@@ -22,6 +22,9 @@ import Units.Player;
 import Units.Unit;
 import Units.Wall;
 import core.IObserver;
+import factories.MovementFactory;
+import factories.RenderingFactory;
+import factories.UnitFactory;
 
 public class Engine implements IObserver, Runnable {
 	
@@ -37,15 +40,19 @@ public class Engine implements IObserver, Runnable {
 	public static Rectangle bounds; // same size as panelSize
 	Painter painter;
 	
+	public static MovementFactory movFact;
+	public static RenderingFactory renFact;
+	public static UnitFactory unitFact;
+	
 	public ConcurrentLinkedQueue<Missile> missiles;
-	public ConcurrentLinkedQueue<Bullet> bullets;
+	public ConcurrentLinkedQueue<Unit> bullets;
 	
 	public ConcurrentLinkedQueue<Unit> dummyUnits;
 	public ConcurrentLinkedQueue<Wall> walls;
 	
 	public ConcurrentLinkedQueue<Asteroid> asteroids;
 	
-	public ConcurrentLinkedQueue<Enemy> enemies;
+	public ConcurrentLinkedQueue<Unit> enemies;
 	public ConcurrentLinkedQueue<Guard> guards;
 	
 	public Dragon dragon;
@@ -73,14 +80,14 @@ public class Engine implements IObserver, Runnable {
 		player = new Player(new Vector(600, 400), null, res.getPlayerImage(), mouse);
 		
 		missiles = new ConcurrentLinkedQueue<Missile>();
-		bullets = new ConcurrentLinkedQueue<Bullet>();
+		bullets = new ConcurrentLinkedQueue<Unit>();
 		
 		dummyUnits = new ConcurrentLinkedQueue<Unit>();
 		
 		asteroids = new ConcurrentLinkedQueue<Asteroid>();
 			
 		
-		enemies = new ConcurrentLinkedQueue<Enemy>();
+		enemies = new ConcurrentLinkedQueue<Unit>();
 		guards = new ConcurrentLinkedQueue<Guard>();
 		
 		walls = new ConcurrentLinkedQueue<Wall>();
@@ -92,28 +99,33 @@ public class Engine implements IObserver, Runnable {
 		ml.addObserver(this);
 		kl.addObserver(this);
 		
-
-		enemies.add(new Enemy(
-			new Vector(50, 50),
-			null,
-			null,
-			res.getEnemyImage(),
-			player
-		));
+		renFact = new RenderingFactory();
+		movFact = new MovementFactory(walls, player);
+		unitFact = new UnitFactory(res, player, walls, bullets, movFact, renFact);
 		
-		guards.add(new Guard(
-			new Vector(50, 50),
-			null,
-			null,
-			res.getEnemyImage(),
-			player
-		));
+
+//		enemies.add(new Enemy(
+//			new Vector(50, 50),
+//			null,
+//			null,
+//			res.getEnemyImage(),
+//			player
+//		));
+		enemies.add(unitFact.getInstanceOfEnemy());
+		
+//		guards.add(new Guard(
+//			new Vector(50, 50),
+//			null,
+//			null,
+//			res.getEnemyImage(),
+//			player
+//		));
 		
 		Unit dummy = new DummyUnit(new Vector(300, 300), new Dimension(50, 40), null);
 		//dummyUnits.add(dummy);
 		
-		Asteroid a = new Asteroid(new Vector(300, 300), null, res.getAsteroidImage());
-		asteroids.add(a);
+//		Asteroid a = new Asteroid(new Vector(300, 300), null, res.getAsteroidImage());
+//		asteroids.add(a);
 		
 //		walls.add(new Wall(
 //			new Vector(400, 0),
@@ -192,23 +204,26 @@ public class Engine implements IObserver, Runnable {
 				if (w.checkCollision(m)) missiles.remove(m);
 			});
 		});
-				
+		
+		//System.out.println(bullets.size());
+		
 		
 		// if bullet is type enemy bullet, then don't remove it
 		// because it might still be in enemies hitbox (where its created)
 
 		// move enemies and check collisions
 		enemies.forEach(e -> {
-			e.move(walls);
+			e.move();
 			bullets.forEach(b -> {
 				// reduce hp remove if unit is dead
-				if (e.checkCollision(b) && !(b instanceof EnemyBullet)) {
-					bullets.remove(b);
-					// TODO: set bullet dmg and use it here!
-					if (e.lowerHealth(5)) {
-						enemies.remove(e);
-					}
-				}
+//				if (e.checkCollision(b) && !(b instanceof EnemyBullet)) {
+//					bullets.remove(b);
+//					System.out.println("bullet removed1");
+//					// TODO: set bullet dmg and use it here!
+//					if (e.lowerHealth(5)) {
+//						enemies.remove(e);
+//					}
+//				}
 			});
 			// missiles that collide with enemies that
 			// aren't their targets
@@ -221,7 +236,7 @@ public class Engine implements IObserver, Runnable {
 					}
 				}
 			});
-			if (r.nextDouble() < enemyFireProbability) e.shoot(res, bullets);
+			if (r.nextDouble() < enemyFireProbability) e.behave();
 			if (e.isOutOfBounds()) e.reposition();
 		});
 		
@@ -234,20 +249,21 @@ public class Engine implements IObserver, Runnable {
 					// TODO: player out of hp
 				}
 			}
-			
 			asteroids.forEach(a -> {
 				if (b.checkCollision(a)) {
 					bullets.remove(b);
 					if (a.lowerHealth(10)) asteroids.remove(a);
 				}
 			});
-			
 		});
 		
 		// move bullets
-		bullets.forEach(u -> {
-			u.move();
-			if (u.isOutOfBounds()) bullets.remove(u);
+		bullets.forEach(b -> {
+			b.move();
+			if (b.isOutOfBounds()) {
+				bullets.remove(b);
+				System.out.println("bullet removed");
+			}
 		});
 		// move missiles
 		missiles.forEach(m -> {
@@ -271,10 +287,10 @@ public class Engine implements IObserver, Runnable {
 			if (a.isOutOfBounds()) a.reposition();
 		});
 		
-		if (dragon != null) {
-			dragon.move();
-			dragon.checkCollision(bullets, asteroids);
-		}
+//		if (dragon != null) {
+//			dragon.move();
+//			dragon.checkCollision(bullets, asteroids);
+//		}
 		
 		guards.forEach(g -> {
 			g.move(walls);

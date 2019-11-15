@@ -138,7 +138,7 @@ public class Guard extends Unit {
 
 	@Override
 	public void draw(Graphics2D g) {
-		rotateAndDraw(g, facingDirection);
+		rotateAndDraw(g);
 		drawHP(g);	
 		
 		Color c = new Color(255, 0, 255, 100);
