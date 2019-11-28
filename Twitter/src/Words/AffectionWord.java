@@ -6,7 +6,7 @@ import Dictionaries.WhissellDictionary;
 
 public class AffectionWord extends AbsMeasurableWord {
 	
-	// use this class when reading from file and building hashtable
+	// use this constructor when reading from file and building hashtable
 	public AffectionWord(String sourceText, String pleasantness, String activation, String imagery) {
 		super(sourceText, null);
 		

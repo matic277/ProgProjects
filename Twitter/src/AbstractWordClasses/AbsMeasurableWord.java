@@ -21,6 +21,11 @@ public abstract class AbsMeasurableWord extends AbsWord {
 		super(source, processed);
 	}
 	
+	@Override
+	public boolean hasSentimentValue() {
+		return true;
+	}
+	
 	public boolean isPositivePleasantness() {
 		if (pleasantness > positiveThreshold) return true;
 		return false;

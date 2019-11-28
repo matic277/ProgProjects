@@ -68,22 +68,21 @@ public class Tweet {
 							AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
 							w.flipPleasantness();
 							changedWordsSentiment = true;
+							i++;
 							continue;
 						}
 					}
-					ii++;
 					if (ii < words.size()) {
 						if (words.get(ii) instanceof AbsMeasurableWord) {
 							AbsMeasurableWord w = (AbsMeasurableWord) words.get(ii);
 							w.flipPleasantness();
 							changedWordsSentiment = true;
+							i += 2;
 							continue;
 						}
 					}
 				}
 			}
-			
-
 			
 			// if a word is upper-case (or close to)
 			// magnify its pleasantness value, except for emojis
@@ -97,7 +96,7 @@ public class Tweet {
 			}
 			
 			if (changedWordsSentiment) {
-				changedWordsSentiment = false;
+				//changedWordsSentiment = false; (unnecessary?)
 				s.calculateSentiment();
 			}
 			
@@ -221,7 +220,7 @@ public class Tweet {
 				uppercaseLettersNum++;
 			}
 		}
-		double ratio = (double)uppercaseLettersNum / sourceText.length();
+		double ratio = (double) uppercaseLettersNum / sourceText.length();
 		return (ratio >= 0.4);
 	}
 

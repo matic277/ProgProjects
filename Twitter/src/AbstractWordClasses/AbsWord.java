@@ -12,6 +12,10 @@ public abstract class AbsWord {
 		this.processedText = processed;
 	}
 	
+	public boolean hasSentimentValue() {
+		return false;
+	}
+	
 	public abstract boolean checkIntegrity();
 	
 	public String getTag() {

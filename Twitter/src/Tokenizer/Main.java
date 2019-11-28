@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import AbstractWordClasses.AbsWord;
 import Dictionaries.DictionaryCollection;
 import StreamConsumer.StreamHandler;
-import TreeDrawer.Frame;
 import Window.MainWindow;
 import ngramStatistics.NGramBuilder;
 

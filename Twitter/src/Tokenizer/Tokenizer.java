@@ -1,6 +1,6 @@
 package Tokenizer;
 import java.util.ArrayList;
-import java.util.Iterator;
+
 import java.util.stream.IntStream;
 import AbstractWordClasses.AbsWord;
 import Words.Acronym;
@@ -14,10 +14,10 @@ import Words.StopWord;
 import Words.Target;
 import Words.URL;
 
+
 public class Tokenizer {
 	
 	// Class is a collection of functions
-
 	private String suspects = "-'!? ¨\"#$%&/()=*ÐŠÈÆŽŠðšæèž:;,_~¡^¢°²`ÿ´½¨¸.*\"<>¤ßè×÷\\â€¦™«";
 	private String[] sentSepRegEx = new String[] {"\\.", "\\!", "\\?"};
 	private String[] sentSep = new String[] {".", "!", "?"};
@@ -39,7 +39,7 @@ public class Tokenizer {
 		// split by sentences
 		ArrayList<StringBuilder> sentences = new ArrayList<StringBuilder>(5);
 		String[] words = singleLineTrimmedText.split(" ");
-				
+		
 		StringBuilder sentence = new StringBuilder();
 		for (String w : words) {
 			if (containsSentenceSeparator(w)) {
@@ -90,15 +90,16 @@ public class Tokenizer {
 	// case: ... word!This is ....
 	// return: {word!, This}
 	private String[] getWordsSplitBySeparators(String str) {
-		String[] t;
 		if (str.contentEquals("!?")) return new String[] {"!?", ""};
+		
+		String[] t;
 		
 		if (str.contains("!?")) {
 			t = str.split("\\!\\?");
 			if (str.endsWith("!?")) return new String[] {t[0]+"!?", ""};
 			else return new String[] {t[0]+"!?", t[1]};
 		}
-			
+		
 		for (int i=0; i<sentSep.length; i++) {
 			if (str.contains(sentSep[i])) {
 				t = str.split(sentSepRegEx[i]);
@@ -127,12 +128,12 @@ public class Tokenizer {
         int[] arr = s.toArray();
         
         String str = "";
-        int pointsI = 0;
+//        int pointsI = 0;
         for (int i=0; i<arr.length; i++) {
         	if(arr[i] >= 256) {
         		str += " 0x" + Integer.toHexString(arr[i]).toLowerCase() + " ";
         		// points.get(pointsI)
-        		pointsI++;
+//        		pointsI++;
         	} else {
         		str += (char)arr[i];
         	}
@@ -150,7 +151,7 @@ public class Tokenizer {
         str = str.replace("0x2019", "'");
         return str;
 	}
-
+	
 	// don't remove -
 	private String cleanToken1(String token) {
 		String chars = suspects.replace("-", "");
@@ -166,14 +167,14 @@ public class Tokenizer {
 		}
 		return token;
 	}
-	
+
 	// input should be a tokenized (by spaces)
 	// string that is in a single line
 	public ArrayList<AbsWord> classifyAndGetWords(String[] tokens) {
 		ArrayList<AbsWord> words = new ArrayList<AbsWord>(tokens.length);
 		for (String token : tokens)
 		{
-			
+			if (token.length() == 0) continue;
 			if (token.length() == 0) continue;
 			
 			String rawToken = token;
@@ -255,7 +256,7 @@ public class Tokenizer {
 				words.add(new AffectionWord(rawToken, checkToken2));
 			}
 			
-			// else, unknown/other word
+			// unknown/other word
 			else words.add(new Other(rawToken, checkToken2));
 		}
 		return words;
