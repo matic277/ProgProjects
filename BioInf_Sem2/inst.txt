@@ -1,0 +1,27 @@
+1.	pick a class of genes
+
+2.	[
+		Before computing the distance among pairs of sequences, align them using global alignment
+		(matches should be scored with 1, mismatches with -1, gap with -2).
+		The observed differences (equal weight of mismatches, insertions, and deletions) in sequence
+		should be then corrected using the Jukes-Cantor model to obtain an evolutionary distance.
+	]
+
+	Align each one of them with all the others,
+	resulting in a distance matrix, like:
+
+		A B C D
+	  A 0 1 2 3
+	  B   0 3 4
+	  C     0 6
+	  D       0
+
+3.	use junes-canter model or something?? to correct some values 
+
+4.	build a tree with some algorithm
+
+6.	construct some algorith that ranks trees by how well they
+	separate the mamals with the fish
+	
+5.	see which class of genes builds the best tree
+

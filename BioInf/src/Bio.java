@@ -1,9 +1,11 @@
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.print.DocFlavor.STRING;
@@ -39,6 +41,113 @@ public class Bio {
 //		}
 //		return sb.toString();
 		return seq.replace("T", "U");
+	}
+	
+	public static double getMaxGCcontent(String[] seqs) {
+		double max = 0;
+		int pos = 0;
+		for (int i=0; i<seqs.length; i++) {
+			double candidate = getGCcontent(seqs[i]);
+			if (candidate > max) {
+				pos = i;
+				max = candidate;
+			}
+		}
+		System.out.println(seqs[pos]);
+		return max * 100;
+	}
+	
+	public static String getLargestCommonMotif(String[] seqs) {
+		if (seqs.length == 1) return seqs[0];
+//		StringBuilder sb = new StringBuilder("");
+		List<String> allSubstrings = getListOfPossibleSubstrings(seqs[0]);
+		
+		Optional<String> result = allSubstrings.stream().filter(s -> {
+			for (String seq : seqs) 
+				if (!seq.contains(s)) return false;
+			return true;
+		}).max(Bio.comparatorByLength());
+		
+		return result.get();
+	}
+	
+	private static List<String> getListOfPossibleSubstrings(String str) {
+		List<String> list = new ArrayList<String>();
+		for (int i=0; i<str.length(); i++)
+			for (int j=i+1; j<str.length(); j++)
+				list.add(str.substring(i, j));
+		list.sort(Bio.comparatorByLength());
+		//System.out.println("-");
+		//list.forEach(System.out::println);
+		return list;
+	}
+	
+	private static Comparator<? super String> comparatorByLength() {
+		return (s1, s2) -> {
+			if (s1.length() > s2.length()) return 1;
+			if (s1.length() < s2.length()) return -1;
+			return 0;
+		};
+	}
+	
+	public static double getGCcontent(String seq) {
+		double counter = 0;
+		for (char c : seq.toCharArray()) {
+			if (c == 'G' || c == 'C') counter++;
+		}
+		return counter / seq.length();
+	}
+	
+	private static char getMostCommonChar(String str) {
+		HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+		map.put('A', 0); map.put('T', 0);
+		map.put('G', 0); map.put('C', 0);
+		for (char c : str.toCharArray()) map.computeIfPresent(c, (k, v) -> v+1);
+		int maxVal = 0;
+		char maxChar = 'X';
+		for (char c : map.keySet()) {
+			if (map.get(c) > maxVal) {
+				maxVal = map.get(c);
+				maxChar = c;
+			}
+		}
+		return maxChar;
+	}
+	
+	private static String getConsensus(String[] seqs) {
+		StringBuilder sb = new StringBuilder();
+		StringBuilder consensus = new StringBuilder();
+		for (int i=0, j=0; i<seqs[j].length(); i++, j=0) {
+			for ( ; j<seqs.length; j++) {
+				sb.append("" + seqs[j].charAt(i));
+			}
+			char mostCommon = getMostCommonChar(sb.toString());
+			consensus.append("" + mostCommon);
+			sb.setLength(0);
+		}
+		return consensus.toString();
+	}
+	
+	public static void printConsensusAndStringProfile(String[] seqs) {
+		String profile = "ACGT";
+		int n = seqs.length, m = seqs[0].length();
+		
+		System.out.println(getConsensus(seqs));
+		
+		for (char profChar : profile.toCharArray()) {
+			System.out.print(profChar + ": ");
+			
+			int counter = 0;
+			for (int i=0; i<m; i++) {
+				for (int j=0; j<n; j++) {
+					if (seqs[j].charAt(i) == profChar) counter++;
+				}
+				System.out.print(counter + " ");
+				counter = 0;
+			}
+			System.out.println();
+			
+		}
 	}
 	
 	public static String applyCodonTable(String seq) {
