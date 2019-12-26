@@ -38,6 +38,9 @@ def plotAll(data):
     # setting distance_threshold=0 ensures we compute the full tree.
     model = AgglomerativeClustering(distance_threshold=0, n_clusters=None)
 
+    # UPGMA algorithm (agglomerative clustering, average linkage, precomputed distances)
+    # model = AgglomerativeClustering(distance_threshold=0, n_clusters=None, affinity='precomputed', linkage='average')
+
     for elt in data:
         model = model.fit(elt[1])
         plt.title('Hierarchical Clustering Dendrogram, Gene-set id: ' + elt[0])

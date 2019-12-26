@@ -16,6 +16,9 @@ def calculate_jukes_cantor(sequence1, sequence2):
             length_counter += 1
             if sequence1[i] != sequence2[i]:
                 difference_counter += 1
+        # added else???
+        else:
+            difference_counter += 2
 
     # Step 2: Calculate and return results
     substitutions_fraction = float(difference_counter) / float(length_counter)

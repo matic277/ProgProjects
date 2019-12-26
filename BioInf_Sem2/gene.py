@@ -41,6 +41,7 @@ class GeneClass:
                     m[i][j] = ga[0]
                     # TODO: correct with JC model
                     m[i][j] = jc.calculate_jukes_cantor(ga[1], ga[2])
+                    m[j][i] = jc.calculate_jukes_cantor(ga[1], ga[2])
 
 
         return m
