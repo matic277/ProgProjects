@@ -1,7 +1,8 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.cluster.hierarchy import dendrogram
 from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram, linkage
+
 
 
 def plot_dendrogram(model, **kwargs):
@@ -57,13 +58,24 @@ names.append("Canis lupus familiaris")
 names.append("Rattus norvegicus")
 names.append("Macaca mulatta")
 
-# setting distance_threshold=0 ensures we compute the full tree.
-model = AgglomerativeClustering(distance_threshold=0, n_clusters=None)
+# # setting distance_threshold=0 ensures we compute the full tree.
+# model = AgglomerativeClustering(distance_threshold=0, n_clusters=None)
+#
+# model = model.fit(data)
+# plt.title('Hierarchical Clustering Dendrogram')
+# # plot the top three levels of the dendrogram
+# plot_dendrogram(model, truncate_mode='level', p=3, labels=names)
+# plt.xlabel("Number of points in node (or index of point if no parenthesis).")
+#
+# plt.show()
 
-model = model.fit(data)
-plt.title('Hierarchical Clustering Dendrogram')
-# plot the top three levels of the dendrogram
-plot_dendrogram(model, truncate_mode='level', p=3, labels=names)
-plt.xlabel("Number of points in node (or index of point if no parenthesis).")
+Z = linkage(data, 'ward')
+fig = plt.figure(figsize=(25, 10))
+dn = dendrogram(Z, labels=names)
 
+print(Z)
+
+Z = linkage(data, 'single')
+fig = plt.figure(figsize=(25, 10))
+dn = dendrogram(Z, labels=names)
 plt.show()

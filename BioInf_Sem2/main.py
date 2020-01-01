@@ -28,20 +28,22 @@ import dndgram
 #
 # dm = []
 # for g in geneClasses:
-#     m = g.getAlignmentMatrix()
+#     m = g.calculateAndGetAlignedDistanceMatrix()
 #     # create matrix of [id, distance_matrix]
 #     dm.append([g.id, m])
-#     print("id: ", g.id)
-#     print("dm: ")
+#     print(g.id)
+#     print()
 #     for l in m:
-#         print("  ", l)
-#     print("")
+#         print(l)
 #
 # print(" -> DONE.")
 
-genemtx = []
+
+
+
 
 # reading precomputed matrices
+genemtx = []
 def readFile():
     filepath = "precomp_md_custom_jc.txt"
 
@@ -64,8 +66,7 @@ def readFile():
 
 readFile()
 
-
-dndgram.plotAll(genemtx)
+dndgram.plotAndOrderAll(genemtx)
 
 print("done")
 

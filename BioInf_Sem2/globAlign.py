@@ -1,38 +1,33 @@
 import sys
-import blosum62
+
 
 def matchScore(m, a, b):
-    # x = m[0].index(a)
-    # y = m[0].index(b)
-    # cost = int(m[x + 1][y])
-    # return cost
-    # print("a: ", a)
-    # print("b: ", b)
     if a == b:
         return 1
     if a == "-" or b == "-":
         return -2
     return -1
 
-def globalAlignAffine(s1, s2, scores):
+
+def globalAlignAffine(s1, s2):
     gap = -11
     egap = -1
     traceM = [[0 for j in range(len(s2) + 1)] for i in range(len(s1) + 1)]
     traceX = [[0 for j in range(len(s2) + 1)] for i in range(len(s1) + 1)]
     traceY = [[0 for j in range(len(s2) + 1)] for i in range(len(s1) + 1)]
 
-    M = [[0 for j in range(len(s2) + 1)] for i in range(len(s1) + 1)] # mismatch
-    X = [[0 for j in range(len(s2) + 1)] for i in range(len(s1) + 1)] # gap x
-    Y = [[0 for j in range(len(s2) + 1)] for i in range(len(s1) + 1)] # gap y
+    M = [[0 for j in range(len(s2) + 1)] for i in range(len(s1) + 1)]  # mismatch
+    X = [[0 for j in range(len(s2) + 1)] for i in range(len(s1) + 1)]  # gap x
+    Y = [[0 for j in range(len(s2) + 1)] for i in range(len(s1) + 1)]  # gap y
 
     for i in range(1, len(s1) + 1):
         M[i][0] = gap + egap * (i - 1)
-        X[i][0] = -sys.maxsize -1
-        Y[i][0] = -sys.maxsize -1
+        X[i][0] = -sys.maxsize - 1
+        Y[i][0] = -sys.maxsize - 1
     for i in range(1, len(s2) + 1):
         M[0][i] = gap + egap * (i - 1)
-        X[0][i] = -sys.maxsize -1
-        Y[0][i] = -sys.maxsize -1
+        X[0][i] = -sys.maxsize - 1
+        Y[0][i] = -sys.maxsize - 1
 
     for i in range(1, len(s1) + 1):
         for j in range(1, len(s2) + 1):
@@ -46,7 +41,7 @@ def globalAlignAffine(s1, s2, scores):
             Y[i][j] = max(costY)
             traceY[i][j] = costY.index(Y[i][j])
 
-            costM = [M[i - 1][j - 1] + matchScore(scores, s1[i - 1], s2[j - 1]),
+            costM = [M[i - 1][j - 1] + matchScore(s1[i - 1], s2[j - 1]),
                      X[i][j],
                      Y[i][j]]
             M[i][j] = max(costM)
@@ -87,15 +82,6 @@ def globalAlignAffine(s1, s2, scores):
 
     return str(maxScore), sAlign, tAlign
 
+
 def alignSequences(s1, s2):
-    return globalAlignAffine(s1, s2, blosum62.BLOSUM62())
-
-
-# s1 = "PRTEINS"
-# s2 = "PRTWPSEIN"
-# r = globalAlignAffine(s1, s2, blosum62.BLOSUM62())
-#
-# print("Result: ")
-# print(r[0])
-# print(r[1])
-# print(r[2])
+    return globalAlignAffine(s1, s2)
