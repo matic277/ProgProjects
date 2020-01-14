@@ -125,25 +125,17 @@ public class Tweet {
 		// calculate sentiment after fully processing
 		// sentences (like executing function *test*)
 		calculateSentiment();
-		
-		
-//		Tokenizer t = new Tokenizer(sourceText);
-//		t.tokenizeTweet();
-//		
-//		words = t.getTokens();
-//		cleanSource = t.cleanSourceText;
-//		
-//		test();
-//		doSomeStatistics();
-////		buildNGramFeatures();
-//		setSentimentValue();
 	}
 	
 	// this method and getSentiment() are badly "designed"
 	// TODO fix
 	private void calculateSentiment() {
 		double sentiment = 0;
-		for (Sentence s : sentences) sentiment += s.getSentiment();
+		for (Sentence s : sentences) {
+			double smileyEmojiSentiment = s.getSentimentValueOfEmojisAndSmileys();
+			if (smileyEmojiSentiment < -0.3 || smileyEmojiSentiment > 0.3) s.magnifySentiment();
+			sentiment += s.getSentiment();
+		}
 		this.sentimentValue = sentiment;
 	}
 	

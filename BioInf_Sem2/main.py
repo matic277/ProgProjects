@@ -39,9 +39,7 @@ import dndgram
 # print(" -> DONE.")
 
 
-
-
-
+# (matrices of JC distances were precomputed and saved to a file)
 # reading precomputed matrices
 genemtx = []
 def readFile():

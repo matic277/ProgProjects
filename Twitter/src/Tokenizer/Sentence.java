@@ -3,9 +3,12 @@ package Tokenizer;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import AbstractWordClasses.AbsMeasurableWord;
 import AbstractWordClasses.AbsWord;
+import Words.Emoji;
+import Words.Smiley;
 
 public class Sentence {
 	
@@ -14,7 +17,7 @@ public class Sentence {
 	
 	private double sentiment;
 	
-	private final double magnifyValue = 1.3;
+	private final double magnifyValue = 2;
 	
 	public Sentence(String sentence) {
 		this.sentence = sentence;
@@ -61,6 +64,28 @@ public class Sentence {
 //		}
 	}
 	
+	private ArrayList<AbsMeasurableWord> getListOfEmojisAndSmileys() {
+		ArrayList<AbsMeasurableWord> list = new ArrayList<AbsMeasurableWord>(5);
+		words.forEach(w -> {
+			if (w instanceof Smiley || w instanceof Emoji)
+				list.add((AbsMeasurableWord) w);
+		});
+		return list;
+//		words.stream().filter(w -> {
+//			if (w instanceof Smiley || w instanceof Emoji) return true;
+//		}).collect(Collectors.toList());
+	}
+	
+	public double getSentimentValueOfEmojisAndSmileys() {
+		double sentiment = 0;
+		for (AbsMeasurableWord mw : getListOfEmojisAndSmileys()) sentiment += mw.getPleasantness();
+		return sentiment;
+	}
+	
+	public void magnifySentiment() {
+		this.sentiment *= magnifyValue;
+	}
+
 	public double getSentiment() {
 		return sentiment;
 	}
@@ -76,7 +101,7 @@ public class Sentence {
 		format.setDecimalFormatSymbols(symbols);
 		
 		StringBuilder sb = new StringBuilder("\t\t|-> Sentence: ");
-		sb.append(sentence);
+		sb.append("\"" + sentence + "\"");
 		sb.append("\n");
 		
 		for (AbsWord w : words) {
@@ -96,7 +121,7 @@ public class Sentence {
 		format.setDecimalFormatSymbols(symbols);
 		
 		StringBuilder sb = new StringBuilder("\t|\t|-> Sentence: ");
-		sb.append(sentence);
+		sb.append("\"" + sentence + "\"");
 		sb.append("\n");
 		
 
@@ -109,10 +134,6 @@ public class Sentence {
 		
 		sb.append("\n\t|");
 		return sb.toString();
-	}
-	
-	public void magnifySentiment() {
-		this.sentiment *= magnifyValue;
 	}
 
 }

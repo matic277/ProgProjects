@@ -63,7 +63,7 @@ public class Main {
 	}
 
 	public static void test() {
-		Tweet t = new Tweet("This is a test tweet . WTF!? . what? hope this works!don't lol :)😊\n www.link.com \n #hashtagSampleTest. Not    bad.   :)", null);
+		Tweet t = new Tweet("This is a test tweet. LOL :)😊. www.link.com \n#hashtagSampleTest. Not good!", null);
 //		Tweet t = new Tweet("||", null);
 		t.processTweet();
 		System.out.println(t.toString());

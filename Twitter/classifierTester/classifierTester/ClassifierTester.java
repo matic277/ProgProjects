@@ -17,7 +17,7 @@ public class ClassifierTester {
 
 	public static String datasetPath;
 	
-	static final double learningPercentage = 0.33;
+	static final double learningPercentage = 0.5;
 	
 	static ArrayList<String> file = new ArrayList<String>(130000);
 	static List<ProcessedTweet> annotatedTweets;
@@ -34,34 +34,33 @@ public class ClassifierTester {
 //				"datasets/processedDatasetEnglishTweetsOnly.txt";
 				"output/tweets.txt";
 //				"datasets/manually_GO_et_al_testSet.txt";
-
+		
+		boolean twoway = true;
 		
 //		special();
 		
 		readDataset();
-		processDataset();
+		processDataset(twoway);
 		
 		createLearningAndTestingDataset();
 
-//		threeWayLearning();
+		if (twoway) twoWayLearning();
+		else threeWayLearning();
+
 		
-		twoWayLearning();
-//		
-		testDataset(true);
-//		
-		testFmeasure(true);
-//		
+		testDataset(twoway);
+		
+		testF1measure(twoway);
+		
 		
 //		testAgain();
 		
 		
 
 //		readAndCreateDatasets();
-		
-//		DataVisualizer vis = new DataVisualizer(annotatedTweets);
 	}
 	
-	public static void testFmeasure(boolean twoway) {
+	public static void testF1measure(boolean twoway) {
 		System.out.println("\n--- F1 measure ---");
 		int nnegative = 0, npositive = 0, nneutral = 0;
 		for (ProcessedTweet t : testingdataset) {
@@ -269,7 +268,7 @@ public class ClassifierTester {
 		System.out.println("\t|-> Original dataset size: " + file.size() + "\n");
 	}
 	
-	public static void processDataset() {
+	public static void processDataset(boolean twoway) {
 		System.out.println("--- DATASET PROCESSING ---");
 		System.out.print("\t|-> Processing dataset... ");
 		
@@ -290,6 +289,9 @@ public class ClassifierTester {
 			String sentiment = tokens[0];
 			String tweet = "";
 			
+			// if classifying 2-way, throw neutral tweets away
+			if (twoway && sentiment.equals("0")) return;
+			
 			for (int i=startIndex; i<tokens.length; i++) tweet += ", " + tokens[i];
 			
 			Tweet t = new Tweet(tweet, "{UNKNOWN}");
@@ -303,8 +305,8 @@ public class ClassifierTester {
 		
 		int x = file.size();
 		int y = annotatedTweets.size();
-		if (x != y) 
-			throw new Error("ERROR: Something went wrong when creating datasets: " + x + " != " + y + "\n"
+		if (x != y && twoway) 
+			System.out.println("Exception: Something went wrong when creating datasets: " + x + " != " + y + "\n"
 				+ "-> file size: " + x + "\n-> processed size: " + y + "\n");
 	}
 	
