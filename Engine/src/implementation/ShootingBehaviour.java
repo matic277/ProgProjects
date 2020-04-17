@@ -2,6 +2,7 @@ package implementation;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import Engine.Engine;
 import Engine.Vector;
 import Graphics.ResourceLoader;
 import Units.Bullet;
@@ -21,14 +22,10 @@ public class ShootingBehaviour implements IUnitBehaviour {
 		this.res = res;
 	}
 
-	@Override
+
 	public void behave(Unit u) {
 		if (!u.canSeePlayer) return;
-		
-//		Vector direction = new Vector(player.position.x - u.position.x, player.position.y - u.position.y);
-//		direction.norm();
-//		direction.multi(5);
-		bullets.add(Engine.Engine.unitFact.getInstanceOfEnemyBullet(u.centerposition, player.centerposition));
+		bullets.add(Engine.unitFact.getInstanceOfEnemyBullet(u.centerposition, player.centerposition));
 	}
 
 }

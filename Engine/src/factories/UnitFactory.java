@@ -1,36 +1,29 @@
 package factories;
 
+import java.awt.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import Engine.Environment;
 import Engine.Vector;
 import Graphics.ResourceLoader;
-import Units.Player;
-import Units.Unit;
-import Units.Wall;
+import Units.*;
 import core.IUnitBehaviour;
 import core.IUnitMovement;
 import core.IUnitRenderer;
-import implementation.EnemyMovement;
-import implementation.RotationRenderer;
-import implementation.ShootingBehaviour;
-import implementation.SimpleLinearMovement;
+import implementation.*;
 
 public class UnitFactory {
 	
 	ResourceLoader res;
-	Player player;
-	ConcurrentLinkedQueue<Wall> walls;
-	ConcurrentLinkedQueue<Unit> bullets;
+	Environment env;
 	MovementFactory movFact;
 	RenderingFactory renFact;
 	
-	public UnitFactory(ResourceLoader res, Player player, ConcurrentLinkedQueue<Wall> walls, ConcurrentLinkedQueue<Unit> bullets,  MovementFactory movFact, RenderingFactory renFact) {
+	public UnitFactory(ResourceLoader res, Environment env,  MovementFactory movFact, RenderingFactory renFact) {
 		this.res = res;
-		this.player = player;
-		this.walls = walls;
+		this.env = env;
 		this.movFact = movFact;
 		this.renFact = renFact;
-		this.bullets = bullets;
 	}
 	
 	public Unit getInstanceOfPlayer() {
@@ -39,9 +32,27 @@ public class UnitFactory {
 //		);
 		return null;
 	}
-	
-	public Unit getInstanceOfBullet() {
-		return null;
+
+	// TODO: method is a copy of get enemy instance bullet
+	public Bullet getInstanceOfBullet(Vector from, Vector to) {
+		Vector direction = new Vector(to.x - from.x, to.y - from.y);
+		Vector startingPosition = new Vector(from);
+		direction.norm();
+		direction.multi(15);
+
+		SimpleLinearMovement move = movFact.getSimpleLinearMovement(direction);
+		IUnitRenderer render = renFact.getSimpleUnitRenderer();
+		IUnitBehaviour behave = (u) -> {}; // don't behave
+
+		return new Bullet(
+				startingPosition,
+				direction,
+				null,
+				res.getEnemyBulletImage(),
+				env,
+				move,
+				render,
+				behave);
 	}
 	
 	public Unit getInstanceOfGuard() {
@@ -51,44 +62,65 @@ public class UnitFactory {
 	public Unit getInstanceOfEnemy() {
 		IUnitRenderer renderer = renFact.getSimpleUnitRenderer();
 		EnemyMovement movement = movFact.getEnemeyMovement();
-		IUnitBehaviour behaviour = new ShootingBehaviour(res, player, bullets);
-		Unit u = new Unit(
+		IUnitBehaviour behaviour = new ShootingBehaviour(res, env.player, env.bullets);
+
+		Enemy e = new Enemy(
 			new Vector(50, 50),
-			null,
+			//null,
+			 null,
 			res.getEnemyImage(),
+			env,
 			movement,
 			renderer,
-			behaviour
-		);
-		movement.assignUnitToThisClass(u);
-		return u;
+			behaviour);
+
+		movement.assignUnitToThisClass(e);
+		return e;
 	}
 	
-	public Unit getInstanceOfEnemyBullet(Vector from, Vector to) {
+	public EnemyBullet getInstanceOfEnemyBullet(Vector from, Vector to) {
 		Vector direction = new Vector(to.x - from.x, to.y - from.y);
+		Vector startingPosition = new Vector(from);
 		direction.norm();
 		direction.multi(5);
-		
-		SimpleLinearMovement movement = movFact.getSimpleLinearMovement(direction);
-		IUnitRenderer renderer = renFact.getSimpleUnitRenderer();
-		
-		Unit u = new Unit(
-			from,
-			null,
-			res.getEnemyBulletImage(),
-			movement,
-			renderer,
-			null
-		);
-		u.setMovingDirection(direction);
-		return u;
+
+		SimpleLinearMovement move = movFact.getSimpleLinearMovement(direction);
+		IUnitRenderer render = renFact.getSimpleUnitRenderer();
+		IUnitBehaviour behave = (u) -> {}; // don't behave
+
+		return new EnemyBullet(
+				startingPosition,
+				direction,
+				null,
+				res.getEnemyBulletImage(),
+				env,
+				move,
+				render,
+				behave);
 	}
 	
-	public Unit getInstanceOfMissile() {
-		return null;
+	public <T extends Unit> Missile<?> getInstanceOfMissile(Vector from, T target) {
+		IUnitMovement move = movFact.getTrackingMovement(target);
+		IUnitRenderer render = renFact.getSimpleUnitRenderer();
+		IUnitBehaviour behave = (u) -> {}; // don't behave
+
+//			public Missile(Vector position, Dimension hitbox, Image image, T target, Environment env,
+//				IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave)
+
+		Missile<?> missile = new Missile<>(
+				new Vector(from),
+				null,
+				res.getMissileImage(),
+				target,
+				env,
+				move,
+				render,
+				behave);
+
+		return missile;
 	}
 	
-	public Unit getInstanceOfWall() {
+	public Wall getInstanceOfWall() {
 		return null;
 	}
 	

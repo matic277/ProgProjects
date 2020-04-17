@@ -1,5 +1,6 @@
 package implementation;
 
+import Engine.Environment;
 import Engine.Vector;
 import Units.Unit;
 import core.IUnitMovement;
@@ -13,9 +14,9 @@ public class SimpleLinearMovement implements IUnitMovement {
 	}
 
 	@Override
-	public void move(Unit unit) {
+	public void move(Unit unit, Environment env) {
 		unit.updatePosition(movingAndFacingDirection);
-		System.out.println(unit.position.toString());
+//		System.out.println(unit.position.toString());
 	}
 
 }

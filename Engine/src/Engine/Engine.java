@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
+import java.sql.SQLOutput;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -39,27 +40,16 @@ public class Engine implements IObserver, Runnable {
 	Dimension panelSize;
 	public static Rectangle bounds; // same size as panelSize
 	Painter painter;
+
+	MediaPlayer media;
 	
 	public static MovementFactory movFact;
 	public static RenderingFactory renFact;
 	public static UnitFactory unitFact;
 	
-	public ConcurrentLinkedQueue<Missile> missiles;
-	public ConcurrentLinkedQueue<Unit> bullets;
+	public Environment env;
 	
-	public ConcurrentLinkedQueue<Unit> dummyUnits;
-	public ConcurrentLinkedQueue<Wall> walls;
-	
-	public ConcurrentLinkedQueue<Asteroid> asteroids;
-	
-	public ConcurrentLinkedQueue<Unit> enemies;
-	public ConcurrentLinkedQueue<Guard> guards;
-	
-	public Dragon dragon;
-	
-	public Player player;
-	
-	Point mouse = new Point();
+	Point mouse;
 	
 	boolean[] keyCodes = new boolean[256];
 	boolean mousePressed = false;
@@ -76,33 +66,33 @@ public class Engine implements IObserver, Runnable {
 		this.panelSize = panelSize;
 		Engine.bounds = new Rectangle(0, 0, panelSize.width, panelSize.height);
 		res = new ResourceLoader();
-		
-		player = new Player(new Vector(600, 400), null, res.getPlayerImage(), mouse);
-		
-		missiles = new ConcurrentLinkedQueue<Missile>();
-		bullets = new ConcurrentLinkedQueue<Unit>();
-		
-		dummyUnits = new ConcurrentLinkedQueue<Unit>();
-		
-		asteroids = new ConcurrentLinkedQueue<Asteroid>();
-			
-		
-		enemies = new ConcurrentLinkedQueue<Unit>();
-		guards = new ConcurrentLinkedQueue<Guard>();
-		
-		walls = new ConcurrentLinkedQueue<Wall>();
-		
-		
+		env = new Environment();
+		mouse = new Point();
+
 		// listeners
 		MousepadListener ml = new MousepadListener();
 		KeyboardListener kl = new KeyboardListener();
 		ml.addObserver(this);
 		kl.addObserver(this);
+
+
+
+		// <-- PLAYER -->
+		env.player = new Player(
+				new Vector(600, 400),
+				null,
+				res.getPlayerImage(),
+				mouse,
+				env,
+				(u, e) -> {},
+				null,
+				(u) -> {});
 		
 		renFact = new RenderingFactory();
-		movFact = new MovementFactory(walls, player);
-		unitFact = new UnitFactory(res, player, walls, bullets, movFact, renFact);
-		
+		movFact = new MovementFactory(env);
+		unitFact = new UnitFactory(res, env, movFact, renFact);
+
+		env.player.render = renFact.getSimpleUnitRenderer();
 
 //		enemies.add(new Enemy(
 //			new Vector(50, 50),
@@ -111,7 +101,8 @@ public class Engine implements IObserver, Runnable {
 //			res.getEnemyImage(),
 //			player
 //		));
-		enemies.add(unitFact.getInstanceOfEnemy());
+
+		env.enemies.add(unitFact.getInstanceOfEnemy());
 		
 //		guards.add(new Guard(
 //			new Vector(50, 50),
@@ -121,7 +112,7 @@ public class Engine implements IObserver, Runnable {
 //			player
 //		));
 		
-		Unit dummy = new DummyUnit(new Vector(300, 300), new Dimension(50, 40), null);
+//		Unit dummy = new DummyUnit(new Vector(300, 300), new Dimension(50, 40), null);
 		//dummyUnits.add(dummy);
 		
 //		Asteroid a = new Asteroid(new Vector(300, 300), null, res.getAsteroidImage());
@@ -161,21 +152,21 @@ public class Engine implements IObserver, Runnable {
 	}
 	
 	private Unit getClosestEnemy(Point location) {
-		if (enemies.isEmpty() && asteroids.isEmpty()) return null;
-		
+		if (env.enemies.isEmpty() && env.asteroids.isEmpty()) return null;
+
 		Unit closest = null;
-		if (enemies.isEmpty()) closest = asteroids.element();
-		else closest = enemies.element();
-		
+		if (env.enemies.isEmpty()) closest = env.asteroids.element();
+		else closest = env.enemies.element();
+
 		double minDistance = Double.MAX_VALUE;
-		for (Unit u : enemies) {
+		for (Unit u : env.enemies) {
 			double newDistance = u.getLocation().distance(new Vector(location.getX(), location.getY()));
 			if (newDistance < minDistance) {
 				minDistance = newDistance;
 				closest = u;
 			}
 		}
-		for (Unit u : asteroids) {
+		for (Unit u : env.asteroids) {
 			double newDistance = u.getLocation().distance(new Vector(location.getX(), location.getY()));
 			if (newDistance < minDistance) {
 				minDistance = newDistance;
@@ -190,20 +181,20 @@ public class Engine implements IObserver, Runnable {
 		// can't just call checkCollision between
 		// bullets and walls, bullet might be too
 		// fast and might skip over walls
-		walls.forEach(w -> {
-			bullets.forEach(b -> {
-				Line2D projectory = new Line2D.Double(
-					new Point((int)b.getLocation().x, (int)b.getLocation().y),
-					new Point((int)(b.getMovingDirection().x + b.getLocation().x), (int)(b.getMovingDirection().y + b.getLocation().y))
-				);
-				if (w.getHitbox().intersectsLine(projectory)) {
-					bullets.remove(b);
-				}
-			});
-			missiles.forEach(m -> {
-				if (w.checkCollision(m)) missiles.remove(m);
-			});
-		});
+//		walls.forEach(w -> {
+//			bullets.forEach(b -> {
+//				Line2D projectory = new Line2D.Double(
+//					new Point((int)b.getLocation().x, (int)b.getLocation().y),
+//					new Point((int)(b.getMovingDirection().x + b.getLocation().x), (int)(b.getMovingDirection().y + b.getLocation().y))
+//				);
+//				if (w.getHitbox().intersectsLine(projectory)) {
+//					bullets.remove(b);
+//				}
+//			});
+//			missiles.forEach(m -> {
+//				if (w.checkCollision(m)) missiles.remove(m);
+//			});
+//		});
 		
 		//System.out.println(bullets.size());
 		
@@ -212,9 +203,9 @@ public class Engine implements IObserver, Runnable {
 		// because it might still be in enemies hitbox (where its created)
 
 		// move enemies and check collisions
-		enemies.forEach(e -> {
+		env.enemies.forEach(e -> {
 			e.move();
-			bullets.forEach(b -> {
+			env.bullets.forEach(b -> {
 				// reduce hp remove if unit is dead
 //				if (e.checkCollision(b) && !(b instanceof EnemyBullet)) {
 //					bullets.remove(b);
@@ -227,12 +218,12 @@ public class Engine implements IObserver, Runnable {
 			});
 			// missiles that collide with enemies that
 			// aren't their targets
-			missiles.forEach(m -> {
+			env.missiles.forEach(m -> {
 				// TODO: same here as for bullets
 				if (e.checkCollision(m)) {
-					missiles.remove(m);
+					env.missiles.remove(m);
 					if (e.lowerHealth(50)) {
-						enemies.remove(e);
+						env.enemies.remove(e);
 					}
 				}
 			});
@@ -241,66 +232,72 @@ public class Engine implements IObserver, Runnable {
 		});
 		
 		// bullet collisions
-		bullets.forEach(b -> {
-			if (player.checkCollision(b) && b instanceof EnemyBullet) {
-				bullets.remove(b);
+		env.bullets.forEach(b -> {
+			if (env.player.checkCollision(b) && b instanceof EnemyBullet) {
+				env.bullets.remove(b);
 				// TODO: var for bullet dmg
-				if (player.lowerHealth(5)) {
+				if (env.player.lowerHealth(5)) {
 					// TODO: player out of hp
 				}
 			}
-			asteroids.forEach(a -> {
+			env.asteroids.forEach(a -> {
 				if (b.checkCollision(a)) {
-					bullets.remove(b);
-					if (a.lowerHealth(10)) asteroids.remove(a);
+					env.bullets.remove(b);
+					if (a.lowerHealth(10)) env.asteroids.remove(a);
 				}
 			});
 		});
-		
+
 		// move bullets
-		bullets.forEach(b -> {
+		env.bullets.forEach(b -> {
 			b.move();
 			if (b.isOutOfBounds()) {
-				bullets.remove(b);
-				System.out.println("bullet removed");
+				env.bullets.remove(b);
 			}
 		});
+
 		// move missiles
-		missiles.forEach(m -> {
+		env.missiles.forEach(m -> {
 			m.move();
-			if (!isTargetAlive(m.target)) {
+			if (isTargetNotAlive(m.target)) {
 				Unit target = getClosestEnemy(mouse);
 				if (target != null) m.target = target;
-				else missiles.remove(m);
+				else env.missiles.remove(m);
 			}
 			if (m.checkCollision(m.target)) {
-				missiles.remove(m);
+				env.missiles.remove(m);
 				if (m.target.lowerHealth(50)) {
-					enemies.remove(m.target);
-					asteroids.remove(m.target);
+					// dirty? but how else?
+					if (m.getTarget().getClass() == Enemy.class)
+						env.enemies.remove(m.target);
+					else
+						env.asteroids.remove(m.target);
 				}
 			}
 		});
-		
-		asteroids.forEach(a -> {
-			a.move();
-			if (a.isOutOfBounds()) a.reposition();
-		});
-		
-//		if (dragon != null) {
-//			dragon.move();
-//			dragon.checkCollision(bullets, asteroids);
-//		}
-		
-		guards.forEach(g -> {
-			g.move(walls);
-			if (g.isOutOfBounds()) g.reposition();
-		});
+//
+//		asteroids.forEach(a -> {
+//			a.move();
+//			if (a.isOutOfBounds()) a.reposition();
+//		});
+//
+////		if (dragon != null) {
+////			dragon.move();
+////			dragon.checkCollision(bullets, asteroids);
+////		}
+//
+//		guards.forEach(g -> {
+//			g.move(walls);
+//			if (g.isOutOfBounds()) g.reposition();
+//		});
 	}
 	
 	private void deleteTarget(Unit target) {
-		enemies.remove(target);
-		asteroids.remove(target);
+		// dirty? but how else?
+		if (target.getClass() == Enemy.class)
+			env.enemies.remove(target);
+		else
+			env.asteroids.remove(target);
 	}
 	
 	private void movePlayer() {
@@ -313,20 +310,21 @@ public class Engine implements IObserver, Runnable {
 		if (keyCodes[83]) force.y +=  playerSpeed;
 		// D
 		if (keyCodes[68]) force.x +=  playerSpeed;
-		
+
+		// can't move through walls
 		Line2D projectory = new Line2D.Double(
-			new Point((int)player.getLocation().x, (int)player.getLocation().y),
-			new Point((int)(force.x + player.getLocation().x), (int)(force.y + player.getLocation().y))
+			new Point((int)env.player.getLocation().x, (int)env.player.getLocation().y),
+			new Point((int)(force.x + env.player.getLocation().x), (int)(force.y + env.player.getLocation().y))
 		);
 		
-		Wall[] wallsArr = walls.toArray(new Wall[0]);
+		Wall[] wallsArr = env.walls.toArray(new Wall[0]);
 		for (int i=0; i<wallsArr.length; i++) {
 			if (wallsArr[i].getHitbox().intersectsLine(projectory)) {
 				return;
 			}
 		};
-		player.updateDirection();
-		player.updatePosition(force);
+		env.player.updateDirection();
+		env.player.updatePosition(force);
 	}
 	
 	
@@ -339,23 +337,20 @@ public class Engine implements IObserver, Runnable {
 		bulletLauncher = new Thread(() -> {
 			while(leftPressed) {
 				Vector direction = new Vector(
-					mouse.x - player.getLocation().x,
-					mouse.y - player.getLocation().y
+					mouse.x - env.player.getLocation().x,
+					mouse.y - env.player.getLocation().y
 				);
 				direction.norm();
 				direction.multi(bulletSpeed);
 				
-				Bullet b = new Bullet(
-					new Vector(
-						player.centerposition.x - res.getBulletImage().getWidth(null)/2,
-						player.centerposition.y - res.getBulletImage().getHeight(null)/2
-					),
-					direction,
-					null,
-					res.getBulletImage()
-				);
+				Bullet b = unitFact.getInstanceOfBullet(env.player.centerposition, new Vector(mouse.x, mouse.y));
 				b.setUnitImage(res.getBulletImage());
-				bullets.add(b);
+				env.bullets.add(b);
+
+				// play sound
+				MediaPlayer media = new MediaPlayer("C:/git/ProgProjects/Engine/test.wav");
+				media.setVolume(0.3F);
+				new Thread(media).start();
 				sleep(fireRate);
 			}
 		});
@@ -367,20 +362,12 @@ public class Engine implements IObserver, Runnable {
 		// if thread responsible is already up and running,
 		// it means a new one shouldn't be created and run
 		if (missileLauncher.isAlive()) return;
-		
+
 		missileLauncher = new Thread(() -> {
 			while(rightPressed) {
 				//if (!isTargetAlive(target)) continue;
-				Missile m = new Missile(
-					new Vector(
-						player.getHitbox().getCenterX() - res.getMissileImage().getWidth(null)/2,
-						player.getHitbox().getCenterY() - res.getMissileImage().getHeight(null)/2
-					),
-					null,
-					res.getMissileImage(),
-					target
-				);
-				missiles.add(m);
+				Missile<?> m = unitFact.getInstanceOfMissile(env.player.centerposition, getClosestEnemy(mouse));
+				env.missiles.add(m);
 				System.out.println("missile launcher alive");
 				sleep(500);
 			}
@@ -389,8 +376,12 @@ public class Engine implements IObserver, Runnable {
 	}
 	
 	public boolean isTargetAlive(Unit target) {
-		if (enemies.contains(target)) return true;
-		return asteroids.contains(target);
+		if (env.enemies.contains(target)) return true;
+		return env.asteroids.contains(target);
+	}
+
+	public boolean isTargetNotAlive(Unit target) {
+		return !isTargetAlive(target);
 	}
 	
 	
@@ -437,7 +428,7 @@ public class Engine implements IObserver, Runnable {
 	public void notifyRightPress(Point location) { 
 		rightPressed = !rightPressed;
 		// dont spawn if there are no enemies
-		if (enemies.isEmpty() && asteroids.isEmpty()) return;
+		if (env.enemies.isEmpty() && env.asteroids.isEmpty()) return;
 		createMissile(getClosestEnemy(mouse));
 	}
 	

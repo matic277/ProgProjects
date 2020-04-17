@@ -4,31 +4,41 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import Engine.Environment;
 import Engine.Vector;
-	
-public class Missile extends Unit {
+import core.IUnitBehaviour;
+import core.IUnitMovement;
+import core.IUnitRenderer;
+
+// generics prolly not needed
+public class Missile<T extends Unit> extends Unit {
 		
-	public Unit target;
-	public Missile(Vector position, Dimension hitbox, Image image, Unit unit) {
-		super(position, hitbox, image);;
+	public T target;
+
+	public Missile(Vector position, Dimension hitbox, Image image, T target, Environment env,
+				   IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
+		super(position, hitbox, image, env, move, render, behave);;
 		super.speed = 5;
-		this.target = unit;
+		this.target = target;
 	}
 
-	@Override
-	public void move() {
-		movingDirection.x = target.getLocation().x - position.x;
-		movingDirection.y = target.getLocation().y - position.y;
-		movingDirection.norm();
-		movingDirection.multi(speed);
-		
-		facingDirection = movingDirection;
-		updatePosition(movingDirection);
-	}
+	public T getTarget() { return target; }
+
+//	@Override
+//	public void move() {
+//		movingDirection.x = target.getLocation().x - position.x;
+//		movingDirection.y = target.getLocation().y - position.y;
+//		movingDirection.norm();
+//		movingDirection.multi(speed);
+//
+//		facingDirection = movingDirection;
+//		updatePosition(movingDirection);
+//	}
 	
-	@Override
-	public void draw(Graphics2D g) {
-		rotateAndDraw(g);
-	}
+//	@Override
+//	public void draw(Graphics2D g) {
+//		rotateAndDraw(g);
+//	}
+
  }
 

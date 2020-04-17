@@ -8,40 +8,36 @@ import java.awt.geom.Line2D;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import Engine.Environment;
 import Engine.Vector;
 import Graphics.ResourceLoader;
+import core.IUnitBehaviour;
 import core.IUnitMovement;
 import core.IUnitRenderer;
 
 public class Enemy extends Unit {
-	
-//	Player player;
-//	
-//	boolean canSeePlayer = false;
-//	
-//	IUnitMovement move;
-//	IUnitRenderer render;
-//
+
+	boolean canSeePlayer = false;
+
+	IUnitMovement move;
+	IUnitRenderer render;
+
 //	public Enemy(Vector position, Vector movingDirection, Dimension hitbox, Image image, Player player) {
 //		super(position, hitbox, image);
 //		super.speed = 2;
 //		this.movingDirection = (movingDirection == null)? new Vector(speed, 0) : movingDirection;
 //		this.facingDirection = new Vector(0, 0);
 //		this.player = player;
-//		
-//		System.out.println("@ENEMY");
 //	}
-//	
-//	public Enemy(Vector position, Vector movingDirection, Dimension hitbox, Image image, Player player,
-//			IUnitMovement move, IUnitRenderer render) {
-//		super(position, hitbox, image);
-//		super.speed = 2;
-//		this.movingDirection = (movingDirection == null)? new Vector(speed, 0) : movingDirection;
-//		this.facingDirection = new Vector(0, 0);
-//		this.player = player;
-//
-//	}
-//	
+
+	public Enemy(Vector position, Dimension hitbox, Image image, Environment env,
+			IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
+		super(position, hitbox, image, env, move, render, behave);
+		super.speed = 2;
+		this.movingDirection = (movingDirection == null)? new Vector(speed, 0) : movingDirection;
+		this.facingDirection = new Vector(0, 0);
+	}
+
 //	@Override
 //	public void move() {
 //		// handled below
@@ -49,7 +45,7 @@ public class Enemy extends Unit {
 //
 //	public void move(ConcurrentLinkedQueue<Wall> walls) {
 //		super.move();
-//		
+//
 ////		super.updatePosition(movingDirection);
 ////
 ////		// if colliding with the wall, change
@@ -69,8 +65,8 @@ public class Enemy extends Unit {
 ////				movingDirection.multi(-1);
 ////			}
 ////		}
-////		
-////		// face player if there is no wall in 
+////
+////		// face player if there is no wall in
 ////		// between the player and this enemy
 ////		// face to played if player is in direct
 ////		// line of sight, otherwise face to where
@@ -79,7 +75,7 @@ public class Enemy extends Unit {
 ////			new Point((int)position.x, (int)position.y),
 ////			new Point((int)player.centerposition.x, (int)player.centerposition.y)
 ////		);
-////		
+////
 ////		for (int i=0; i<wallsArr.length; i++) {
 ////			if (wallsArr[i].hitbox.intersectsLine(enemy_playerLine)) {
 ////				// face direction
@@ -97,23 +93,23 @@ public class Enemy extends Unit {
 //
 //	@Override
 //	public void draw(Graphics2D g) {
-//		rotateAndDraw(g, facingDirection);
-//		drawHP(g);	
+//		rotateAndDraw(g);
+//		drawHP(g);
 ////		drawHitbox(g);
 //	}
-//
-//	public void reposition() {
-//		if (position.x > Engine.Engine.bounds.width) {
-//			position.x = 0 - hitbox.getWidth() + 1;
-//		} else if (position.x < 0) {
-//			position.x = Engine.Engine.bounds.width;
-//		} else if (position.y > Engine.Engine.bounds.height) {
-//			position.y = 0 - hitbox.getHeight() + 1;
-//		} else if (position.y < 0) {
-//			position.y = Engine.Engine.bounds.height;
-//		}
-//	}
-//
+
+	public void reposition() {
+		if (position.x > Engine.Engine.bounds.width) {
+			position.x = 0 - hitbox.getWidth() + 1;
+		} else if (position.x < 0) {
+			position.x = Engine.Engine.bounds.width;
+		} else if (position.y > Engine.Engine.bounds.height) {
+			position.y = 0 - hitbox.getHeight() + 1;
+		} else if (position.y < 0) {
+			position.y = Engine.Engine.bounds.height;
+		}
+	}
+
 //	public void shoot(ResourceLoader res, ConcurrentLinkedQueue<Bullet> bullets) {
 //		if (!canSeePlayer) return;
 //		Vector direction = new Vector(player.position.x - position.x, player.position.y - position.y);

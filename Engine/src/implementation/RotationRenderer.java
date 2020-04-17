@@ -1,6 +1,6 @@
 package implementation;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 import Units.Unit;
@@ -20,9 +20,10 @@ public class RotationRenderer implements IUnitRenderer {
 	    g.translate(cx+u.hitbox.x, cy+u.hitbox.y);
 	    g.rotate(u.imageAngleRad);
 	    g.translate(-cx, -cy);
-	    g.drawImage(u.image, 0, 0, null);
+	    g.drawImage(u.image, 0, 0, null);;
+	    g.draw(u.hitbox);
 	    g.setTransform(oldAT);
-	    
+
 	    // courtesy of stack overflow
 	}
 

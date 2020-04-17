@@ -77,19 +77,19 @@ public class Painter extends JPanel implements IObserver {
 		g.setColor(bgColor);
 		g.fillRect(0, 0, bounds.width, bounds.height);
 		
-		engine.dummyUnits.forEach(b -> b.draw(g));
-		engine.walls.forEach(b -> b.draw(g));
+		engine.env.dummyUnits.forEach(b -> b.draw(g));
+		engine.env.walls.forEach(b -> b.draw(g));
 		
-		engine.bullets.forEach(b -> b.draw(g));
-		engine.missiles.forEach(b -> b.draw(g));
+		engine.env.bullets.forEach(b -> b.draw(g));
+		engine.env.missiles.forEach(b -> b.draw(g));
 		
-		engine.asteroids.forEach(b -> b.draw(g));
-		engine.enemies.forEach(b -> b.draw(g));
-		engine.guards.forEach(b -> b.draw(g));
+		engine.env.asteroids.forEach(b -> b.draw(g));
+		engine.env.enemies.forEach(b -> b.draw(g));
+		engine.env.guards.forEach(b -> b.draw(g));
 		
-		if (engine.dragon != null) engine.dragon.draw(g);
+//		if (engine.dragon != null) engine.dragon.draw(g);
 		
-		engine.player.draw(g);
+		engine.env.player.draw(g);
 
 		drawInputs(g);
 		

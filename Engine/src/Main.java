@@ -1,23 +1,21 @@
 import java.awt.Dimension;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import Engine.Engine;
+import Units.Player;
+import Units.Unit;
+
+import javax.sound.sampled.*;
 
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Engine e = new Engine(new Dimension(1000, 800));
 		new Thread(e).start();
-		
-		//ResourceLoader rl = new ResourceLoader();
-		
-		//Player p = new Player(new Vector(600, 400), new Rectangle(600, 400, 30, 30), new SimpleRenderer());
-		playmusic("test.wav");
 	}
-	
-	public static void playmusic(String musicLocation) {
-		
-
-	}
-
 }

@@ -8,13 +8,14 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import Engine.Environment;
 import Engine.Vector;
 import core.IUnitBehaviour;
 import core.IUnitMovement;
 import core.IUnitRenderer;
 import implementation.*;
 
-public class Unit {
+public abstract class Unit {
 	
 	public Image image;
 	
@@ -29,40 +30,27 @@ public class Unit {
 	Rectangle hpAmmount;
 	
 	public double imageAngleRad = 0;
-	double speed;
+	public double speed;
 	public boolean canSeePlayer = false;
 	
 	public Vector facingDirection;
 	public Vector movingDirection;
+
+	public Environment env;
 	
 	public IUnitMovement move;
 	public IUnitRenderer render;
 	public IUnitBehaviour behave;
-	
-	public Unit(Vector position, Dimension size, Image image) {
-		if (size == null) {
-			if (image == null) size = new Dimension(50, 50);
-			else size = new Dimension(image.getWidth(null), image.getHeight(null));
-		}
-		this.hitbox = new Rectangle((int)position.x, (int)position.y, size.width, size.height);
-		this.image = image;
-		this.position = position;
-		this.centerposition = new Vector(hitbox.getCenterX(), hitbox.getCenterY());		
 
-		hpContainer = new Rectangle(hitbox.x, hitbox.y+hitbox.height + 10, 50, 10);
-		hpAmmount = new Rectangle(hitbox.x, hitbox.y+hitbox.height + 10, 50, 10);
-		
-		facingDirection = new Vector(0, 0);
-		movingDirection = new Vector(0, 0);
-	}
-	
-	public Unit(Vector position, Dimension size, Image image, IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
+	public Unit(Vector position, Dimension size, Image image, Environment env,
+				IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
 		if (size == null) {
 			if (image == null) size = new Dimension(50, 50);
 			else size = new Dimension(image.getWidth(null), image.getHeight(null));
 		}
 		this.hitbox = new Rectangle((int)position.x, (int)position.y, size.width, size.height);
 		this.image = image;
+		this.env = env;
 		this.position = position;
 		this.centerposition = new Vector(hitbox.getCenterX(), hitbox.getCenterY());	
 		
@@ -82,7 +70,6 @@ public class Unit {
 	}
 	
 	public void updatePosition(Vector direction) {
-//		System.out.println("Updating position from, to:  " + this.position.toString() + ", " + direction.toString());
 		position.add(direction);
 		hitbox.setLocation((int)position.x, (int)position.y);
 		centerposition.x = hitbox.getCenterX();
@@ -93,11 +80,10 @@ public class Unit {
 	}
 	
 	public void move() {
-		move.move(this);
+		move.move(this, env);
 	}
 	
 	public void behave() {
-		if (behave == null) System.out.println("NULL");
 		behave.behave(this);
 	}
 	
@@ -130,22 +116,22 @@ public class Unit {
 		g.draw(hpContainer);
 	}
 	
-	public void rotateAndDraw(Graphics2D g) {
+//	public void rotateAndDraw(Graphics2D g) {
 //	    imageAngleRad = Math.atan2(facingDirection.y, facingDirection.x);
 //
 //	    int cx = image.getWidth(null) / 2;
 //	    int cy = image.getHeight(null) / 2;
-//	    
+//
 //	    AffineTransform oldAT = g.getTransform();
-//	    
+//
 //	    g.translate(cx+hitbox.x, cy+hitbox.y);
 //	    g.rotate(imageAngleRad);
 //	    g.translate(-cx, -cy);
 //	    g.drawImage(image, 0, 0, null);
 //	    g.setTransform(oldAT);
-//	    
+//
 //	    // courtesy of stack overflow
-	}
+//	}
 	
 	public void reposition() {
 		if (position.x > Engine.Engine.bounds.width) {

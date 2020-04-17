@@ -5,6 +5,7 @@ import java.awt.geom.Line2D;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import Engine.Environment;
 import Engine.Vector;
 import Units.Player;
 import Units.Unit;
@@ -13,9 +14,7 @@ import core.IUnitMovement;
 
 public class EnemyMovement implements IUnitMovement {
 	
-	ConcurrentLinkedQueue<Wall> walls;
-	
-	Player player;
+	Environment env;
 	
 	int speed = 2;
 	
@@ -23,9 +22,8 @@ public class EnemyMovement implements IUnitMovement {
 	
 	Thread movementController;
 	
-	public EnemyMovement(ConcurrentLinkedQueue<Wall> walls, Player player) {
-		this.walls = walls;
-		this.player = player;
+	public EnemyMovement(Environment emv) {
+		this.env = env;
 	}
 	
 	public void assignUnitToThisClass(Unit unit) {
@@ -36,15 +34,13 @@ public class EnemyMovement implements IUnitMovement {
 			this.unit.setMovingDirection(new Vector(speed, 0));
 			Random r = new Random();
 			while (true){
-				
 				if (r.nextDouble() <= 0.2) {
 					this.unit.movingDirection.rotate(90);
 				}
-				
 				this.unit.movingDirection.rotateRandomly(40);
 				
 				// sleep for somewhere between x amd y
-				// them update direction again
+				// then update direction again
 				Engine.Engine.sleep(300 + r.nextInt(500));
 			}
 		});
@@ -52,13 +48,13 @@ public class EnemyMovement implements IUnitMovement {
 	}
 
 	@Override
-	public void move(Unit u) {
+	public void move(Unit u, Environment env) {
 //		System.out.println("moving for: " + this.unit.hashCode());
 		u.updatePosition(u.movingDirection);
 
 		// if colliding with the wall, change
 		// the moving direction
-		Wall[] wallsArr = walls.toArray(new Wall[0]);
+		Wall[] wallsArr = env.walls.toArray(new Wall[0]);
 		Vector nextPosition = new Vector(u.position);
 		nextPosition.add(u.movingDirection);
 		for (int i=0; i<wallsArr.length; i++) {
@@ -81,7 +77,7 @@ public class EnemyMovement implements IUnitMovement {
 		// its heading
 		Line2D enemy_playerLine = new Line2D.Double(
 			new Point((int)u.position.x, (int)u.position.y),
-			new Point((int)player.centerposition.x, (int)player.centerposition.y)
+			new Point((int)env.player.centerposition.x, (int)env.player.centerposition.y)
 		);
 		
 		for (int i=0; i<wallsArr.length; i++) {
@@ -94,8 +90,8 @@ public class EnemyMovement implements IUnitMovement {
 			}
 		};
 		// face player
-		u.facingDirection.x = player.position.x - u.position.x;
-		u.facingDirection.y = player.position.y - u.position.y;
+		u.facingDirection.x = env.player.position.x - u.position.x;
+		u.facingDirection.y = env.player.position.y - u.position.y;
 		u.canSeePlayer = true;
 		
 	}
