@@ -4,8 +4,8 @@ import java.awt.Graphics2D;
 
 import Units.Unit;
 
-public interface IUnitRenderer {
+public interface IUnitRenderer <T> {
 	
-	void draw(Graphics2D g, Unit unit);
+	void draw(Graphics2D g, T unit);
 
 }

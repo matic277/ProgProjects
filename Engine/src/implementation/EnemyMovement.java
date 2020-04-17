@@ -7,12 +7,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Engine.Environment;
 import Engine.Vector;
+import Units.Enemy;
 import Units.Player;
 import Units.Unit;
 import Units.Wall;
 import core.IUnitMovement;
 
-public class EnemyMovement implements IUnitMovement {
+public class EnemyMovement implements IUnitMovement<Enemy> {
 	
 	Environment env;
 	
@@ -20,9 +21,7 @@ public class EnemyMovement implements IUnitMovement {
 	
 	Unit unit;
 	
-	Thread movementController;
-	
-	public EnemyMovement(Environment emv) {
+	public EnemyMovement(Environment env) {
 		this.env = env;
 	}
 	
@@ -48,7 +47,7 @@ public class EnemyMovement implements IUnitMovement {
 	}
 
 	@Override
-	public void move(Unit u, Environment env) {
+	public void move(Enemy u, Environment env) {
 //		System.out.println("moving for: " + this.unit.hashCode());
 		u.updatePosition(u.movingDirection);
 

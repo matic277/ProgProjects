@@ -1,10 +1,9 @@
 package core;
 
 import Engine.Environment;
-import Units.Unit;
 
-public interface IUnitMovement {
+public interface IUnitMovement <T>{
 	
-	void move(Unit unit, Environment env);
+	void move(T unit, Environment env);
 
 }

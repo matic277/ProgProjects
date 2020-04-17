@@ -16,6 +16,8 @@ import core.IUnitRenderer;
 import implementation.*;
 
 public abstract class Unit {
+
+	public final Object lock = new Object();
 	
 	public Image image;
 	

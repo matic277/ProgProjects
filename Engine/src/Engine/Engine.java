@@ -85,29 +85,12 @@ public class Engine implements IObserver, Runnable {
 
 		// <-- PLAYER -->
 		env.player = unitFact.getInstanceOfPlayer(mouse);
-
-
-
-
 		env.player.render = renFact.getSimpleUnitRenderer();
 
-//		enemies.add(new Enemy(
-//			new Vector(50, 50),
-//			null,
-//			null,
-//			res.getEnemyImage(),
-//			player
-//		));
 
 		env.enemies.add(unitFact.getInstanceOfEnemy());
-		
-//		guards.add(new Guard(
-//			new Vector(50, 50),
-//			null,
-//			null,
-//			res.getEnemyImage(),
-//			player
-//		));
+
+		env.guards.add(unitFact.getInstanceOfGuard());
 		
 //		Unit dummy = new DummyUnit(new Vector(300, 300), new Dimension(50, 40), null);
 		//dummyUnits.add(dummy);
@@ -286,11 +269,11 @@ public class Engine implements IObserver, Runnable {
 ////			dragon.move();
 ////			dragon.checkCollision(bullets, asteroids);
 ////		}
-//
-//		guards.forEach(g -> {
-//			g.move(walls);
-//			if (g.isOutOfBounds()) g.reposition();
-//		});
+
+		env.guards.forEach(g -> {
+			g.move();
+			if (g.isOutOfBounds()) g.reposition();
+		});
 	}
 	
 	private void deleteTarget(Unit target) {
@@ -347,11 +330,6 @@ public class Engine implements IObserver, Runnable {
 				Bullet b = unitFact.getInstanceOfBullet(env.player.centerposition, new Vector(mouse.x, mouse.y));
 				b.setUnitImage(res.getBulletImage());
 				env.bullets.add(b);
-
-				// play sound
-//				MediaPlayer media = new MediaPlayer("C:/git/ProgProjects/Engine/Resources/sounds/sf_bullet.wav");
-//				media.setVolume(0.2F);
-//				new Thread(media).start();
 
 				// plays sound
 				env.player.behave();

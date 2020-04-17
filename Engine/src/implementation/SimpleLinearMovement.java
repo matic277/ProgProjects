@@ -5,7 +5,7 @@ import Engine.Vector;
 import Units.Unit;
 import core.IUnitMovement;
 
-public class SimpleLinearMovement implements IUnitMovement {
+public class SimpleLinearMovement implements IUnitMovement<Unit> {
 	
 	Vector movingAndFacingDirection;
 	

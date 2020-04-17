@@ -42,31 +42,20 @@ public class UnitFactory {
 				null,
 				(u) -> sound.produceSound()); // behaviour is just making a sound
 	}
-
-	// TODO: method is a copy of get enemy instance bullet
-	public Bullet getInstanceOfBullet(Vector from, Vector to) {
-		Vector direction = new Vector(to.x - from.x, to.y - from.y);
-		Vector startingPosition = new Vector(from);
-		direction.norm();
-		direction.multi(15);
-
-		SimpleLinearMovement move = movFact.getSimpleLinearMovement(direction);
-		IUnitRenderer render = renFact.getSimpleUnitRenderer();
+	
+	public Guard getInstanceOfGuard() {
+		IUnitMovement<Guard> move = movFact.getGuardMovement();
+		IUnitRenderer<Guard> render = renFact.getGuardRenderer();
 		IUnitBehaviour behave = (u) -> { };
 
-		return new Bullet(
-				startingPosition,
-				direction,
+		return new Guard(
+				new Vector(50, 50),
 				null,
-				res.getEnemyBulletImage(),
+				res.getEnemyImage(),
 				env,
 				move,
 				render,
 				behave);
-	}
-	
-	public Unit getInstanceOfGuard() {
-		return null;
 	}
 	
 	public Unit getInstanceOfEnemy() {
@@ -89,6 +78,28 @@ public class UnitFactory {
 
 		movement.assignUnitToThisClass(e);
 		return e;
+	}
+
+	// TODO: method is a copy of get enemy instance bullet
+	public Bullet getInstanceOfBullet(Vector from, Vector to) {
+		Vector direction = new Vector(to.x - from.x, to.y - from.y);
+		Vector startingPosition = new Vector(from);
+		direction.norm();
+		direction.multi(15);
+
+		SimpleLinearMovement move = movFact.getSimpleLinearMovement(direction);
+		IUnitRenderer render = renFact.getSimpleUnitRenderer();
+		IUnitBehaviour behave = (u) -> { };
+
+		return new Bullet(
+				startingPosition,
+				direction,
+				null,
+				res.getEnemyBulletImage(),
+				env,
+				move,
+				render,
+				behave);
 	}
 	
 	public EnemyBullet getInstanceOfEnemyBullet(Vector from, Vector to) {

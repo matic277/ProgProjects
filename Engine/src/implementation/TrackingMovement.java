@@ -1,11 +1,12 @@
 package implementation;
 
 import Engine.Environment;
+import Units.Missile;
 import Units.Unit;
 import core.IUnitMovement;
 
 // are generics needed here? prolly not
-public class TrackingMovement <T extends Unit> implements IUnitMovement {
+public class TrackingMovement <T extends Unit, G extends Unit> implements IUnitMovement<Missile<G>> {
 
     T target;
 
@@ -14,7 +15,7 @@ public class TrackingMovement <T extends Unit> implements IUnitMovement {
     }
 
     @Override
-    public void move(Unit unit, Environment env) {
+    public void move(Missile<G> unit, Environment env) {
 		unit.movingDirection.x = target.getLocation().x - unit.position.x;
 		unit.movingDirection.y = target.getLocation().y - unit.position.y;
 		unit.movingDirection.norm();
