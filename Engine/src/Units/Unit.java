@@ -84,6 +84,7 @@ public abstract class Unit {
 	}
 	
 	public void behave() {
+		if (behave == null) System.out.println("NULL");
 		behave.behave(this);
 	}
 	

@@ -1,5 +1,6 @@
 package implementation;
 
+import java.io.File;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Engine.Engine;
@@ -8,30 +9,34 @@ import Graphics.ResourceLoader;
 import Units.Bullet;
 import Units.Player;
 import Units.Unit;
+import core.ISoundingBehaviour;
 import core.IUnitBehaviour;
 import Engine.MediaPlayer;
+import Engine.Environment;
 
 public class ShootingBehaviour implements IUnitBehaviour {
-	
-	ConcurrentLinkedQueue<Unit> bullets;
+
+	Environment env;
 	ResourceLoader res;
+	ISoundingBehaviour sound;
 	Player player;
 	
-	public ShootingBehaviour(ResourceLoader res, Player player, ConcurrentLinkedQueue<Unit> bullets) {
+	public ShootingBehaviour(ResourceLoader res, ISoundingBehaviour sound, Player player, Environment env) {
 		this.player = player;
-		this.bullets = bullets;
+		this.env = env;
+		this.sound = sound;
 		this.res = res;
 	}
 
 
 	public void behave(Unit u) {
 		if (!u.canSeePlayer) return;
-		bullets.add(Engine.unitFact.getInstanceOfEnemyBullet(u.centerposition, player.centerposition));
+		env.bullets.add(Engine.unitFact.getInstanceOfEnemyBullet(
+				u.centerposition, player.centerposition));
 
-		// play sound
-		MediaPlayer media = new MediaPlayer("C:/git/ProgProjects/Engine/Resources/sounds/sf_enemybullet.wav");
-		media.setVolume(0.2F);
-		new Thread(media).start();
+		sound.produceSound();
 	}
+
+
 
 }

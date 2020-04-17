@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
+import java.io.File;
 import java.sql.SQLOutput;
 import java.util.Random;
 import java.util.Set;
@@ -23,9 +24,11 @@ import Units.Player;
 import Units.Unit;
 import Units.Wall;
 import core.IObserver;
+import core.ISoundingBehaviour;
 import factories.MovementFactory;
 import factories.RenderingFactory;
 import factories.UnitFactory;
+import implementation.SimpleSoundBehaviour;
 
 public class Engine implements IObserver, Runnable {
 	
@@ -75,22 +78,16 @@ public class Engine implements IObserver, Runnable {
 		ml.addObserver(this);
 		kl.addObserver(this);
 
-
-
-		// <-- PLAYER -->
-		env.player = new Player(
-				new Vector(600, 400),
-				null,
-				res.getPlayerImage(),
-				mouse,
-				env,
-				(u, e) -> {},
-				null,
-				(u) -> {});
 		
 		renFact = new RenderingFactory();
 		movFact = new MovementFactory(env);
 		unitFact = new UnitFactory(res, env, movFact, renFact);
+
+		// <-- PLAYER -->
+		env.player = unitFact.getInstanceOfPlayer(mouse);
+
+
+
 
 		env.player.render = renFact.getSimpleUnitRenderer();
 
@@ -352,9 +349,12 @@ public class Engine implements IObserver, Runnable {
 				env.bullets.add(b);
 
 				// play sound
-				MediaPlayer media = new MediaPlayer("C:/git/ProgProjects/Engine/Resources/sounds/sf_bullet.wav");
-				media.setVolume(0.2F);
-				new Thread(media).start();
+//				MediaPlayer media = new MediaPlayer("C:/git/ProgProjects/Engine/Resources/sounds/sf_bullet.wav");
+//				media.setVolume(0.2F);
+//				new Thread(media).start();
+
+				// plays sound
+				env.player.behave();
 
 				sleep(fireRate);
 			}

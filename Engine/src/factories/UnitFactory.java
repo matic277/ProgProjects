@@ -1,12 +1,14 @@
 package factories;
 
 import java.awt.*;
+import java.io.File;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Engine.Environment;
 import Engine.Vector;
 import Graphics.ResourceLoader;
 import Units.*;
+import core.ISoundingBehaviour;
 import core.IUnitBehaviour;
 import core.IUnitMovement;
 import core.IUnitRenderer;
@@ -26,11 +28,19 @@ public class UnitFactory {
 		this.renFact = renFact;
 	}
 	
-	public Unit getInstanceOfPlayer() {
-//		return new Unit(
-//			
-//		);
-		return null;
+	public Player getInstanceOfPlayer(Point mouse) {
+		File f = new File("./Resources/sounds/sf_bullet.wav");
+		ISoundingBehaviour sound = new SimpleSoundBehaviour(f, 0.2F);
+
+		return new Player(
+				new Vector(600, 400),
+				null,
+				res.getPlayerImage(),
+				mouse,
+				env,
+				(u, e) -> {},
+				null,
+				(u) -> sound.produceSound()); // behaviour is just making a sound
 	}
 
 	// TODO: method is a copy of get enemy instance bullet
@@ -42,7 +52,7 @@ public class UnitFactory {
 
 		SimpleLinearMovement move = movFact.getSimpleLinearMovement(direction);
 		IUnitRenderer render = renFact.getSimpleUnitRenderer();
-		IUnitBehaviour behave = (u) -> {}; // don't behave
+		IUnitBehaviour behave = (u) -> { };
 
 		return new Bullet(
 				startingPosition,
@@ -60,9 +70,12 @@ public class UnitFactory {
 	}
 	
 	public Unit getInstanceOfEnemy() {
+		File f = new File("./Resources/sounds/sf_enemybullet.wav");
+
 		IUnitRenderer renderer = renFact.getSimpleUnitRenderer();
 		EnemyMovement movement = movFact.getEnemeyMovement();
-		IUnitBehaviour behaviour = new ShootingBehaviour(res, env.player, env.bullets);
+		ISoundingBehaviour sound = new SimpleSoundBehaviour(f, 0.2F);
+		IUnitBehaviour behaviour = new ShootingBehaviour(res, sound, env.player, env);
 
 		Enemy e = new Enemy(
 			new Vector(50, 50),
@@ -104,10 +117,7 @@ public class UnitFactory {
 		IUnitRenderer render = renFact.getSimpleUnitRenderer();
 		IUnitBehaviour behave = (u) -> {}; // don't behave
 
-//			public Missile(Vector position, Dimension hitbox, Image image, T target, Environment env,
-//				IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave)
-
-		Missile<?> missile = new Missile<>(
+		return new Missile<>(
 				new Vector(from),
 				null,
 				res.getMissileImage(),
@@ -116,8 +126,6 @@ public class UnitFactory {
 				move,
 				render,
 				behave);
-
-		return missile;
 	}
 	
 	public Wall getInstanceOfWall() {

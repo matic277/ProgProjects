@@ -18,7 +18,7 @@ public class Player extends Unit {
 
 	public Player(Vector position, Dimension hitboxSize, Image image, Point mouse, Environment env,
 				  IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
-		super(position, hitboxSize, image, env, null, render, null);
+		super(position, hitboxSize, image, env, move, render, behave);
 		super.speed = 10;
 		this.image = image;
 		this.mouse = mouse;
