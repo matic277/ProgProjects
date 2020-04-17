@@ -17,11 +17,6 @@ import core.IUnitRenderer;
 
 public class Enemy extends Unit {
 
-	boolean canSeePlayer = false;
-
-	IUnitMovement move;
-	IUnitRenderer render;
-
 //	public Enemy(Vector position, Vector movingDirection, Dimension hitbox, Image image, Player player) {
 //		super(position, hitbox, image);
 //		super.speed = 2;

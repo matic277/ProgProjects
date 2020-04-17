@@ -61,8 +61,8 @@ public class ResourceLoader {
 	public static BufferedImage loadImage(String fileName) {
 		BufferedImage img = null;
 		try {
-			System.out.print("Loading resource: 'Resources/" + fileName + "' ... ");
-			img = ImageIO.read(new File("Resources/" + fileName));
+			System.out.print("Loading resource: 'Resources/images/" + fileName + "' ... ");
+			img = ImageIO.read(new File("Resources/images/" + fileName));
 			System.out.println("done.");
 		}
 		catch (IOException e) { e.printStackTrace(); }

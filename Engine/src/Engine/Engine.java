@@ -35,7 +35,7 @@ public class Engine implements IObserver, Runnable {
 	int fireRate = 75;
 	
 	final Random r = new Random();
-	double enemyFireProbability = 0.01;
+	double enemyFireProbability = 0.03;
 	
 	Dimension panelSize;
 	public static Rectangle bounds; // same size as panelSize
@@ -258,12 +258,15 @@ public class Engine implements IObserver, Runnable {
 
 		// move missiles
 		env.missiles.forEach(m -> {
-			m.move();
 			if (isTargetNotAlive(m.target)) {
 				Unit target = getClosestEnemy(mouse);
 				if (target != null) m.target = target;
 				else env.missiles.remove(m);
+
+				return;
 			}
+			m.move();
+
 			if (m.checkCollision(m.target)) {
 				env.missiles.remove(m);
 				if (m.target.lowerHealth(50)) {
@@ -274,6 +277,7 @@ public class Engine implements IObserver, Runnable {
 						env.asteroids.remove(m.target);
 				}
 			}
+
 		});
 //
 //		asteroids.forEach(a -> {
@@ -348,9 +352,10 @@ public class Engine implements IObserver, Runnable {
 				env.bullets.add(b);
 
 				// play sound
-				MediaPlayer media = new MediaPlayer("C:/git/ProgProjects/Engine/test.wav");
-				media.setVolume(0.3F);
+				MediaPlayer media = new MediaPlayer("C:/git/ProgProjects/Engine/Resources/sounds/sf_bullet.wav");
+				media.setVolume(0.2F);
 				new Thread(media).start();
+
 				sleep(fireRate);
 			}
 		});
@@ -368,7 +373,12 @@ public class Engine implements IObserver, Runnable {
 				//if (!isTargetAlive(target)) continue;
 				Missile<?> m = unitFact.getInstanceOfMissile(env.player.centerposition, getClosestEnemy(mouse));
 				env.missiles.add(m);
-				System.out.println("missile launcher alive");
+
+				// play sound
+				MediaPlayer media = new MediaPlayer("C:/git/ProgProjects/Engine/Resources/sounds/sf_missile.wav");
+				media.setVolume(0.2F);
+				new Thread(media).start();
+
 				sleep(500);
 			}
 		});
