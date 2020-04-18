@@ -86,6 +86,7 @@ public class Painter extends JPanel implements IObserver {
 		engine.env.asteroids.forEach(b -> b.draw(g));
 		engine.env.enemies.forEach(b -> b.draw(g));
 		engine.env.guards.forEach(b -> b.draw(g));
+		engine.env.turrets.forEach(b -> b.draw(g));
 		
 //		if (engine.dragon != null) engine.dragon.draw(g);
 		

@@ -1,12 +1,10 @@
 package factories;
 
-import Units.Asteroid;
-import Units.Guard;
-import Units.Player;
-import Units.Unit;
+import Units.*;
 import core.IUnitRenderer;
 import implementation.GuardRenderer;
 import implementation.RotationRenderer;
+import implementation.TurretRenderer;
 
 public class RenderingFactory {
 	
@@ -28,4 +26,7 @@ public class RenderingFactory {
 		return new GuardRenderer(getSimpleUnitRenderer());
 	}
 
+	public IUnitRenderer<Turret> getTurretRenderer() {
+		return new TurretRenderer(getSimpleUnitRenderer());
+	}
 }

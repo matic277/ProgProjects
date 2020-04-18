@@ -14,7 +14,7 @@ import core.IUnitBehaviour;
 import Engine.MediaPlayer;
 import Engine.Environment;
 
-public class ShootingBehaviour implements IUnitBehaviour {
+public class ShootingBehaviour implements IUnitBehaviour<Unit> {
 
 	Environment env;
 	ResourceLoader res;

@@ -2,8 +2,8 @@ package core;
 
 import Units.Unit;
 
-public interface IUnitBehaviour {
+public interface IUnitBehaviour<T> {
 	
-	void behave(Unit unit);
+	void behave(T unit);
 
 }

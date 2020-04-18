@@ -20,6 +20,7 @@ public class Environment {
 
     public ConcurrentLinkedQueue<Unit> enemies;
     public ConcurrentLinkedQueue<Guard> guards;
+    public ConcurrentLinkedQueue<Turret> turrets;
 
     public Environment() {
         missiles = new ConcurrentLinkedQueue<Missile>();
@@ -31,6 +32,7 @@ public class Environment {
 
         enemies = new ConcurrentLinkedQueue<Unit>();
         guards = new ConcurrentLinkedQueue<Guard>();
+        turrets = new ConcurrentLinkedQueue<Turret>();
 
         walls = new ConcurrentLinkedQueue<Wall>();
     }

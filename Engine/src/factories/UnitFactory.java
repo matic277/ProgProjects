@@ -18,14 +18,34 @@ public class UnitFactory {
 	
 	ResourceLoader res;
 	Environment env;
+
 	MovementFactory movFact;
 	RenderingFactory renFact;
+	BehaviourFactory behFact;
 	
-	public UnitFactory(ResourceLoader res, Environment env,  MovementFactory movFact, RenderingFactory renFact) {
+	public UnitFactory(ResourceLoader res, Environment env,MovementFactory movFact,
+					   RenderingFactory renFact, BehaviourFactory behFact) {
 		this.res = res;
 		this.env = env;
 		this.movFact = movFact;
 		this.renFact = renFact;
+		this.behFact = behFact;
+	}
+
+	public Turret getInstanceOfTurret() {
+		IUnitMovement<Turret> move = (u, e) -> { }; // don't move
+		IUnitRenderer<Turret> render = renFact.getTurretRenderer();
+		IUnitBehaviour<Turret> behave = behFact.getTurretBehaviour();
+
+		return new Turret(
+				new Vector(500, 300),
+				null,
+				res.getEnemyImage(),
+				env,
+				300,
+				move,
+				render,
+				behave);
 	}
 	
 	public Player getInstanceOfPlayer(Point mouse) {

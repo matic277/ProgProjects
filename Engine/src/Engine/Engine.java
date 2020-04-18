@@ -25,6 +25,7 @@ import Units.Unit;
 import Units.Wall;
 import core.IObserver;
 import core.ISoundingBehaviour;
+import factories.BehaviourFactory;
 import factories.MovementFactory;
 import factories.RenderingFactory;
 import factories.UnitFactory;
@@ -49,6 +50,7 @@ public class Engine implements IObserver, Runnable {
 	public static MovementFactory movFact;
 	public static RenderingFactory renFact;
 	public static UnitFactory unitFact;
+	public static BehaviourFactory behFact;
 	
 	public Environment env;
 	
@@ -78,10 +80,11 @@ public class Engine implements IObserver, Runnable {
 		ml.addObserver(this);
 		kl.addObserver(this);
 
-		
+
+		behFact = new BehaviourFactory(env);
 		renFact = new RenderingFactory();
 		movFact = new MovementFactory(env);
-		unitFact = new UnitFactory(res, env, movFact, renFact);
+		unitFact = new UnitFactory(res, env, movFact, renFact, behFact);
 
 		// <-- PLAYER -->
 		env.player = unitFact.getInstanceOfPlayer(mouse);
@@ -91,6 +94,8 @@ public class Engine implements IObserver, Runnable {
 		env.enemies.add(unitFact.getInstanceOfEnemy());
 
 		env.guards.add(unitFact.getInstanceOfGuard());
+
+		env.turrets.add(unitFact.getInstanceOfTurret());
 		
 //		Unit dummy = new DummyUnit(new Vector(300, 300), new Dimension(50, 40), null);
 		//dummyUnits.add(dummy);
@@ -274,6 +279,9 @@ public class Engine implements IObserver, Runnable {
 			g.move();
 			if (g.isOutOfBounds()) g.reposition();
 		});
+
+		// rotate turrets
+		env.turrets.forEach(Unit::behave);
 	}
 	
 	private void deleteTarget(Unit target) {
@@ -408,8 +416,8 @@ public class Engine implements IObserver, Runnable {
 //		staticUnits.add(unit);
 //	}
 
-	public static void sleep(int t) {
-		try { Thread.sleep(t); } 
+	public static void sleep(int milis) {
+		try { Thread.sleep(milis); }
 		catch (InterruptedException e) {e.printStackTrace(); }
 	}
 
