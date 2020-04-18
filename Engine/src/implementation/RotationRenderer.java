@@ -3,32 +3,30 @@ package implementation;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
-import Units.Player;
 import Units.Unit;
-import core.IUnitMovement;
 import core.IUnitRenderer;
 
-public class RotationRenderer implements IUnitRenderer<Unit> {
+public class RotationRenderer <T extends Unit> implements IUnitRenderer<T> {
 
-	public void draw(Graphics2D g, Unit u) {
-		u.imageAngleRad = Math.atan2(u.facingDirection.y, u.facingDirection.x);
+	@Override
+	public void draw(Graphics2D g, T unit) {
+		unit.imageAngleRad = Math.atan2(unit.facingDirection.y, unit.facingDirection.x);
 
-	    int cx = u.image.getWidth(null) / 2;
-	    int cy = u.image.getHeight(null) / 2;
+	    int cx = unit.image.getWidth(null) / 2;
+	    int cy = unit.image.getHeight(null) / 2;
 	    
 	    AffineTransform oldAT = g.getTransform();
 	    
-	    g.translate(cx+u.hitbox.x, cy+u.hitbox.y);
-	    g.rotate(u.imageAngleRad);
+	    g.translate(cx+unit.hitbox.x, cy+unit.hitbox.y);
+	    g.rotate(unit.imageAngleRad);
 	    g.translate(-cx, -cy);
 	    // image
-	    g.drawImage(u.image, 0, 0, null);;
+	    g.drawImage(unit.image, 0, 0, null);;
 	    // hitbox
 		g.setColor(Color.black);
-	    g.drawRect(0, 0, u.hitbox.width, u.hitbox.height);
+	    g.drawRect(0, 0, unit.hitbox.width, unit.hitbox.height);
 	    g.setTransform(oldAT);
 
 	    // courtesy of stack overflow
 	}
-
 }

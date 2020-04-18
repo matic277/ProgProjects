@@ -14,8 +14,8 @@ public class RenderingFactory {
 	}
 	
 	// enemies, bullets, missiles
-	public IUnitRenderer<Unit> getSimpleUnitRenderer() {
-		return new RotationRenderer();
+	public RotationRenderer<Unit> getSimpleUnitRenderer() {
+		return new RotationRenderer<>();
 	}
 	
 	public IUnitRenderer<Asteroid> getAsteroidRenderer() {

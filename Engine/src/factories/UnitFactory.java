@@ -2,7 +2,6 @@ package factories;
 
 import java.awt.*;
 import java.io.File;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Engine.Environment;
 import Engine.Vector;
@@ -50,7 +49,7 @@ public class UnitFactory {
 	
 	public Player getInstanceOfPlayer(Point mouse) {
 		File f = new File("./Resources/sounds/sf_bullet.wav");
-		ISoundingBehaviour sound = new SimpleSoundBehaviour(f, 0.2F);
+		ISoundingBehaviour sound = new SimpleSoundBehaviour(f, ISoundingBehaviour.DEFAULT_SOUND_VOLUME);
 
 		return new Player(
 				new Vector(600, 400),
@@ -60,13 +59,13 @@ public class UnitFactory {
 				env,
 				(u, e) -> {},
 				null,
-				(u) -> sound.produceSound()); // behaviour is just making a sound
+				(u, e) -> sound.produceSound()); // behaviour is just making a sound
 	}
 	
 	public Guard getInstanceOfGuard() {
 		IUnitMovement<Guard> move = movFact.getGuardMovement();
 		IUnitRenderer<Guard> render = renFact.getGuardRenderer();
-		IUnitBehaviour behave = (u) -> { };
+		IUnitBehaviour<Guard> behave = (u, e) -> { };
 
 		return new Guard(
 				new Vector(50, 50),
@@ -78,13 +77,10 @@ public class UnitFactory {
 				behave);
 	}
 	
-	public Unit getInstanceOfEnemy() {
-		File f = new File("./Resources/sounds/sf_enemybullet.wav");
-
-		IUnitRenderer renderer = renFact.getSimpleUnitRenderer();
+	public Enemy getInstanceOfEnemy() {
+		IUnitRenderer<Unit> renderer = renFact.getSimpleUnitRenderer();
 		EnemyMovement movement = movFact.getEnemeyMovement();
-		ISoundingBehaviour sound = new SimpleSoundBehaviour(f, 0.2F);
-		IUnitBehaviour behaviour = new ShootingBehaviour(res, sound, env.player, env);
+		IUnitBehaviour<Enemy> behaviour = behFact.getShootingBehaviour();
 
 		Enemy e = new Enemy(
 			new Vector(50, 50),
@@ -107,9 +103,9 @@ public class UnitFactory {
 		direction.norm();
 		direction.multi(15);
 
-		SimpleLinearMovement move = movFact.getSimpleLinearMovement(direction);
-		IUnitRenderer render = renFact.getSimpleUnitRenderer();
-		IUnitBehaviour behave = (u) -> { };
+		IUnitMovement<Unit> move = movFact.getSimpleLinearMovement(direction);
+		IUnitRenderer<Unit> render = renFact.getSimpleUnitRenderer();
+		IUnitBehaviour<Bullet> behave = (u, e) -> { };
 
 		return new Bullet(
 				startingPosition,
@@ -122,15 +118,15 @@ public class UnitFactory {
 				behave);
 	}
 	
-	public EnemyBullet getInstanceOfEnemyBullet(Vector from, Vector to) {
-		Vector direction = new Vector(to.x - from.x, to.y - from.y);
-		Vector startingPosition = new Vector(from);
+	public EnemyBullet getInstanceOfEnemyBullet(Unit fromUnit, Vector to) {
+		Vector direction = new Vector(to.x - fromUnit.centerposition.x, to.y - fromUnit.centerposition.y);
+		Vector startingPosition = new Vector(fromUnit.centerposition);
 		direction.norm();
 		direction.multi(5);
 
-		SimpleLinearMovement move = movFact.getSimpleLinearMovement(direction);
-		IUnitRenderer render = renFact.getSimpleUnitRenderer();
-		IUnitBehaviour behave = (u) -> {}; // don't behave
+		IUnitMovement<Unit> move = movFact.getSimpleLinearMovement(direction);
+		IUnitRenderer<Unit> render = renFact.getSimpleUnitRenderer();
+		IUnitBehaviour<Bullet> behave = (u, e) -> {}; // don't behave
 
 		return new EnemyBullet(
 				startingPosition,
@@ -144,9 +140,9 @@ public class UnitFactory {
 	}
 	
 	public <T extends Unit> Missile<?> getInstanceOfMissile(Vector from, T target) {
-		IUnitMovement move = movFact.getTrackingMovement(target);
-		IUnitRenderer render = renFact.getSimpleUnitRenderer();
-		IUnitBehaviour behave = (u) -> {}; // don't behave
+		IUnitMovement<Missile<T>> move = movFact.getTrackingMovement(target);
+		IUnitRenderer<Unit> render = renFact.getSimpleUnitRenderer();
+		IUnitBehaviour<Missile<T>> behave = (u, e) -> {}; // don't behave
 
 		return new Missile<>(
 				new Vector(from),

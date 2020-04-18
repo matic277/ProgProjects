@@ -1,42 +1,28 @@
 package implementation;
 
-import java.io.File;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import Engine.Engine;
-import Engine.Vector;
 import Graphics.ResourceLoader;
-import Units.Bullet;
+import Units.Enemy;
 import Units.Player;
 import Units.Unit;
 import core.ISoundingBehaviour;
 import core.IUnitBehaviour;
-import Engine.MediaPlayer;
 import Engine.Environment;
 
-public class ShootingBehaviour implements IUnitBehaviour<Unit> {
+public class ShootingBehaviour <T extends Unit> implements IUnitBehaviour<T> {
 
-	Environment env;
-	ResourceLoader res;
 	ISoundingBehaviour sound;
-	Player player;
 	
-	public ShootingBehaviour(ResourceLoader res, ISoundingBehaviour sound, Player player, Environment env) {
-		this.player = player;
-		this.env = env;
+	public ShootingBehaviour(ISoundingBehaviour sound) {
 		this.sound = sound;
-		this.res = res;
 	}
 
-
-	public void behave(Unit u) {
-		if (!u.canSeePlayer) return;
+	@Override
+	public void behave(T unit, Environment env) {
+		if (!unit.canSeePlayer) return;
 		env.bullets.add(Engine.unitFact.getInstanceOfEnemyBullet(
-				u.centerposition, player.centerposition));
+				unit, env.player.centerposition));
 
 		sound.produceSound();
 	}
-
-
-
 }

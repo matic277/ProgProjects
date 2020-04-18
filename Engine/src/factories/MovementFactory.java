@@ -26,7 +26,7 @@ public class MovementFactory {
 		return new TrackingMovement<>(target);
 	}
 	
-	public SimpleLinearMovement getSimpleLinearMovement(Vector direction) {
+	public IUnitMovement<Unit> getSimpleLinearMovement(Vector direction) {
 		return new SimpleLinearMovement(direction);
 	}
 

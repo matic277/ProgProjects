@@ -12,18 +12,13 @@ public class TurretBehaviour implements IUnitBehaviour<Turret> {
     double rotationDegreesPerTick = 1;
     boolean canSeePlayer = false;
 
-    Environment env;
     Runnable shootingController;
     Thread controllerRunner;
 
-    // should behave be called with environment ? probably
-    public TurretBehaviour(Environment env) {
-        this.env = env;
-
-    }
+    public TurretBehaviour() { }
 
     @Override
-    public void behave(Turret unit) {
+    public void behave(Turret unit, Environment env) {
         canSeePlayer = circleContainsPoint(
                 env.player.centerposition,
                 unit.centerposition.x,
@@ -35,7 +30,7 @@ public class TurretBehaviour implements IUnitBehaviour<Turret> {
             unit.facingDirection.y = env.player.centerposition.y - unit.centerposition.y;
 
             if (shootingController == null) {
-                initController(unit);
+                initController(unit, env);
                 startController();
             } else if (!controllerRunner.isAlive()) {
                 startController();
@@ -50,7 +45,7 @@ public class TurretBehaviour implements IUnitBehaviour<Turret> {
         unit.facingDirection.rotate(rotationDegreesPerTick);
     }
 
-    private void initController(Unit unit) {
+    private void initController(Unit unit, Environment env) {
         shootingController = () -> {
             while (canSeePlayer) {
                 env.bullets.add(Engine.unitFact.getInstanceOfBullet(

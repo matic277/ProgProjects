@@ -24,6 +24,10 @@ public class Bullet extends Unit {
 		super(position, size, image, env, move, render, behave);
 		super.movingDirection = direction;
 		super.facingDirection = direction;
+
+		// reposition slightly
+		position.x = position.x - (super.hitbox.width / 2);
+		position.y = position.y - (super.hitbox.height / 2);
 	}
 
 //	@Override

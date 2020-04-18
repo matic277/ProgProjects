@@ -87,7 +87,7 @@ public abstract class Unit {
 	
 	public void behave() {
 		if (behave == null) System.out.println("NULL");
-		behave.behave(this);
+		behave.behave(this, env);
 	}
 	
 	public void draw(Graphics2D g) {
