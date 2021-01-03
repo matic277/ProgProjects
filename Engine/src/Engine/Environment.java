@@ -2,9 +2,12 @@ package Engine;
 
 import Units.*;
 
+import java.awt.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Environment {
+
+    public Dimension envSize = new Dimension(1000, 1000);
 
     public Player player;
 

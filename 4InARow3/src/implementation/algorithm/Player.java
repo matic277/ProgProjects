@@ -18,13 +18,7 @@ public class Player implements IPlayer {
     int move;
     int movesMade;
     
-    private final Object lock = new Object();
-    private Object lockOfCaller = new Object();
-    String threadName;
-    AtomicBoolean isWaiting;
-    
     public Player(GameState gameState, PlayerType pType, IMovingStrategy movStrat) {
-        this.isWaiting = new AtomicBoolean(true);
         this.gameState = gameState;
         this.movingStrategy = movStrat;
         this.pType = pType;
@@ -32,57 +26,8 @@ public class Player implements IPlayer {
     }
     
     @Override
-    public void run() {
-        this.threadName = this.getClass().getSimpleName() + "[" + Thread.currentThread().getId() + "]";
-        Thread.currentThread().setName(threadName);
-        System.out.println(" + Thread " + threadName + " started.");
-        
-        while (true) {
-            // signal sleep/waiting mode
-            isWaiting.set(true);
-        
-            // self-pause after task is completed
-            System.out.println("   ~ " + threadName + " pausing.");
-            synchronized(lock) {
-                try { lock.wait(); }
-                catch (Exception e) { /* Do nothing */ e.printStackTrace(); }
-            }
-            System.out.println("   ~ " + threadName + " woken-up.");
-            isWaiting.set(false);
-            
-            // this thread has been woken up
-            // make a move
-            this.move = movingStrategy.makeMove();
-            
-            // report that a move
-            // has been made, inputHandler
-            // will read this.move field
-            synchronized (lockOfCaller) {
-                lockOfCaller.notify();
-            }
-        }
-        // unreachable
-    }
-    
-    @Override
-    public int makeMove(TokenType[][] grid, final Object lockOfCaller) {
-        // save the lock of caller
-        // and wake up this thread
-        this.lockOfCaller = lockOfCaller;
-        synchronized (lock) {
-            lock.notify();
-        }
-        
-        // make caller put himself to sleep
-        synchronized (lockOfCaller) {
-            try {lockOfCaller.wait(); }
-            catch (Exception e ) { e.printStackTrace(); }
-        }
-        
-        // here, caller is woken up
-        // by this thread and this
-        // means the result (move)
-        // has been made
+    public int makeMove(TokenType[][] grid) {
+        this.move = movingStrategy.makeMove();
         return move;
     }
     

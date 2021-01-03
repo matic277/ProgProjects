@@ -139,12 +139,12 @@ public class UnitFactory {
 				behave);
 	}
 	
-	public <T extends Unit> Missile<?> getInstanceOfMissile(Vector from, T target) {
-		IUnitMovement<Missile<T>> move = movFact.getTrackingMovement(target);
+	public Missile getInstanceOfMissile(Vector from, Unit target) {
+		IUnitMovement<Missile> move = movFact.getTrackingMovement(target);
 		IUnitRenderer<Unit> render = renFact.getSimpleUnitRenderer();
-		IUnitBehaviour<Missile<T>> behave = (u, e) -> {}; // don't behave
+		IUnitBehaviour<Missile> behave = (u, e) -> {}; // don't behave
 
-		return new Missile<>(
+		return new Missile(
 				new Vector(from),
 				null,
 				res.getMissileImage(),

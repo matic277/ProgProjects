@@ -32,12 +32,9 @@ public class GamePainter implements IDrawable {
     
     public GamePainter(Rectangle bounds) {
         this.bounds = bounds;
-//        this.tokenRad = tokenRad;
         this.mouseIndicatorSpace = new Rectangle(
                 (int)(bounds.getX()), (int)(bounds.getY() + bounds.getHeight() - 10),
                 bounds.width, 10);
-//        this.mouseIndicator = new Rectangle(0, 0, Token.rad*2, 10);
-
         initGrid();
     }
     

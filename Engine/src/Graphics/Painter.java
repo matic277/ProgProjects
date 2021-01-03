@@ -16,9 +16,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import Engine.Engine;
+import Engine.Environment;
 import Engine.KeyboardListener;
 import Engine.MousepadListener;
 import core.IObserver;
+
 
 public class Painter extends JPanel implements IObserver {
 
@@ -30,6 +32,7 @@ public class Painter extends JPanel implements IObserver {
 	JFrame frame;
 	Engine engine;
 	Dimension bounds;
+	Environment env;
 	
 	
 	Set<Character> keys = new HashSet<Character>(1);
@@ -40,9 +43,10 @@ public class Painter extends JPanel implements IObserver {
 	
 	int fps = 144;
 	
-	public Painter(Engine engine, Dimension panelSize, MousepadListener ml, KeyboardListener kl) {
+	public Painter(Engine engine, Environment env, Dimension panelSize, MousepadListener ml, KeyboardListener kl) {
 		this.engine = engine;
 		this.bounds = panelSize;
+		this.env = env;
 		
 		this.setFocusable(true);
 		this.setLayout(null);
@@ -75,6 +79,7 @@ public class Painter extends JPanel implements IObserver {
 		Graphics2D g = (Graphics2D) gr;
 		
 		g.setColor(bgColor);
+
 		g.fillRect(0, 0, bounds.width, bounds.height);
 		
 		engine.env.dummyUnits.forEach(b -> b.draw(g));

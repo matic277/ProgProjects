@@ -111,8 +111,7 @@ public class Vector {
 	}
 	
 	public static boolean compare(Vector v1, Vector v2) {
-		if (v1.x == v2.x && v1.y == v2.y) return true;
-		return false;
+		return v1.x == v2.x && v1.y == v2.y;
 	}
 	
 	public double distance(Vector v) {

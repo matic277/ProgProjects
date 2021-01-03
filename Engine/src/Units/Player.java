@@ -17,7 +17,7 @@ public class Player extends Unit {
 	Point mouse;
 
 	public Player(Vector position, Dimension hitboxSize, Image image, Point mouse, Environment env,
-				  IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
+				  IUnitMovement<?> move, IUnitRenderer<?> render, IUnitBehaviour<?> behave) {
 		super(position, hitboxSize, image, env, move, render, behave);
 		super.speed = 10;
 		this.image = image;
@@ -25,22 +25,9 @@ public class Player extends Unit {
 		
 		facingDirection = new Vector(0, 0);
 	}
-
-//	@Override
-//	public void move() {
-//		// handled by engine
-//	}
 	
 	public void updateDirection() {
 		facingDirection.x = mouse.x - position.x;
 		facingDirection.y = mouse.y - position.y;
 	}
-
-//	@Override
-//	public void draw(Graphics2D g) {
-//		rotateAndDraw(g);
-//		drawHP(g);
-//		drawHitbox(g);
-//	}
-
 }

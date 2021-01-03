@@ -54,7 +54,7 @@ public class Engine implements IObserver, Runnable {
 	
 	public Environment env;
 	
-	Point mouse;
+	public static Point mouse;
 	
 	boolean[] keyCodes = new boolean[256];
 	boolean mousePressed = false;
@@ -62,10 +62,6 @@ public class Engine implements IObserver, Runnable {
 	boolean leftPressed = false;
 	
 	ResourceLoader res;
-
-//	SimpleRenderer simpleRenderer;
-//	NullRenderer nullRenderer;
-//	ImageRenderer imageRenderer;
 	
 	public Engine(Dimension panelSize) {
 		this.panelSize = panelSize;
@@ -80,7 +76,7 @@ public class Engine implements IObserver, Runnable {
 		ml.addObserver(this);
 		kl.addObserver(this);
 
-
+		// factories
 		behFact = new BehaviourFactory(env);
 		renFact = new RenderingFactory();
 		movFact = new MovementFactory(env);
@@ -91,37 +87,17 @@ public class Engine implements IObserver, Runnable {
 		env.player.render = renFact.getSimpleUnitRenderer();
 
 
-		env.enemies.add(unitFact.getInstanceOfEnemy());
+		// enemies
+//		env.enemies.add(unitFact.getInstanceOfEnemy());
 
 		env.guards.add(unitFact.getInstanceOfGuard());
 
-		env.turrets.add(unitFact.getInstanceOfTurret());
-		
-//		Unit dummy = new DummyUnit(new Vector(300, 300), new Dimension(50, 40), null);
-		//dummyUnits.add(dummy);
-		
-//		Asteroid a = new Asteroid(new Vector(300, 300), null, res.getAsteroidImage());
-//		asteroids.add(a);
-		
-//		walls.add(new Wall(
-//			new Vector(400, 0),
-//			new Dimension(10, 500),
-//			null
-//		));
-//		walls.add(new Wall(
-//			new Vector(10, 10),
-//			new Dimension(10, 500),
-//			null
-//		));
-//		walls.add(new Wall(
-//			new Vector(10, 10),
-//			new Dimension(500, 10),
-//			null
-//		));
-		
-//		dragon = new Dragon(new Vector(0, 0), null, 500, res.getDragonHeadImage(), res.getDragonBodyImage(), res.getDragonTailImage());
-		
-		painter = new Painter(this, panelSize, ml, kl);
+//		env.turrets.add(unitFact.getInstanceOfTurret());
+
+
+
+
+		painter = new Painter(this, env, panelSize, ml, kl);
 	}
 	
 	
@@ -275,10 +251,7 @@ public class Engine implements IObserver, Runnable {
 ////			dragon.checkCollision(bullets, asteroids);
 ////		}
 
-		env.guards.forEach(g -> {
-			g.move();
-			if (g.isOutOfBounds()) g.reposition();
-		});
+		env.guards.forEach(Guard::move);
 
 		// rotate turrets
 		env.turrets.forEach(Unit::behave);
@@ -357,7 +330,7 @@ public class Engine implements IObserver, Runnable {
 		missileLauncher = new Thread(() -> {
 			while(rightPressed) {
 				//if (!isTargetAlive(target)) continue;
-				Missile<?> m = unitFact.getInstanceOfMissile(env.player.centerposition, getClosestEnemy(mouse));
+				Missile m = unitFact.getInstanceOfMissile(env.player.centerposition, getClosestEnemy(mouse));
 				env.missiles.add(m);
 
 				// play sound

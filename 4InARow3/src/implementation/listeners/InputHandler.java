@@ -10,9 +10,9 @@ import interfaces.*;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CompletableFuture;
 
-public class InputHandler implements Runnable, IMouseObserver {
+public class InputHandler implements IMouseObserver {
     
     GameState gameState;
     
@@ -23,14 +23,9 @@ public class InputHandler implements Runnable, IMouseObserver {
     
     Point mouse = new Point(0, 0);
     
-    private final Object lock = new Object();
-    String threadName;
-    AtomicBoolean isWaiting;
-    
     public InputHandler() { }
     
     public void init(GameState gameState, GamePainter gamePainter) {
-        this.isWaiting = new AtomicBoolean(true);
         this.gameState = gameState;
         this.activeColumnIndex = -1;
         this.gamePainter = gamePainter;
@@ -41,8 +36,7 @@ public class InputHandler implements Runnable, IMouseObserver {
         int columnWidth = gamePainter.getPanelSpace().width / m;
         for (int i = 0, x = gamePainter.getPanelSpace().x, y = gamePainter.getPanelSpace().y; i < m; i++, x+=columnWidth) {
             columnIndicators[i] = new Rectangle(
-                    x,
-                    y,
+                    x, y,
                     columnWidth,
                     gamePainter.getPanelSpace().height);
         }
@@ -52,58 +46,23 @@ public class InputHandler implements Runnable, IMouseObserver {
     }
     
     @Override
-    public void run() {
-        this.threadName = this.getClass().getSimpleName() + "[" + Thread.currentThread().getId() + "]";
-        Thread.currentThread().setName(threadName);
-//        System.out.println(" + Thread " + threadName + " started.");
-        
-        while (true) {
-            
-            // if game is over, then go
-            // to sleep until woken up
-            // by reset button
-            if (gameState.isGameOver()) {
-//                System.out.println("   ~ " + threadName +" detected game is over.");
-                pause();
-            }
-    
-//            System.out.println("   ~ " + threadName +" waiting for move by: " + gameState.getCurrentPlayer().getPlayerType());
-    
-            // if current player is human
-            // then put yourself to sleep
-            // (woken up upon a click)
-            if (gameState.getCurrentPlayer().getPlayerType() == PlayerType.HUMAN) {
-                pause();
-            }
-    
-            // something has awaken this thread
-            // get the next move to play
-            // TODO: isWaiting does not get set in makeMove() method
-            int move = gameState
-                    .getCurrentPlayer()
-                    .makeMove(gameState.getGrid(), lock);
-    
-            System.out.println("   -> INH: move made: " + move);
-            // a move has been made
-            // process it
-            this.processMove(move);
-        }
-    }
-    
-    @Override
     public void onMouseClick(MouseEvent event) {
         this.mouse = event.getPoint();
+        if (gameState.isGameOver()) return;
         
-        // don't do anything if
-        // its computers turn
-        if (gameState.getCurrentPlayer().getPlayerType() == PlayerType.COMPUTER)
-            return;
-        
-        // wake up this thread and
-        // let it process the click
-        synchronized (lock) {
-            lock.notify();
-        }
+        CompletableFuture
+                // make a move and process it
+                .runAsync(() -> {
+                    int move = gameState
+                        .getCurrentPlayer()
+                        .makeMove(gameState.getGrid());
+                    InputHandler.this.processMove(move);
+                })
+                // if next move is computers turn, then call this function again
+                .thenRun(() -> {
+                    if (gameState.getCurrentPlayer().getPlayerType() == PlayerType.COMPUTER)
+                        InputHandler.this.onMouseClick(event);
+                });
     }
     
     public void processMove(int inColumn) {
@@ -129,20 +88,6 @@ public class InputHandler implements Runnable, IMouseObserver {
         player.getPlayer().incrementNumberOfMoves();
         gameState.addToken(token, inRow, inColumn);
         gameState.nextPlayer();
-    }
-    
-    private void pause() {
-        // signal sleep/waiting mode
-        isWaiting.set(true);
-    
-        // self-pause
-        System.out.println("   ~ " + threadName + " pausing.");
-        synchronized (lock) {
-            try { lock.wait(); }
-            catch (Exception e) { e.printStackTrace(); }
-        }
-        System.out.println("\n   ~ " + threadName + " woken-up.");
-        isWaiting.set(false);
     }
     
     @Override

@@ -23,7 +23,7 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
     public int makeMove() {
         initState();
         System.out.println("--------------------------------------------------------starting--------------------------------------------------------");
-        Pair<Double, Integer> result = minimax(state, 2, 5);
+        Pair<Double, Integer> result = minimax(state, 2, 5, 3);
         System.out.println("ended with move: " + result.getB());
         return result.getB();
     }
@@ -38,12 +38,12 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
         }
     }
     
-    public Pair<Double, Integer> minimax(int[][] state, int player, int depth) {
-        if (gameState.checkIfGameOver(state)) return new Pair<>(eval(state), -1);
+    public Pair<Double, Integer> minimax(int[][] state, int player, int depth, int col) {
+        if (gameState.checkIfGameOver(state)) return new Pair<>(eval(state), col);
         if (depth == 0) {
 //            System.out.println("\n -> 0 At depth [" + depth + "], returning: " + new Pair<>(eval(state), move));
 //            print(state);
-            return new Pair<>(eval(state), -1);
+            return new Pair<>(eval(state), col);
         }
         
         // max
@@ -52,7 +52,7 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
             for (int freeCol : getFreeColumns(state)) {
                 int[][] subState = copyState(state);
                 dropTokenInColumn(subState, freeCol, 1);
-                Pair<Double, Integer> currentEval = minimax(subState, 2, depth - 1);
+                Pair<Double, Integer> currentEval = minimax(subState, 2, depth - 1, freeCol);
                 
 //                System.out.println("\nDepth[" + depth + "] -> Comparing (current, max): " + currentEval + ", " + maxEval);
                 if (currentEval.getA() >= maxEval.getA()) {
@@ -71,7 +71,7 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
             for (int freeCol : getFreeColumns(state)) {
                 int[][] subState = copyState(state);
                 dropTokenInColumn(subState, freeCol, 1);
-                Pair<Double, Integer> currentEval = minimax(subState, 1, depth - 1);
+                Pair<Double, Integer> currentEval = minimax(subState, 1, depth - 1, freeCol);
                 
 //                System.out.println("\nDepth[" + depth + "] -> Comparing (current, max): " + currentEval + ", " + maxEval);
                 if (currentEval.getA() <= minEval.getA()) {
@@ -90,22 +90,6 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
         int inRow = getFirstFreeRowInColumn(state, inColumn);
         state[inRow][inColumn] = player;
         return state;
-    }
-    
-    // not needed anymore
-    public int getMoveMade(int[][] initialState, int[][] newState) {
-        for (int i=0; i<6; i++) for (int j=0; j<7; j++) {
-            if (initialState[i][j] != newState[i][j]) return j;
-        }
-        throw new RuntimeException("Couldnt find move made between states: \ninitial:\n" +
-                (Arrays.deepToString(state)).substring(1, 137).replaceAll("\\],", "]\n") +
-                "\n new: \n" + (Arrays.deepToString(state)).substring(1, 137).replaceAll("\\],", "]\n"));
-    }
-    
-    public double evaluatePosition(int[][] state) {
-        // player = 1 -> +
-        // player = 2 -> -
-        return eval(state);
     }
     
     // counts number of same consecutive numbers
@@ -147,21 +131,7 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
         return result2;
     }
     
-//    public static int[] getCandidateMoves(int[][] state, int player) {
-//        int[] freeCols = getFreeColumns(state);
-//        int numOfFreeCols = freeCols.length;
-//
-//        int[][][] newStates = new int[numOfFreeCols][6][7];
-//        for (int i=0; i<numOfFreeCols; i++) newStates[i] = copyState(state);
-//
-//        return
-//        for (int i=0, j=0; i<numOfFreeCols; i++)
-//            newStates[i][getFirstFreeRowInColumn(newStates[i], freeCols[j++])][freeCols[j-1]] = player;
-//
-//        return newStates;
-//    }
-    
-    // only if colum has at least one free row
+    // only if column has at least one free row
     public static int getFirstFreeRowInColumn(int[][] state, int inColumn) {
         for (int i=1; i<6; i++) {
             if (state[i][inColumn] != 0) return i-1;
@@ -191,10 +161,10 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
         int[][] state = new int [][]{
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 1, 0, 0, 2},
-                {0, 0, 0, 1, 0, 0, 2},
-                {0, 0, 0, 1, 0, 0, 2}
+                {0, 0, 0, 0, 2, 0, 0},
+                {0, 0, 1, 1, 2, 0, 0},
+                {0, 0, 1, 1, 2, 0, 0},
+                {0, 0, 1, 1, 2, 0, 0}
         };
 //        print(state);
     
@@ -218,6 +188,8 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
             }
         }
     }
+    
+    
     
     public static double eval(int[][] state) {
         int[] totalResult = new int[] {0, 0, 0, 0};

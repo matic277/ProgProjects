@@ -14,7 +14,4 @@ public class EnemyBullet extends Bullet {
 					   IUnitMovement<Unit> move, IUnitRenderer<Unit> render, IUnitBehaviour<Bullet> behave) {
 		super(position, direction, size, image, env, move, render, behave);
 	}
-
-
-
 }

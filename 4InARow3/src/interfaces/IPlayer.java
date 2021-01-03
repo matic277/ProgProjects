@@ -4,14 +4,14 @@ import enums.TokenType;
 import implementation.algorithm.Player;
 import implementation.algorithm.PlayerType;
 
-public interface IPlayer extends Runnable {
+public interface IPlayer {
     
     /**
      * input:   Token[][] : state of game
      * output:  int       : column in which to drop token
      * @param grid
      */
-    int makeMove(TokenType[][] grid, Object lock);
+    int makeMove(TokenType[][] grid);
     
     TokenType getTokenType();
     void setTokenType(TokenType red);

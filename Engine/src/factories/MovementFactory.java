@@ -22,8 +22,8 @@ public class MovementFactory {
 		return new EnemyMovement(env);
 	}
 
-	public <T extends Unit, G extends Unit> TrackingMovement<T, G> getTrackingMovement(T target) {
-		return new TrackingMovement<>(target);
+	public <T extends Unit> TrackingMovement getTrackingMovement(T target) {
+		return new TrackingMovement(target);
 	}
 	
 	public IUnitMovement<Unit> getSimpleLinearMovement(Vector direction) {
@@ -33,4 +33,5 @@ public class MovementFactory {
     public IUnitMovement<Guard> getGuardMovement() {
 		return new GuardMovement();
     }
+
 }

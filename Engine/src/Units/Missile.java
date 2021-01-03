@@ -11,18 +11,18 @@ import core.IUnitMovement;
 import core.IUnitRenderer;
 
 // generics prolly not needed
-public class Missile<T extends Unit> extends Unit {
+public class Missile extends Unit {
 		
-	public T target;
+	public Unit target;
 
-	public Missile(Vector position, Dimension hitbox, Image image, T target, Environment env,
+	public Missile(Vector position, Dimension hitbox, Image image, Unit target, Environment env,
 				   IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
 		super(position, hitbox, image, env, move, render, behave);;
 		super.speed = 5;
 		this.target = target;
 	}
 
-	public T getTarget() { return target; }
+	public Unit getTarget() { return target; }
 
 //	@Override
 //	public void move() {

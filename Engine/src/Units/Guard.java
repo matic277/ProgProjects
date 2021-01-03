@@ -66,19 +66,6 @@ public class Guard extends Unit {
 		pathToString();
 	}
 
-	// TODO: makes this a strategy aswell
-	public void reposition() {
-		if (position.x > Engine.Engine.bounds.width) {
-			position.x = 0 - hitbox.getWidth() + 1;
-		} else if (position.x < 0) {
-			position.x = Engine.Engine.bounds.width;
-		} else if (position.y > Engine.Engine.bounds.height) {
-			position.y = 0 - hitbox.getHeight() + 1;
-		} else if (position.y < 0) {
-			position.y = Engine.Engine.bounds.height;
-		}
-	}
-
 	public void pathToString() {
 		System.out.println();
 		System.out.println(Arrays.deepToString(path));

@@ -45,7 +45,7 @@ public abstract class Unit {
 	public IUnitBehaviour behave;
 
 	public Unit(Vector position, Dimension size, Image image, Environment env,
-				IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
+				IUnitMovement<?> move, IUnitRenderer<?> render, IUnitBehaviour<?> behave) {
 		if (size == null) {
 			if (image == null) size = new Dimension(50, 50);
 			else size = new Dimension(image.getWidth(null), image.getHeight(null));

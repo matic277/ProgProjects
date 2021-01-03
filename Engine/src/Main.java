@@ -16,7 +16,7 @@ import Engine.MediaPlayer;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		Engine e = new Engine(new Dimension(1000, 800));
+		Engine e = new Engine(new Dimension(600, 600));
 		new Thread(e).start();
 
 //		File f = new File("./Resources/sounds/sf_enemybullet.wav");

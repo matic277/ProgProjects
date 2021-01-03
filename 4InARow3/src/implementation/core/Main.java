@@ -33,22 +33,16 @@ public class Main {
         
         // players
         Player p1 =
-//                PlayerFactory.getMiniMaxPlayer(gameState);
-                PlayerFactory.getHumanPlayer(gameState, inputHandler);
-        Player p2 =
-//                PlayerFactory.getHumanPlayer(gameState, inputHandler);
                 PlayerFactory.getMiniMaxPlayer(gameState);
+//                PlayerFactory.getHumanPlayer(gameState, inputHandler);
+        Player p2 =
+                PlayerFactory.getHumanPlayer(gameState, inputHandler);
+//                PlayerFactory.getMiniMaxPlayer(gameState);
         
         gamePainter.setGameState(gameState);
         statPainter.initPlayers(p1, p2);
         gameState.setPlayers(p1, p2);
         ml.addMouseObserver(inputHandler);
-    
-    
-        new Thread(p1).start();
-        new Thread(p2).start();
-        PanelPainter.sleep(10); // badly avoiding race condition
-        new Thread(inputHandler).start();
     }
 
 }

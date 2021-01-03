@@ -4,6 +4,8 @@ import enums.TokenType;
 import implementation.algorithm.Player;
 import interfaces.IPlayer;
 
+// TODO: this should be removed and simplified
+
 // recursive structure to get rid of if statements
 // ... -> player1 -> player2 -> player1 -> ...
 public class CurrentPlayer {

@@ -43,11 +43,6 @@ public class TileDrawer implements ITileDrawer {
             g.setFont(BIGGER_FONT);
             tileMap.get(t).drawTile(g, tile);
         }
-//        // redraw so info is on top, ugly
-//        if (tile.getTileTypes().contains(Tile.WIND) || tile.getTileTypes().contains(Tile.WUMPUS)) {
-//            g.setFont(BIGGER_FONT);
-//            tileMap.get(tile.getTileTypes().contains(Tile.WUMPUS)? Tile.WUMPUS : Tile.WUMPUS).drawTile(g, tile);
-//        }
         g.setFont(NORMAL_FONT);
     }
     

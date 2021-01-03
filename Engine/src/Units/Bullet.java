@@ -12,13 +12,7 @@ import core.IUnitMovement;
 import core.IUnitRenderer;
 
 public class Bullet extends Unit {
-//	public Unit(Vector position, Dimension size, Image image, IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
 
-//	public Bullet(Vector position, Vector direction, Dimension size, Image image) {
-//		super(position, size, image);
-//		super.movingDirection = direction;
-//		super.facingDirection = direction;
-//	}
 	public Bullet(Vector position, Vector direction, Dimension size, Image image, Environment env,
 				IUnitMovement move, IUnitRenderer render, IUnitBehaviour behave) {
 		super(position, size, image, env, move, render, behave);
@@ -29,15 +23,4 @@ public class Bullet extends Unit {
 		position.x = position.x - (super.hitbox.width / 2);
 		position.y = position.y - (super.hitbox.height / 2);
 	}
-
-//	@Override
-//	public void move() {
-//		updatePosition(movingDirection);
-//	}
-//
-//	@Override
-//	public void draw(Graphics2D g) {
-//		rotateAndDraw(g);
-////		drawHitbox(g);
-//	}
 }

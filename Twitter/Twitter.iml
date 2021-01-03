@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="jar://$MODULE_DIR$/twitter4j/twitter4j-async-4.0.7.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/twitter4j/twitter4j-core-4.0.7.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/twitter4j/twitter4j-examples-4.0.7.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/twitter4j/twitter4j-stream-4.0.7.jar!/" />
+    <src_description expected_position="5">
+      <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
+      <src_folder value="file://$MODULE_DIR$/ngramStatistics" expected_position="1" />
+      <src_folder value="file://$MODULE_DIR$/classifierTester" expected_position="7" />
+      <src_folder value="file://$MODULE_DIR$/datasetManager" expected_position="8" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/bin" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ngramStatistics" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/classifierTester" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/datasetManager" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="JavaSE-1.8" jdkType="JavaSDK" />
+    <orderEntry type="module-library">
+      <library name="twitter4j-async-4.0.7.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/twitter4j/twitter4j-async-4.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="twitter4j-core-4.0.7.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/twitter4j/twitter4j-core-4.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="twitter4j-examples-4.0.7.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/twitter4j/twitter4j-examples-4.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="twitter4j-stream-4.0.7.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/twitter4j/twitter4j-stream-4.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
