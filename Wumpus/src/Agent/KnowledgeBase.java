@@ -13,10 +13,12 @@ public class KnowledgeBase {
     
     private Set<Pair<Integer, Integer>> visited;
     private Queue<Pair<Integer, Integer>> toExplore;
+    private Set<Pair<Integer, Integer>> toExploreSet; // to prevent toExplore containing same values, LAZY
     
     public KnowledgeBase(TileRect[][] grid) {
         this.grid = grid;
-        toExplore = new PriorityQueue<>(100);
+        toExplore = new PriorityQueue<>(100, Utils.visitPlannerComparator);
+        toExploreSet = new HashSet<>(100);
         visited = new HashSet<>(100);
     }
     
@@ -55,7 +57,6 @@ public class KnowledgeBase {
                     }
                 }
             }
-        
     }
     
     public Queue<Pair<Integer, Integer>> getTilesToExplore() {
@@ -63,7 +64,8 @@ public class KnowledgeBase {
     }
     
     public void addTileToExplore(Pair<Integer, Integer> position) {
-        if (visited.contains(position)) return;
+        if (visited.contains(position) || toExploreSet.contains(position)) return;
+        toExploreSet.add(position);
         toExplore.add(position);
     }
     
@@ -72,7 +74,6 @@ public class KnowledgeBase {
         c.forEach(x -> System.out.print(x.toString() + ", "));
         System.out.println("]");
     }
-    
     
     public void addVisitedTile(Pair<Integer, Integer> position) {
         visited.add(position);

@@ -2,6 +2,7 @@ package implementation.core;
 
 
 import enums.TokenType;
+import implementation.algorithm.MiniMaxMovingStrategy;
 import implementation.algorithm.PlayerType;
 import implementation.graphics.GamePainter;
 import implementation.graphics.PanelPainter;
@@ -175,10 +176,12 @@ public class GameState implements IGameState {
     @Override
     public boolean checkIfGameOver(int[][] state) {
         // rows
+        MiniMaxMovingStrategy.print(state);
         for (int row = 0; row < n; row++) {
             ArrayList<Integer> reduced = reduce(grid[row]);
             if (contains4InARow(reduced)) {
                 isGameOver = true;
+                System.out.println("TRUE!\n");
                 return true;
             }
         }
@@ -188,6 +191,7 @@ public class GameState implements IGameState {
             ArrayList<Integer> reduced = reduce(getColumn(column));
             if (contains4InARow(reduced)) {
                 isGameOver = true;
+                System.out.println("TRUE!\n");
                 return true;
             }
         }
@@ -197,6 +201,7 @@ public class GameState implements IGameState {
             ArrayList<Integer> reduced = reduce(createArrayFromDiags(diagonal));
             if (contains4InARow(reduced)) {
                 isGameOver = true;
+                System.out.println("TRUE!\n");
                 return true;
             }
         }
@@ -206,9 +211,12 @@ public class GameState implements IGameState {
             ArrayList<Integer> reduced = reduce(createArrayFromDiags(diagonal));
             if (contains4InARow(reduced)) {
                 isGameOver = true;
+                System.out.println("TRUE!\n");
                 return true;
             }
         }
+    
+        System.out.println("FALSE!\n");
         return false;
     }
     

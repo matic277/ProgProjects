@@ -2,6 +2,7 @@ package Agent;
 
 import Game.Tile;
 import Game.TileRect;
+import Main.Main;
 import Main.Pair;
 
 import java.sql.SQLOutput;
@@ -75,7 +76,7 @@ public class Algorithm implements Runnable {
         while (!toExplore.isEmpty()) {
             Pair<Integer, Integer> goal = toExplore.poll();
             if (goal.equals(playerPos)) continue;
-    
+            System.out.println("To visit: "+goal);
             bfs(playerPos, goal);
             List<Pair<Integer, Integer>> path = preparePath(goal);
             path.forEach(x -> { grid[x.getA()][x.getB()].addTileType(Tile.PATH); });
@@ -112,10 +113,14 @@ public class Algorithm implements Runnable {
             System.out.println("Goal not found!");
             return;
         }
+        if (playerPos.equals(this.goal)) {
+            System.out.println("Goal found. GAMEOVER!");
+            return;
+        }
         bfs(playerPos, this.goal);
         List<Pair<Integer, Integer>> pathToGoal = preparePath(this.goal);
         walkToGoal(pathToGoal);
-        System.out.println("Goal found.");
+        System.out.println("Goal found. GAMEOVER!");
     }
     
     public Set<Tile> getTilesInPosition(Pair<Integer, Integer> position) {
@@ -126,7 +131,7 @@ public class Algorithm implements Runnable {
         var path = (LinkedList<Pair<Integer, Integer>>) pathList;
         var current = path.removeFirst(); // we are already here
         while (true) {
-            sleep(100);
+            sleep(Main.sleep);
             Utils.gridAt(current).remove(Tile.PLAYER);
             Utils.gridAt(current).remove(Tile.PATH);
             current = path.removeFirst();
@@ -142,7 +147,7 @@ public class Algorithm implements Runnable {
         db.addKnowledge(current, Utils.trueGridAt(current));
         db.addVisitedTile(current);
         db.removeToExplore(current);
-    
+        
         grid[current.getA()][current.getB()].removeTileType(Tile.UNKNOWN);
         grid[current.getA()][current.getB()].removeTileType(Tile.PATH);
         grid[current.getA()][current.getB()].addTileType(Tile.VISITED);
@@ -162,7 +167,7 @@ public class Algorithm implements Runnable {
                 Utils.gridAt(n).remove(Tile.WUMPUS);
             });
         }
-
+        
         // if tile smells/windy, mark wumpuses/pits
         // if not, unmark neighbors as wumpuses/pits
         if (currentTiles.contains(Tile.SMELL)) {
@@ -177,9 +182,9 @@ public class Algorithm implements Runnable {
         }
         
         db.processKnowledgeBase();
-
+        
         if (Utils.trueGridAt(playerPos).contains(Tile.WUMPUS) ||
-                Utils.trueGridAt(playerPos).contains(Tile.PIT)) {
+            Utils.trueGridAt(playerPos).contains(Tile.PIT)) {
             System.out.println("GAME OVER");
             System.exit(1);
         }
@@ -204,8 +209,9 @@ public class Algorithm implements Runnable {
             neighbors.forEach(p -> {
                 // only move through SAFE tiles!
                 // unless the neighbor is goal node!
-                if ((!visited.contains(p) && grid[p.getA()][p.getB()].getTileTypes().contains(Tile.SAFE))
-                    || p.equals(goal))
+                if (p.equals(goal) ||
+                    (!visited.contains(p) &&
+                     grid[p.getA()][p.getB()].getTileTypes().contains(Tile.SAFE)))
                 {
                     visited.add(p);
                     p.setParent(toVisit);

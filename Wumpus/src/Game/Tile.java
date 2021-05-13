@@ -18,16 +18,11 @@ public enum Tile {
     SMELL(9),
     GOAL(10);
     
-    
     int id;
     
     Tile(int id) {
         this.id = id;
     }
-    
-    public static Comparator<Tile> TILE_COMPARATOR = (t1, t2) -> {
-      return 1;
-    };
     
     public int getId() { return id; }
 }

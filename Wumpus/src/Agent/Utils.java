@@ -5,6 +5,7 @@ import Game.TileRect;
 import Main.Pair;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,6 +23,8 @@ public class Utils {
         Utils.trueGrid = truthGrid;
         n = grid.length; m = grid[0].length;
     }
+    
+    public static Comparator<Pair<Integer, Integer>> visitPlannerComparator = Comparator.comparingInt(p -> p.getA() * 10 + p.getB());
     
     public static Set<Tile> gridAt(Pair<Integer, Integer> pos) { return grid[pos.getA()][pos.getB()].getTileTypes(); }
     

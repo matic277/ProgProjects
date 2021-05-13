@@ -86,7 +86,7 @@ public class WorldReader {
         }
         String info = (Character.isDigit(line.charAt(1))) ?
                 line.substring(0, 1) : line.substring(0, 2);
-        String pos = line.substring(line.length()-2, line.length());
+        String pos = line.substring(line.length() - 2);
         
         switch (info) {
             case "A": player = getLocation(pos); break;
@@ -105,9 +105,9 @@ public class WorldReader {
         return new Pair<>(Integer.parseInt(""+ s.charAt(1))-1, Integer.parseInt(""+ s.charAt(0))-1);
     }
     
-    static class TileInfo {
-        Tile tile;
-        Pair<Integer, Integer> location;
-        public TileInfo(Tile t, Pair<Integer, Integer> loc) { tile = t; location = loc; }
-    }
+//    static class TileInfo {
+//        Tile tile;
+//        Pair<Integer, Integer> location;
+//        public TileInfo(Tile t, Pair<Integer, Integer> loc) { tile = t; location = loc; }
+//    }
 }

@@ -22,19 +22,13 @@ public class Painter extends JPanel implements IObserver {
     
     Color bgColor = Color.white;
     
-    MousePointerShape pointerShape = new MousePointerShape();
+//    MousePointerShape pointerShape = new MousePointerShape();
     Grid grid;
     
     JFrame frame;
     Dimension bounds;
     Dimension tileSize;
     Point gridStartPosition;
-    Set<Character> keys = new HashSet<>(1);
-    Point mouse = new Point();
-    
-    boolean mousePressed = false;
-    boolean leftPressed = false;
-    boolean rightPressed = false;
     
     int fps = 144;
     
@@ -85,35 +79,25 @@ public class Painter extends JPanel implements IObserver {
         
         grid.draw(g);
         
-        pointerShape.draw(mouse, g);
+//        pointerShape.draw(mouse, g);
         
         sleep(fps);
         super.repaint();
     }
-
+    
     private void sleep(int t) {
         try { Thread.sleep(1000 / (long)t); }
         catch (InterruptedException e) { e.printStackTrace(); }
     }
     
-    public void changeMousePointerShape(IShape shape) {
-        pointerShape.setCurrentShape(shape);
-    }
+    @Override
+    public void notifyMouseMoved(Point location) { }
     
     @Override
-    public void notifyMouseMoved(Point location) {
-        mouse = location;
-    }
+    public void notifyMousePressed(MouseEvent event) { }
     
     @Override
-    public void notifyMousePressed(MouseEvent event) {
-        mousePressed = !mousePressed;
-    }
-    
-    @Override
-    public void notifyMouseReleased(MouseEvent event) {
-        mousePressed = !mousePressed;
-    }
+    public void notifyMouseReleased(MouseEvent event) { }
     
     @Override
     public void notifyMouseClicked(Point location) {
@@ -121,50 +105,31 @@ public class Painter extends JPanel implements IObserver {
             Algorithm.makeNextMove = true;
             Algorithm.lock.notify();
         }
-//        TileRect clickedTile = grid.getClickedTile(location);
-//        System.out.println(grid.toString());
-//        if (clickedTile == null || pointerShape.getHeldTile() == null ||
-//            clickedTile.getTileType() == Tile.PLAYER) {
-//            pointerShape.setShapeToBlank();
-//            pointerShape.setHoldingTile(null);
-//            return;
-//        }
-//        if (clickedTile.getTileType() == pointerShape.getHeldTile()) {
-//            clickedTile.setTileType(Tile.UNKNOWN, grid.getTileDrawer(Tile.UNKNOWN));
-//            return;
-//        }
-//        clickedTile.setTileType(pointerShape.getHeldTile(), grid.getTileDrawer(pointerShape.getHeldTile()));
     }
     
     @Override
     public void notifyKeysPressed(boolean[] keyCodes) {}
     
     @Override
-    public void notifyCharacterKeyPressed(Set<Character> keys) {
-        this.keys = keys;
-    }
+    public void notifyCharacterKeyPressed(Set<Character> keys) { }
     
     @Override
-    public void notifyRightPress(Point location) {
-        rightPressed = !rightPressed;
-    }
+    public void notifyRightPress(Point location) {}
     
     @Override
-    public void notifyRightRelease(Point location) {
-        rightPressed = !rightPressed;
-    }
+    public void notifyRightRelease(Point location) { }
     
     @Override
-    public void notifyLeftPress(Point location) {
-        leftPressed = !leftPressed;
-    }
+    public void notifyLeftPress(Point location) { }
     
     @Override
-    public void notifyLeftRelease(Point location) {
-        leftPressed = !leftPressed;
-    }
+    public void notifyLeftRelease(Point location) { }
     
-    public void changeMousePointerHeldType(Tile tile) {
-        pointerShape.setHoldingTile(tile);
-    }
+//    public void changeMousePointerHeldType(Tile tile) {
+//        pointerShape.setHoldingTile(tile);
+//    }
+
+//    public void changeMousePointerShape(IShape shape) {
+//        pointerShape.setCurrentShape(shape);
+//    }
 }

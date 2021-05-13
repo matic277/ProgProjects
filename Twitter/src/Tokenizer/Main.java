@@ -57,9 +57,9 @@ public class Main {
 //			
 //		}.start();
 //
-//		MainWindow mw = new MainWindow();
+		MainWindow mw = new MainWindow();
 		
-		test();
+//		test();
 	}
 
 	public static void test() {

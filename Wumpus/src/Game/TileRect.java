@@ -2,11 +2,9 @@ package Game;
 
 import Main.Pair;
 import interfaces.IDrawable;
-import interfaces.ITileDrawer;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import Graphics.TileDrawer;
@@ -28,7 +26,7 @@ public class TileRect extends Rectangle implements IDrawable {
         g.draw(this);
         TileDrawer.drawer.drawTile(g, this);
         g.setColor(Color.BLACK);
-        g.drawString("[" +index.getA()+", "+index.getB()+"]", this.x+8, this.y+16);
+        g.drawString("[" +index.getA()+", "+index.getB()+"]", this.x+10, this.y+18);
     }
     
     public Set<Tile> getTileTypes() { return types; }
@@ -41,9 +39,4 @@ public class TileRect extends Rectangle implements IDrawable {
     public void removeTileType(Tile type) {
         this.types.remove(type);
     }
-    
-//    @Override
-//    public String toString() {
-//        return type.id + "";
-//    }
 }

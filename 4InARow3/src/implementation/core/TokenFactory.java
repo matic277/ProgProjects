@@ -21,7 +21,7 @@ public class TokenFactory {
     
     int tokenRad = 50;
     
-    private static TokenFactory factory;
+    private static TokenFactory factory = new TokenFactory();
     
     private TokenFactory() {
         colorMap = new HashMap<>();
@@ -30,10 +30,8 @@ public class TokenFactory {
         colorMap.put(TokenType.NONE,   new Pair<>(Color.white, Color.white));
     }
     
-    // TODO might not have to be singleton
-    // useful for now that it can be called anywhere
+    // singleton
     public static TokenFactory getTokenFactory() {
-        if (factory == null) factory = new TokenFactory();
         return factory;
     }
     

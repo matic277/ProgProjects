@@ -12,7 +12,7 @@ public class EmojiDictionary extends AbsDictionary {
 		buildHashtable(relativeFilePath, "emojis", 1, 1000);
 		checkIntegrity();
 	}
-	
+ 
 	private void checkIntegrity() {
 		// does not contain space or -
 		String strangeChars = "'¨!\"#$%&/()=?*ÐŠÈÆŽŠðšæèž:;_~¡^¢°²`ÿ´½¨¸+*\"<>-¤ßè×÷\\â€¦™«";

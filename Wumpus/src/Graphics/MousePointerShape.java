@@ -4,6 +4,7 @@ import Game.Tile;
 import interfaces.IShape;
 import java.awt.*;
 
+// TODO: remove class, not used
 /**
  * Also holds info about what shape it holds,
  * should refactor this eventaully.

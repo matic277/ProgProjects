@@ -15,7 +15,7 @@ public class Node {
     int move;
     
     Node parent;
-    ArrayList<Node> childs;
+    ArrayList<Node> children;
     
     public Node(int[][] state, int move, int player, int depth, Node parent) {
         this.state = state;
@@ -23,11 +23,11 @@ public class Node {
         this.parent = parent;
         this.depth = depth;
         this.move = move;
-        this.childs = new ArrayList<>(7);
+        this.children = new ArrayList<>(7);
         
         // eval position
         this.eval = MiniMaxMovingStrategy.eval(state);
-    
+        
         if (depth == 0) return;
         
         // generate children
@@ -37,7 +37,7 @@ public class Node {
             int row = MiniMaxMovingStrategy.getFirstFreeRowInColumn(state, col);
             int[][] subState = MiniMaxMovingStrategy.copyState(state);
             subState[row][col] = player;
-            childs.add(new Node(subState, col, (player == 1 ? 2 : 1), depth - 1, this));
+            children.add(new Node(subState, col, (player == 1 ? 2 : 1), depth - 1, this));
         }
     }
     
@@ -46,9 +46,9 @@ public class Node {
             leafs.add(this);
             return leafs;
         }
-        childs.forEach(c -> c.getAllLeafs(leafs));
+        children.forEach(c -> c.getAllLeafs(leafs));
         return leafs;
     }
     
-    public boolean isLeaf() { return childs.isEmpty(); }
+    public boolean isLeaf() { return children.isEmpty(); }
 }

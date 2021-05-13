@@ -65,7 +65,7 @@ public class Grid implements IDrawable {
         Utils.gridAt(world.player).add(Tile.SAFE);
         Utils.getNeighbors(world.player).forEach(n -> { Utils.gridAt(n).add(Tile.SAFE); });
     }
-
+    
     public void init() {
         n = 8;
         m = 8;

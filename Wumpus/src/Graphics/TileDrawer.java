@@ -33,6 +33,7 @@ public class TileDrawer implements ITileDrawer {
     
     public static final Font NORMAL_FONT = new Font("Rage", Font.PLAIN, 11);
     public static final Font BIGGER_FONT = new Font("Rage", Font.BOLD, 20);
+    public static final Font AGENT_FONT = new Font("Times New Roman", Font.BOLD, 50);
     
     private TileDrawer() { }
     
@@ -98,7 +99,9 @@ public class TileDrawer implements ITileDrawer {
     public ITileDrawer getPlayerDrawer() {
         return (g, t) -> {
             g.setColor(Color.BLACK);
-//            g.drawString("P",(int)t.getCenterX()-10, (int)t.getCenterY()+5);
+            g.setFont(AGENT_FONT);
+            g.drawString("A",(int)t.getCenterX()-16, (int)t.getCenterY()+18);
+            g.setFont(NORMAL_FONT);
             g.drawRect(t.x+5, t.y+5, t.width-10, t.height-10);
             g.drawRect(t.x+7, t.y+7, t.width-14, t.height-14);
         };
@@ -151,5 +154,4 @@ public class TileDrawer implements ITileDrawer {
             g.drawOval(t.x+12, t.y+12, t.width-24, t.height-24);
         };
     }
-    
 }

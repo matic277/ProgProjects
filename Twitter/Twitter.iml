@@ -12,7 +12,7 @@
       <src_folder value="file://$MODULE_DIR$/datasetManager" expected_position="8" />
     </src_description>
   </component>
-  <component name="NewModuleRootManager">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_11">
     <output url="file://$MODULE_DIR$/bin" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -21,8 +21,8 @@
       <sourceFolder url="file://$MODULE_DIR$/classifierTester" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/datasetManager" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="JavaSE-1.8" jdkType="JavaSDK" />
-    <orderEntry type="module-library">
+    <orderEntry type="jdk" jdkName="11" jdkType="JavaSDK" />
+    <orderEntry type="module-library" exported="">
       <library name="twitter4j-async-4.0.7.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/twitter4j/twitter4j-async-4.0.7.jar!/" />
@@ -31,7 +31,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="twitter4j-core-4.0.7.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/twitter4j/twitter4j-core-4.0.7.jar!/" />
@@ -40,7 +40,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="twitter4j-examples-4.0.7.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/twitter4j/twitter4j-examples-4.0.7.jar!/" />
@@ -49,7 +49,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="twitter4j-stream-4.0.7.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/twitter4j/twitter4j-stream-4.0.7.jar!/" />
