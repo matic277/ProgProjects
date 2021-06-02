@@ -1,11 +1,6 @@
 package Window;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -16,28 +11,21 @@ import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import StreamConsumer.StreamHandler;
+import StreamConsumer.StreamListener;
 import Tokenizer.Logger;
 import Tokenizer.Tweet;
 
-public class MainWindow extends JFrame implements ComponentListener, ActionListener, MouseMotionListener, MouseListener {
-
+public class MainWindow extends JFrame implements  ActionListener, MouseMotionListener, MouseListener {
+    
     private static final long serialVersionUID = -7576066237767094230L;
-
+    
     JPanel panel;
     
     int width, height;
@@ -49,6 +37,8 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
     TextField apiInput;
     TextField outputInput;
     String userOutputPath;
+    
+    JLabel errorLbl;
 
     Dimension buttonSize;
     Dimension topPanelSize;
@@ -125,6 +115,15 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
                         if (MainWindow.two_way) logger.saveResults2way();
                         if (MainWindow.three_way) logger.saveResults3way();
                     }
+                    
+                    System.out.println();
+                    System.out.println("Sent DMs : " + StreamListener.sentDMs.get());
+                    System.out.println("Error DMs: " + StreamListener.errorDMs.get());
+                    System.out.println("Seen users size: " + StreamListener.seenUsers.size());
+                    
+//                    System.out.println("Last error message = "+ StreamListener.lastErrorMsg.get());
+//                    System.out.println("Full error stacktrace = \n"+ StreamListener.lastErrorExc.get().toString());
+                    errorLbl.setText("Last error message: " + StreamListener.lastErrorMsg.get());
                 }
             }
         }).start();
@@ -285,6 +284,8 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
         labels.add(label);
         label.setFont(new Font(label.getFont().getName(), Font.PLAIN, 40));
         
+        
+        
         // labels in right panel
 
         // current tweet stream labels
@@ -399,6 +400,18 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
         
         labels.add(two);
         labels.add(three);
+    
+        errorLbl = new JLabel("EMPTY");
+        errorLbl.setBounds(
+                topPanel.x + buttonSpacing + 220,
+                topPanel.y + buttonSpacing-10,
+                300,
+                100
+        );
+//        errorLbl.setVerticalTextPosition(SwingConstants.TOP);
+        errorLbl.setOpaque(true);
+        errorLbl.setBackground(Color.pink);
+//        label.add(errorLbl);
     }
     
     private void initPanel() {
@@ -426,13 +439,14 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
         };
         this.add(panel);
         panel.setPreferredSize(new Dimension(width, height));
-        panel.addComponentListener(this);
+//        panel.addComponentListener(this);
         panel.setLayout(null);
         
         labels.forEach(l -> panel.add(l));
         buttons.forEach(b -> panel.add(b));
         panel.add(apiInput);
         panel.add(outputInput);
+        panel.add(errorLbl);
         
         this.setTitle("Main");
         this.pack();
@@ -441,15 +455,15 @@ public class MainWindow extends JFrame implements ComponentListener, ActionListe
         this.setResizable(false);
     }
 
-    @Override
-    public void componentResized(ComponentEvent event) {
+//    @Override
+//    public void componentResized(ComponentEvent event) {
 //		Dimension newSize = event.getComponent().getSize();
 //		this.width = newSize.width;
 //		this.height = newSize.height;
 ////		System.out.println(newSize.toString());
 //		positionPanels();
 //		positionButtons();
-    }
+//    }
     
     public void componentHidden(ComponentEvent arg0) {}
     public void componentMoved(ComponentEvent arg0) {}

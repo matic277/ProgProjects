@@ -12,13 +12,7 @@ import java.util.stream.Stream;
 
 import Tokenizer.Tweet;
 import datasetCollector2.Listener;
-import twitter4j.FilterQuery;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
+import twitter4j.*;
 import twitter4j.auth.AccessToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
@@ -60,7 +54,8 @@ public class StreamHandler {
     public void openAndListenStream() {
         // Twitter4J setup
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder.setOAuthConsumerKey(apiKeys[0])
+        configurationBuilder
+                .setOAuthConsumerKey(apiKeys[0])
                 .setOAuthConsumerSecret(apiKeys[1])
                 .setOAuthAccessToken(apiKeys[2])
                 .setOAuthAccessTokenSecret(apiKeys[3])
@@ -68,11 +63,6 @@ public class StreamHandler {
                 .setJSONStoreEnabled(true);
         
         twitterStream = new TwitterStreamFactory(configurationBuilder.build()).getInstance();
-        
-        // thread pool
-        // executor = Executors.newWorkStealingPool();
-        // queue_size = new AtomicInteger(0);
-        
         
         listener = new StreamListener(this);
         // Listener used when collecting dataset
@@ -87,7 +77,6 @@ public class StreamHandler {
             System.out.println("\t-> Stream with query started.");
             for (String s : queries) System.out.print(s + ", ");
         }
-        
         // regular stream
         else {
             System.out.println("\t-> Regular stream started.");

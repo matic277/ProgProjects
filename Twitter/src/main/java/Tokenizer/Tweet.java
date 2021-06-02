@@ -2,8 +2,10 @@ package Tokenizer;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import AbstractWordClasses.AbsMeasurableWord;
 import AbstractWordClasses.AbsWord;
@@ -47,6 +49,10 @@ public class Tweet {
     
     private int[] ngramFeatures;
     
+    public LocalDate dateCollected;
+    public int sentimentClass; // [-1, 0, 1]
+    String lowercaseSourceText;
+    
     public Tweet(String sourceText, String username) {
         this.sourceText = sourceText;
         this.username = (username == null)? "{UNKNOWN}" : username;
@@ -56,6 +62,45 @@ public class Tweet {
         this.date = date;
         this.sourceText = sourceText;
         this.username = (username == null)? "{UNKNOWN}" : username;
+    }
+    
+    public Tweet(String sourceText, String username, LocalDate dateCollected) {
+        this.dateCollected = dateCollected;
+        this.sourceText = sourceText;
+        this.username = (username == null)? "{UNKNOWN}" : username;
+        this.lowercaseSourceText = sourceText.toLowerCase();
+    }
+    
+    public boolean isPfizer() {
+        return lowercaseSourceText.contains("pfizer") &&
+            !lowercaseSourceText.contains("astrazeneca") &&
+            !lowercaseSourceText.contains("moderna");
+    }
+    
+    public boolean isModerna() {
+        return lowercaseSourceText.contains("moderna") &&
+                !lowercaseSourceText.contains("astrazeneca") &&
+                !lowercaseSourceText.contains("pfizer");
+    }
+    
+    public boolean isAstrazeneca() {
+        return lowercaseSourceText.contains("astrazeneca") &&
+                !lowercaseSourceText.contains("moderna") &&
+                !lowercaseSourceText.contains("pfizer");
+    }
+    
+    public boolean isMixed() {
+        int c = 0;
+        c += lowercaseSourceText.contains("pfizer") ? 1 : 0;
+        c += lowercaseSourceText.contains("astrazeneca") ? 1 : 0;
+        c += lowercaseSourceText.contains("moderna") ? 1 : 0;
+        return c > 1;
+    }
+    
+    public boolean isNone() {
+        return !lowercaseSourceText.contains("moderna") &&
+               !lowercaseSourceText.contains("astrazeneca") &&
+               !lowercaseSourceText.contains("pfizer");
     }
     
     private void test() {
@@ -124,7 +169,6 @@ public class Tweet {
         // at this point, text is in single line
         // and emojis are represented as unicodes
         sentences = t.splitIntoSentences(processedText);
-
         
         test();
         doSomeStatistics();

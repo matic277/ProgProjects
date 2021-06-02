@@ -31,8 +31,14 @@ public class Sender {
                 surveyUrl + "\n Thank you for your time.";
         
         try {
+            System.out.println("NAME=" + twitter.getScreenName());
+            var x = twitter.getDirectMessages(30);
+            System.out.println("SIZE="+x.size());
+            for (DirectMessage xx : x) {
+                System.out.println(xx.getText());
+            }
             System.out.println(twitter.getScreenName());
-            directMessage = twitter.sendDirectMessage("@hellotester8", message);
+            directMessage = twitter.sendDirectMessage("hellotester8", "please send.");
         }
         catch (Exception e) {
             System.out.println("Error sending dm.");
