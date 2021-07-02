@@ -53,21 +53,25 @@ public class PanelPainter extends JPanel implements IObserver {
     }
     
     @Override
-    protected void paintComponent(Graphics gr){
+    protected void paintComponent(Graphics gr) {
         Graphics2D g = (Graphics2D) gr;
         g.setColor(bgColor);
         g.fillRect(0, 0, bounds.width, bounds.height);
         
+        // anti-aliasing
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        
         drawableComponents.forEach(d -> d.draw(g));
-
+        
         // cursor
         g.setColor(mousePressed ? Color.red : Color.black);
         g.drawRect(mouse.x-2, mouse.y-2, 4, 4);
         g.drawString("(" + mouse.x + ", " + mouse.y + ")", mouse.x, mouse.y-10);
         
         // game over
-        g.setColor(Color.black);
-//        g.drawString("Game Over: " + GameState.getGameState().isGameOver(), 30, 30);
+        //g.setColor(Color.black);
+        //g.drawString("Game Over: " + GameState.getGameState().isGameOver(), 30, 30);
         
         sleep(fps);
         super.repaint();
@@ -106,12 +110,4 @@ public class PanelPainter extends JPanel implements IObserver {
     public void notifyLeftPress(Point location) { }
     @Override
     public void notifyLeftRelease(Point location) { }
-    
-    public static class MyButton extends JButton {
-        Runnable r;
-        public MyButton(String text) { super(text); }
-        public void setMyAction(Runnable r) { this.r = r; }
-        public void executeAction() { r.run(); }
-    }
-    
 }

@@ -25,9 +25,9 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
     @Override
     public int makeMove() {
         initState();
-        System.out.println("--------------------------------------------------------starting--------------------------------------------------------");
-        Pair<Double, Integer> result = minimax(state, 2, 3, 3);
-        System.out.println("ended with move: " + result.getB());
+        //System.out.println("--------------------------------------------------------starting--------------------------------------------------------");
+        Pair<Double, Integer> result = minimax(state, 2, 6, 3);
+        //System.out.println("ended with move: " + result.getB());
         return result.getB();
     }
     
@@ -47,19 +47,19 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
             return new Pair<>(player == 1 ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY, col);
         }
         if (depth == 0) {
-//            System.out.println("\n -> 0 At depth [" + depth + "], returning: " + new Pair<>(eval(state), move));
-//            print(state);
+            System.out.println("\n -> 0 At depth [" + depth + "], returning: " + new Pair<>(eval(state), col));
+            print(state);
             return new Pair<>(eval(state), col);
         }
         List<Pair<Double, Integer>> states = new ArrayList<>(8);
-    
+        
         // max
         if (player == 1) {
             Pair<Double, Integer> maxEval = new Pair<>(Double.NEGATIVE_INFINITY, -1);
             
             for (int freeCol : getFreeColumns(state)) {
                 int[][] stateCopy = copyState(state);
-                dropTokenInColumn(stateCopy, freeCol, 1);
+                dropTokenInColumn(stateCopy, freeCol, player);
                 Pair<Double, Integer> currentEval = minimax(stateCopy, 2, depth - 1, freeCol);
                 
 //                print(state);
@@ -82,9 +82,9 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
             Pair<Double, Integer> minEval = new Pair<>(Double.POSITIVE_INFINITY, -1);
             for (int freeCol : getFreeColumns(state)) {
                 int[][] stateCopy = copyState(state);
-                dropTokenInColumn(stateCopy, freeCol, 2);
+                dropTokenInColumn(stateCopy, freeCol, player);
                 Pair<Double, Integer> currentEval = minimax(stateCopy, 1, depth - 1, freeCol);
-    
+                
 //                states.add(currentEval);
 //                System.out.println("\nDepth[" + depth + "] -> Comparing (current, max): " + currentEval + ", " + maxEval);
                 if (currentEval.getA() <= minEval.getA()) {
@@ -176,14 +176,14 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0}
+                {0, 0, 0, 0, 0, 0, 2},
+                {0, 1, 1, 1, 0, 2, 2}
         };
 //        print(state);
-    
-        System.out.println((eval(state)));
         
-        Node tree = new Node(state, 0, 1, 2, null);
+        System.out.println(Arrays.toString(reduceRow(state[5])));
+        
+        //Node tree = new Node(state, 0, 1, 2, null);
         
     }
     
@@ -210,18 +210,20 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
         // check all rows
         for (int i=0; i<6; i++) {
             int[] reduced = reduceRow(state[i]);
-            for (int j = 0; j < reduced.length; j++)
-                if (reduced[j] == 4) return Double.POSITIVE_INFINITY;
-                else if (reduced[j] == -4) return Double.NEGATIVE_INFINITY;
+            for (int j = 0; j < reduced.length; j++) {
+                if (reduced[j] > 3) return Double.POSITIVE_INFINITY;
+                if (reduced[j] < -3) return Double.NEGATIVE_INFINITY;
+            }
             eval(reduced, totalResult);
         }
         
         // check all columns
         for (int i=0; i<7; i++) {
             int[] reduced = reduceColumn(state, i);
-            for (int j = 0; j < reduced.length; j++)
-                if (reduced[j] == 4) return Double.POSITIVE_INFINITY;
-                else if (reduced[j] == -4) return Double.NEGATIVE_INFINITY;
+            for (int j = 0; j < reduced.length; j++) {
+                if (reduced[j] > 3) return Double.POSITIVE_INFINITY;
+                if (reduced[j] < -3) return Double.NEGATIVE_INFINITY;
+            }
             eval(reduced, totalResult);
         }
         
@@ -230,49 +232,55 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
         int[] reduced;
         for (int i=3, j=0, k=0; i>=0; i--, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[5];
         for (int i=4, j=0, k=0; i>=0; i--, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[6];
         for (int i=5, j=0, k=0; i>=0; i--, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[6];
         for (int i=5, j=1, k=0; i>=0; i--, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[5];
         for (int i=5, j=2, k=0; i>=1; i--, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[4];
         for (int i=5, j=3, k=0; i>=2; i--, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         
@@ -280,49 +288,55 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
         diag = new int[4];
         for (int i=2, j=0, k=0; i<=5; i++, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[5];
         for (int i=1, j=0, k=0; i<=5; i++, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[6];
         for (int i=0, j=0, k=0; i<=5; i++, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[6];
         for (int i=0, j=1, k=0; i<=5; i++, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[5];
         for (int i=0, j=2, k=0; i<=4; i++, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         diag = new int[4];
         for (int i=0, j=3, k=0; i<=3; i++, j++, k++) diag[k] = state[i][j];
         reduced = reduceRow(diag);
-        for (int i=0; i<reduced.length; i++)
-            if (reduced[i] == 4) return Double.POSITIVE_INFINITY;
-            else if (reduced[i] == -4) return Double.NEGATIVE_INFINITY;
+        for (int i=0; i<reduced.length; i++) {
+            if (reduced[i] > 3) return Double.POSITIVE_INFINITY;
+            if (reduced[i] < -3) return Double.NEGATIVE_INFINITY;
+        }
         eval(reduced, totalResult);
         
         // 3 -> 70%

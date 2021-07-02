@@ -8,11 +8,11 @@ import implementation.graphics.GamePainter;
 import implementation.graphics.PanelPainter;
 import interfaces.IGameState;
 import interfaces.IPlayer;
-import implementation.graphics.PanelPainter.MyButton;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameState implements IGameState {
@@ -56,7 +56,7 @@ public class GameState implements IGameState {
     public void addToken(Token token, int inRow, int inColumn) {
         tokens.add(token);
         grid[inRow][inColumn] = token.getType();
-        System.out.println("   -> Token added: (" + inRow + ", " + inColumn + "), total tokens: " + tokens.size());
+        System.out.println("   -> Token added: (row:" + inRow + ", col:" + inColumn + ")");
         new Thread(getTokenDropper(token)).start();
         printState();
         checkIfGameOver();
@@ -80,11 +80,10 @@ public class GameState implements IGameState {
         };
     }
     
-    public MyButton getResetButton() {
-        MyButton btn = new MyButton("Reset");
-        btn.setMyAction(this::initResetGameState);
+    public JButton getResetButton() {
+        JButton btn = new JButton("Reset");
+        btn.addActionListener(a -> initResetGameState());
         btn.setBounds(new Rectangle(100, 25, 80, 40));
-        btn.addActionListener(a -> btn.executeAction());
         btn.setFocusable(false);
         return btn;
     }
@@ -165,58 +164,72 @@ public class GameState implements IGameState {
         }
         return result;
     }
+    private ArrayList<Integer> reduce(int[] arr) {
+        ArrayList<Integer> result = new ArrayList<>(arr.length);
+        for (int i=0, j=1; i<arr.length; i++, j=i+1) {
+            int type = arr[i];
+            if (arr[i] == 0) continue;
+            int c;
+            for (j=i+1, c=1; j < arr.length; j++) {
+                if (arr[j] == type) c++;
+                else break;
+            }
+            result.add(c);
+            i = j-1;
+        }
+        return result;
+    }
     
     private boolean contains4InARow(ArrayList<Integer> reduced) {
         for (int i : reduced) {
-            if (i == 4) return true;
+            if (i > 3) return true;
         }
         return false;
     }
     
     @Override
     public boolean checkIfGameOver(int[][] state) {
+        //MiniMaxMovingStrategy.print(state);
+        
+        for (int[] r : state) {
+            if (Arrays.toString(r).contains("1, 1, 1, 1")) {
+                System.out.println("YESSSSSSSSSSSSSSSSS");
+            }
+        }
+        
         // rows
-        MiniMaxMovingStrategy.print(state);
         for (int row = 0; row < n; row++) {
-            ArrayList<Integer> reduced = reduce(grid[row]);
+            ArrayList<Integer> reduced = reduce(state[row]);
             if (contains4InARow(reduced)) {
-                isGameOver = true;
-                System.out.println("TRUE!\n");
+                System.out.println("YESSSSSSSSSSSSSSSSS");
                 return true;
             }
         }
-    
+        
         // columns
         for (int column = 0; column < m; column++) {
             ArrayList<Integer> reduced = reduce(getColumn(column));
             if (contains4InARow(reduced)) {
-                isGameOver = true;
-                System.out.println("TRUE!\n");
                 return true;
             }
         }
-    
+        
         // diags1 /
         for (ArrayList<Pair<Integer, Integer>> diagonal : diags1) {
             ArrayList<Integer> reduced = reduce(createArrayFromDiags(diagonal));
             if (contains4InARow(reduced)) {
-                isGameOver = true;
-                System.out.println("TRUE!\n");
                 return true;
             }
         }
-    
+        
         // diags2 \
         for (ArrayList<Pair<Integer, Integer>> diagonal : diags2) {
             ArrayList<Integer> reduced = reduce(createArrayFromDiags(diagonal));
             if (contains4InARow(reduced)) {
-                isGameOver = true;
-                System.out.println("TRUE!\n");
                 return true;
             }
         }
-    
-        System.out.println("FALSE!\n");
+        
         return false;
     }
     

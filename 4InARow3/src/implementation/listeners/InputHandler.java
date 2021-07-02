@@ -56,12 +56,12 @@ public class InputHandler implements IMouseObserver {
                     int move = gameState
                         .getCurrentPlayer()
                         .makeMove(gameState.getGrid());
-                    InputHandler.this.processMove(move);
+                    processMove(move);
                 })
                 // if next move is computers turn, then call this function again
                 .thenRun(() -> {
                     if (gameState.getCurrentPlayer().getPlayerType() == PlayerType.COMPUTER)
-                        InputHandler.this.onMouseClick(event);
+                        onMouseClick(event);
                 });
     }
     

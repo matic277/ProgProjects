@@ -20,8 +20,8 @@ public class GamePainter implements IDrawable {
     
     Color borderColor = Color.BLACK;
     Color boardColor = new Color(22, 75, 238);
-    Color mouseIndicatorBackgroundColor = new Color(15, 59, 203);
-    Color activeMouseIndicatorColor = Color.red;
+    Color mouseIndicatorBackgroundColor = boardColor;
+    Color activeMouseIndicatorColor = boardColor.brighter();
     
     Rectangle activeColumnIndicator;
     
@@ -54,9 +54,6 @@ public class GamePainter implements IDrawable {
                         g.setColor(Color.WHITE);
                         this.fillOval(g, (int)this.getDrawingPosition().get().getX(),
                                 (int)this.getDrawingPosition().get().getY(), Token.rad);
-//                        g.setColor(Color.red);
-//                        g.fillRect((int)this.getDrawingPosition().get().getX()-2,
-//                                (int)this.getDrawingPosition().get().getY()-2, 4, 4);
                     }
                 };
                 t.setDrawingPosition(new Point(x, y));
@@ -78,24 +75,6 @@ public class GamePainter implements IDrawable {
         
         // tokens
         gameState.getTokens().forEach(t -> t.draw(g));
-    
-//        TokenType[][] gr = gameState.getGrid().clone();
-//        for (int i=0; i<6; i++) for (int j=0; j<7; j++) {
-//            TokenType tt = gr[i][j];
-//            Color c = switch (tt) {
-//                case NONE -> Color.black;
-//                case YELLOW -> Color.yellow;
-//                case RED -> Color.red;
-//            };
-//            g.setColor(c);
-//            int finalI = i;
-//            int finalJ = j;
-//            gameState.getTokens().stream().filter(t -> {
-//                Pair<Integer, Integer> pos = t.getGridPosition();
-//                return pos.getA() == finalI && pos.getB() == finalJ;
-//            }).forEach(t -> { t.drawIndicator(g); });
-//        }
-
         
         // indicators
         g.setColor(mouseIndicatorBackgroundColor);

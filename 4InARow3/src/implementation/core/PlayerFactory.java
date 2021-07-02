@@ -16,24 +16,6 @@ import java.util.Random;
 
 public class PlayerFactory {
     
-    GameState gameState;
-    
-    private static PlayerFactory pf;
-    
-    private PlayerFactory(GameState gs) {
-        gameState = gs;
-    }
-    
-    public static synchronized PlayerFactory getPlayerFactory(GameState gameState) {
-        return pf == null ?
-            new PlayerFactory(gameState) : pf;
-    }
-    
-    public static synchronized PlayerFactory getPlayerFactory() {
-        return pf == null ?
-            new PlayerFactory(null) : pf;
-    }
-    
     public static Player getHumanPlayer(GameState gameState, InputHandler inputHandler) {
         Player p = new Player(null, null, null);
         IMovingStrategy movStrat = getHumanMovingStrategy(inputHandler, p);

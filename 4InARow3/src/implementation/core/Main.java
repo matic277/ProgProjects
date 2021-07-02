@@ -33,11 +33,13 @@ public class Main {
         
         // players
         Player p1 =
-                PlayerFactory.getMiniMaxPlayer(gameState);
-//                PlayerFactory.getHumanPlayer(gameState, inputHandler);
-        Player p2 =
+                //PlayerFactory.getMiniMaxPlayer(gameState);
                 PlayerFactory.getHumanPlayer(gameState, inputHandler);
-//                PlayerFactory.getMiniMaxPlayer(gameState);
+                //PlayerFactory.getRandomPlayer(gameState);
+        Player p2 =
+                PlayerFactory.getMiniMaxPlayer(gameState);
+                PlayerFactory.getHumanPlayer(gameState, inputHandler);
+//                PlayerFactory.getRandomPlayer(gameState);
         
         gamePainter.setGameState(gameState);
         statPainter.initPlayers(p1, p2);

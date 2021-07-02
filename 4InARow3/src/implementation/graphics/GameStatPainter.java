@@ -44,13 +44,14 @@ public class GameStatPainter implements IDrawable {
         g.setColor(bgColor);
         g.fill(bounds);
         
-        Font oldFont = g.getFont();
+        //Font oldFont = g.getFont();
         g.setFont(new Font("Consolas", Font.BOLD, 16));
         
         g.setColor(fontColor);
-        g.drawString("STATS:", bounds.x, bounds.y+10);
-        g.drawString(p1.getPlayerType().toString() + "   " + p2.getPlayerType().toString(), bounds.x, bounds.y+25);
-        g.drawString(p1.getNumberOfMovesMade() + spacing + p2.getNumberOfMovesMade(), bounds.x, bounds.y+40);
+        g.drawString("Game Over: " + gameState.isGameOver(), bounds.x, bounds.y);
+        g.drawString("STATS:", bounds.x, bounds.y+15);
+        g.drawString(p1.getPlayerType().toString() + "   " + p2.getPlayerType().toString(), bounds.x, bounds.y+30);
+        g.drawString(p1.getNumberOfMovesMade() + spacing + p2.getNumberOfMovesMade(), bounds.x, bounds.y+45);
 //        g.drawString("EVAL: " + gameState., , );
     }
 }
