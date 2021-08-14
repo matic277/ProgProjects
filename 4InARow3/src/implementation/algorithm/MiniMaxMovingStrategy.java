@@ -20,13 +20,15 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
     // false (min) player = 2
     int[][] state;
     
+    final int depth = 3;
+    
     public MiniMaxMovingStrategy(GameState gameState, Player player) { this.gameState = gameState; this.player = player; }
     
     @Override
     public int makeMove() {
         initState();
         //System.out.println("--------------------------------------------------------starting--------------------------------------------------------");
-        Pair<Double, Integer> result = minimax(state, 2, 6, 3);
+        Pair<Double, Integer> result = minimax(state, 2, depth, 3);
         //System.out.println("ended with move: " + result.getB());
         return result.getB();
     }

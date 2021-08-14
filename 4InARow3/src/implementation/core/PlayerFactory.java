@@ -1,27 +1,22 @@
 package implementation.core;
 
-import enums.TokenType;
 import implementation.algorithm.MiniMaxMovingStrategy;
 import implementation.algorithm.Player;
 import implementation.algorithm.PlayerType;
-import implementation.graphics.PanelPainter;
-import implementation.listeners.InputHandler;
-import interfaces.IMouseObserver;
 import interfaces.IMovingStrategy;
-import interfaces.IPlayer;
 
-import java.awt.*;
-import java.awt.event.MouseEvent;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 
 public class PlayerFactory {
     
-    public static Player getHumanPlayer(GameState gameState, InputHandler inputHandler) {
+    public static Player getHumanPlayer(GameState gameState) {
         Player p = new Player(null, null, null);
-        IMovingStrategy movStrat = getHumanMovingStrategy(inputHandler, p);
         p.setGameState(gameState);
         p.setPlayerType(PlayerType.HUMAN);
-        p.setMovingStrat(movStrat);
         return p;
     }
     
@@ -29,7 +24,7 @@ public class PlayerFactory {
         Player p = new Player(null, null, null);
         IMovingStrategy movStrat = getComputerMovingStrategy(gameState, p);
         p.setGameState(gameState);
-        p.setPlayerType(PlayerType.COMPUTER);
+        p.setPlayerType(PlayerType.RANDOM);
         p.setMovingStrat(movStrat);
         return p;
     }
@@ -38,17 +33,23 @@ public class PlayerFactory {
         Player p = new Player(null, null, null);
         IMovingStrategy movStrat = getMiniMaxMovingStrategy(gameState, p);
         p.setGameState(gameState);
-        p.setPlayerType(PlayerType.COMPUTER);
+        p.setPlayerType(PlayerType.MINIMAX);
         p.setMovingStrat(movStrat);
         return p;
     }
     
-    private static IMovingStrategy getHumanMovingStrategy(InputHandler inputHandler, Player p) {
-        System.out.println("   ~ " + Thread.currentThread().getName() + " (" + p.getPlayerType() + ") is trying to make a move.");
-        return inputHandler::getActiveColumnIndex;
+    private static final Map<PlayerType, Function<GameState, Player>> typeMap;
+    static {
+        typeMap = new HashMap<>();
+        typeMap.put(PlayerType.HUMAN, PlayerFactory::getHumanPlayer);
+        typeMap.put(PlayerType.RANDOM, PlayerFactory::getRandomPlayer);
+        typeMap.put(PlayerType.MINIMAX, PlayerFactory::getMiniMaxPlayer);
+    }
+    public static Player getPlayerByType(PlayerType type, GameState gameState) {
+        return typeMap.get(type).apply(gameState);
     }
     
-    private static IMovingStrategy getComputerMovingStrategy(GameState gameState, Player p) {
+    public static IMovingStrategy getComputerMovingStrategy(GameState gameState, Player p) {
         final Random r = new Random();
         RandomMovingStrategy strategy = new RandomMovingStrategy();
         strategy.gameState = gameState;
@@ -56,7 +57,7 @@ public class PlayerFactory {
         return strategy;
     }
     
-    private static IMovingStrategy getMiniMaxMovingStrategy(GameState gameState, Player p) {
+    public static IMovingStrategy getMiniMaxMovingStrategy(GameState gameState, Player p) {
         MiniMaxMovingStrategy strategy = new MiniMaxMovingStrategy(gameState, p);
         strategy.gameState = gameState;
         strategy.player = p;

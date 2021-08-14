@@ -2,10 +2,11 @@ package implementation.core;
 
 
 import enums.TokenType;
-import implementation.algorithm.MiniMaxMovingStrategy;
+import implementation.algorithm.Player;
 import implementation.algorithm.PlayerType;
-import implementation.graphics.GamePainter;
+import implementation.graphics.GamePanel;
 import implementation.graphics.PanelPainter;
+import implementation.listeners.InputHandler;
 import interfaces.IGameState;
 import interfaces.IPlayer;
 
@@ -22,25 +23,43 @@ public class GameState implements IGameState {
     public TokenType[][] grid;
     ConcurrentLinkedQueue<Token> tokens;
     
-    CurrentPlayer currentPlayer;
+    InputHandler inputHandler;
+    CurrentPlayers currentPlayers;
     boolean isGameOver;
     boolean areBothPlayersComputers;
     
     // lock when game is over/restarted
     private final Object stateLock = new Object();
     
+    private int moveCounter;
+    
     public GameState() {
         this.isGameOver = false;
         this.tokens = new ConcurrentLinkedQueue<>();
         this.grid = new TokenType[n][m];
+        
         initResetGameState();
+        
+        Player p1 = PlayerFactory.getHumanPlayer(this);
+        Player p2 = PlayerFactory.getHumanPlayer(this);
+        
+        this.currentPlayers = new CurrentPlayers(p1, p2);
+        areBothPlayersComputers = false;
     }
     
-    public void setPlayers(IPlayer p1, IPlayer p2) {
-        currentPlayer = new CurrentPlayer(p1, p2);
-        areBothPlayersComputers =
-                p1.getPlayerType() == PlayerType.COMPUTER &&
-                p2.getPlayerType() == PlayerType.COMPUTER;
+    public void setNewPlayer(PlayerType newPlayerType, TokenType playerColor) {
+        Player player = PlayerFactory.getPlayerByType(newPlayerType,this);
+        player.setTokenType(playerColor);
+        
+        // some exception...
+        if (newPlayerType == PlayerType.HUMAN) player.setMovingStrat(inputHandler);
+        
+        playerColor.getRewireFunction().accept(currentPlayers, player);
+        
+        areBothPlayersComputers = currentPlayers.redPlayer.   player.getPlayerType().isComputerPlayer() &&
+                                  currentPlayers.yellowPlayer.player.getPlayerType().isComputerPlayer();
+    
+        System.out.println("Are both computers: " + areBothPlayersComputers);
     }
     
     public void initResetGameState() {
@@ -60,6 +79,7 @@ public class GameState implements IGameState {
         new Thread(getTokenDropper(token)).start();
         printState();
         checkIfGameOver();
+        moveCounter++;
     }
     
     public int getEmptyRowAtColumn(int inColumn) {
@@ -73,6 +93,8 @@ public class GameState implements IGameState {
     }
     
     public boolean areBothPlayersComputers() { return areBothPlayersComputers; }
+    
+    public int getMoveCounter() { return moveCounter; }
     
     private Runnable getTokenDropper(Token t) {
         return () -> {
@@ -144,7 +166,7 @@ public class GameState implements IGameState {
     
     // TODO useless method of interface
     @Override
-    public void inputToken(Token token, int inColumn, GamePainter gamePainter) { }
+    public void inputToken(Token token, int inColumn, GamePanel gamePanel) { }
     
     // counts number of same consecutive numbers
     // input: [1 1 2 2 2 1 3 3]
@@ -246,7 +268,7 @@ public class GameState implements IGameState {
     
     public void isLegalMoveOrThrowException(int inColumn) {
         if (inColumn < 0 || inColumn > 7 || grid[0][inColumn] != TokenType.NONE)
-            throw new RuntimeException("Illegal move made by " + currentPlayer.player.player.getPlayerType() +
+            throw new RuntimeException("Illegal move made by " + currentPlayers.currentPlayer.player.getPlayerType() +
                     ", move made in column: " + inColumn + ".\nGameState:\n" + stateToString());
     }
     
@@ -273,13 +295,11 @@ public class GameState implements IGameState {
     }
     
     public TokenType getCurrentPlayersTokenType() {
-//        return currentPlayer == null?
-//                TokenType.RED :
-        return currentPlayer.getTokenType();
+        return currentPlayers.getTokenType();
     }
     
     @Override
-    public IPlayer getCurrentPlayer() { return currentPlayer.player.player; }
+    public IPlayer getCurrentPlayer() { return currentPlayers.currentPlayer.player; }
     
     @Override
     public boolean checkIfGameOver(TokenType[][] grid) {
@@ -287,7 +307,7 @@ public class GameState implements IGameState {
     }
     
     @Override
-    public void nextPlayer() { currentPlayer.nextPlayer(); }
+    public void nextPlayer() { currentPlayers.nextPlayer(); }
     
     @Override
     public boolean isGameOver() { return isGameOver; }
@@ -366,5 +386,13 @@ public class GameState implements IGameState {
         for (int i=0, j=3; i<=3; i++, j++)
             diag.add(new Pair<>(i, j));
         diags2.add(diag);
+    }
+    
+    public void setInputHandler(InputHandler inputHandler) {
+        this.inputHandler = inputHandler;
+    }
+    
+    public CurrentPlayers getCurrentPlayers() {
+        return this.currentPlayers;
     }
 }

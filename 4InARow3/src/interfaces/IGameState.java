@@ -2,14 +2,13 @@ package interfaces;
 
 import enums.TokenType;
 import implementation.core.Token;
-import implementation.graphics.GamePainter;
+import implementation.graphics.GamePanel;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public interface IGameState {
     
-    void inputToken(Token token, int inColumn, GamePainter gamePainter);
+    void inputToken(Token token, int inColumn, GamePanel gamePanel);
     void nextPlayer();
     IPlayer getCurrentPlayer();
     

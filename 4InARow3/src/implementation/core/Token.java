@@ -19,7 +19,7 @@ public class Token implements IDrawable {
     Pair<Color, Color> colors;
     Color transparentColor = new Color(0, 0, 0, 0);
     
-    static int fallingSpeed = 20;
+    static int fallingSpeed = 15;
     
     public Token() {
         this.drawingPos = new AtomicReference<>(new Point(0, 0));
@@ -31,33 +31,7 @@ public class Token implements IDrawable {
     public void draw(Graphics2D g) {
         g.setColor(colors.getB());
         
-        fillOval(g, (int)drawingPos.get().getX(), (int)drawingPos.get().getY(), rad);
-        g.setColor(colors.getA());
-        fillOval(g, (int)drawingPos.get().getX(), (int)drawingPos.get().getY(), rad-10);
-        g.setColor(colors.getB());
-        fillOval(g, (int)drawingPos.get().getX(), (int)drawingPos.get().getY(), rad-15);
-        g.setColor(colors.getA());
-        fillOval(g, (int)drawingPos.get().getX(), (int)drawingPos.get().getY(), rad-25);
-    
-        // outline
-//        g.setColor(Color.black);
-//        drawOval(g, (int)drawingPos.get().getX(), (int)drawingPos.get().getY(), rad);
-        
-        // token center
-//        g.setColor(Color.green);
-//        g.fillRect((int)drawingPos.getX()-3, (int)pos.getY()-3, 6, 6);
-    }
-    
-    public void drawOval(Graphics2D g, int x, int y, int rad) {
-        x = x - (rad / 2);
-        y = y - (rad / 2);
-        g.drawOval(x, y, rad, rad);
-    }
-    
-    public void fillOval(Graphics2D g, int x, int y, int rad) {
-        x = x - (rad / 2);
-        y = y - (rad / 2);
-        g.fillOval(x, y, rad, rad);
+        g.fillOval((int)drawingPos.get().getX(), (int)drawingPos.get().getY(), rad*2, rad*2);
     }
     
     public void drawWhiteSpaces(Graphics2D g) {
@@ -104,9 +78,9 @@ public class Token implements IDrawable {
         return gridIndex;
     }
     
-    public void drawIndicator(Graphics2D g) {
-        fillOval(g, (int)pos.get().getX(), (int)pos.get().getY(), rad-25);
-    }
+    //public void drawIndicator(Graphics2D g) {
+    //    fillOval(g, (int)pos.get().getX(), (int)pos.get().getY(), rad-25);
+    //}
     
     //public int getRad() { return rad; }
 }

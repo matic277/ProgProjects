@@ -1,68 +1,53 @@
 package implementation.listeners;
 
 import enums.TokenType;
-import implementation.algorithm.PlayerType;
 import implementation.core.GameState;
 import implementation.core.Token;
 import implementation.core.TokenFactory;
-import implementation.graphics.GamePainter;
+import implementation.graphics.GamePanel;
 import interfaces.*;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.concurrent.CompletableFuture;
 
-public class InputHandler implements IMouseObserver {
+public class InputHandler implements MouseMotionListener, MouseListener, IMovingStrategy {
     
     GameState gameState;
     
-    GamePainter gamePainter;
+    GamePanel gamePanel;
     Rectangle[] columnIndicators; // hover-able columns
     Rectangle activeIndicator;
     int activeColumnIndex;
+    
+    final int activeColumnIndexHeight = 5;
     
     Point mouse = new Point(0, 0);
     
     public InputHandler() { }
     
-    public void init(GameState gameState, GamePainter gamePainter) {
-        this.gameState = gameState;
+    public void init(GamePanel gamePanel) {
         this.activeColumnIndex = -1;
-        this.gamePainter = gamePainter;
-    
+        this.gamePanel = gamePanel;
+        
         // hoverable columns
-        int m = 7;
-        columnIndicators = new Rectangle[m];
-        int columnWidth = gamePainter.getPanelSpace().width / m;
-        for (int i = 0, x = gamePainter.getPanelSpace().x, y = gamePainter.getPanelSpace().y; i < m; i++, x+=columnWidth) {
+        columnIndicators = new Rectangle[7];
+        
+        int unit = gamePanel.getBoardBounds().width / 7,
+               x = gamePanel.getBoardBounds().x,
+               y = gamePanel.getBoardBounds().y;
+        
+        for (int i=0; i<7; i++, x+=unit) {
             columnIndicators[i] = new Rectangle(
                     x, y,
-                    columnWidth,
-                    gamePainter.getPanelSpace().height);
+                    unit,
+                    gamePanel.getBoardBounds().height);
         }
         this.activeIndicator = new Rectangle();
-        this.activeIndicator.width = columnWidth;
-        this.activeIndicator.height = 10;
-    }
-    
-    @Override
-    public void onMouseClick(MouseEvent event) {
-        this.mouse = event.getPoint();
-        if (gameState.isGameOver()) return;
-        
-        CompletableFuture
-                // make a move and process it
-                .runAsync(() -> {
-                    int move = gameState
-                        .getCurrentPlayer()
-                        .makeMove(gameState.getGrid());
-                    processMove(move);
-                })
-                // if next move is computers turn, then call this function again
-                .thenRun(() -> {
-                    if (gameState.getCurrentPlayer().getPlayerType() == PlayerType.COMPUTER)
-                        onMouseClick(event);
-                });
+        this.activeIndicator.width = unit;
+        this.activeIndicator.height = activeColumnIndexHeight; // dimension ignored when drawing
     }
     
     public void processMove(int inColumn) {
@@ -78,33 +63,65 @@ public class InputHandler implements IMouseObserver {
         TokenType type = player.getTokenType();
         Token token = new Token();
         token.setType(type);
-        token.setPos(gamePainter.getPositionForGridIndex(inRow, inColumn));
+        token.setPos(gamePanel.getPositionForGridIndex(inRow, inColumn));
         token.setGridPosition(inRow, inColumn);
         token.setDrawingColors(TokenFactory.getTokenFactory().getColorMap().get(type));
         token.setDrawingPosition(new Point(
-                (int) columnIndicators[inColumn].getCenterX(),
-                columnIndicators[inColumn].y - Token.rad/5));
+                (int) columnIndicators[inColumn].getCenterX() - Token.rad,
+                -2*Token.rad));
         
         player.getPlayer().incrementNumberOfMoves();
         gameState.addToken(token, inRow, inColumn);
         gameState.nextPlayer();
     }
     
+    public int getActiveColumnIndex() { return activeColumnIndex; }
+    
     @Override
-    public void onMouseMove(MouseEvent event) {
-        // processed by panel thread itself
+    public int makeMove() {  return getActiveColumnIndex(); }
+    
+    @Override
+    public void mouseMoved(MouseEvent e) {
         activeColumnIndex = -1;
         for (int i = 0; i < columnIndicators.length; i++) {
-            if (columnIndicators[i].contains(event.getPoint())) {
+            if (columnIndicators[i].contains(e.getPoint())) {
                 activeIndicator.x = columnIndicators[i].x;
-                activeIndicator.y = columnIndicators[i].y + columnIndicators[i].height - 10;
-                gamePainter.setActiveColumnIndicator(activeIndicator);
+                activeIndicator.y = columnIndicators[i].y + columnIndicators[i].height - activeColumnIndexHeight;
+                gamePanel.setActiveColumnIndicator(activeIndicator);
                 activeColumnIndex = i;
                 return;
             }
         }
-        gamePainter.setActiveColumnIndicator(null);
+        gamePanel.setActiveColumnIndicator(null);
     }
- 
-    public int getActiveColumnIndex() { return activeColumnIndex; }
+    
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        this.mouse = e.getPoint();
+        if (gameState.isGameOver()) return;
+    
+        CompletableFuture
+                // make a move and process it
+                .runAsync(() -> {
+                    int move = gameState
+                            .getCurrentPlayer()
+                            .makeMove(gameState.getGrid());
+                    processMove(move);
+                })
+                // if next move is computers turn, then call this function again
+                .thenRun(() -> {
+                    if (gameState.getCurrentPlayer().getPlayerType().isComputerPlayer())
+                        mouseClicked(e);
+                });
+    }
+    
+    public void setGameState(GameState gameState) { this.gameState = gameState; }
+    
+    @Override public void mousePressed(MouseEvent e) { }
+    @Override public void mouseDragged(MouseEvent e) { }
+    @Override public void mouseReleased(MouseEvent e) { }
+    @Override public void mouseEntered(MouseEvent e) { }
+    @Override public void mouseExited(MouseEvent e) { }
+    
+
 }

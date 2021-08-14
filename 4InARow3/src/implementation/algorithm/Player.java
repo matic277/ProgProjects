@@ -62,4 +62,9 @@ public class Player implements IPlayer {
     public int getNumberOfMovesMade() { return movesMade; }
     
     public void incrementNumberOfMoves() { this.movesMade++; };
+    
+    @Override
+    public String toString() {
+        return "PLAYER[" + tType + ", " + pType + "]";
+    }
 }
