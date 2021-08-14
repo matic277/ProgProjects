@@ -14,12 +14,10 @@ public class MainPanel extends JPanel {
     
     GameState gameState;
     
-    public MainPanel(Dimension windowSize, GameState gameState) {
+    public MainPanel(GameState gameState) {
         this.gameState = gameState;
         
         this.setLayout(new BorderLayout());
-        this.setSize(windowSize);
-        this.setPreferredSize(windowSize);
         
         gamePanel = new GamePanel(this, gameState);
         controlPanel = new ControlPanel(this, gameState);

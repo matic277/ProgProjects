@@ -1,6 +1,7 @@
 package implementation.graphics;
 
 import implementation.core.GameState;
+import implementation.core.Main;
 import implementation.core.Token;
 import implementation.listeners.InputHandler;
 
@@ -32,10 +33,14 @@ public class GamePanel extends JPanel {
     
     Token[][] drawingGrid; // blank grid only for drawing white token holes in board
     
-    public GamePanel(MainPanel parent, GameState gameState) {
+    public GamePanel(MainPanel parent,GameState gameState) {
         this.mainPanel = parent;
         this.gameState = gameState;
         initGrid();
+        
+        this.setPreferredSize(new Dimension(
+                boardBounds.width  + 2 * Main.borderSize,
+                boardBounds.height + 2 * Main.borderSize));
     }
     
     /*   This is a single *unit* that makes up the 6x7 board
@@ -48,21 +53,18 @@ public class GamePanel extends JPanel {
         |________________|
      */
     public void initGrid() {
-        // it is preferable that:
-        // (unit - 2*space) / 2 => integer
-        // So first define radius of circle and spacing!
-        int rad = 30;
-        int space = 5; // spacing between tokens
+        int rad = Main.rad;
+        int space = Main.space;
+        
         unit = 2 * (space + rad);
         boardBorderThickness = space;
         
         Token.rad = rad;
         
         Rectangle parentConstraints = mainPanel.getBounds();
-        int borderSize = 100;
         this.boardBounds = new Rectangle(
-                parentConstraints.x + borderSize,
-                parentConstraints.y + borderSize,
+                parentConstraints.x + Main.borderSize,
+                parentConstraints.y + Main.borderSize,
                 unit * cols,
                 unit * rows);
         
