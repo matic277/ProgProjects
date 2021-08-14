@@ -32,6 +32,10 @@ public class Token implements IDrawable {
         g.setColor(colors.getB());
         
         g.fillOval((int)drawingPos.get().getX(), (int)drawingPos.get().getY(), rad*2, rad*2);
+        
+        g.setColor(colors.getB().darker());
+        g.setStroke(new BasicStroke(8));
+        g.drawOval((int)drawingPos.get().getX()+3, (int)drawingPos.get().getY()+3, rad*2-6, rad*2-6);
     }
     
     public void drawWhiteSpaces(Graphics2D g) {

@@ -20,9 +20,11 @@ public class MiniMaxMovingStrategy implements IMovingStrategy {
     // false (min) player = 2
     int[][] state;
     
-    final int depth = 3;
+    int depth = 4; // default depth
     
     public MiniMaxMovingStrategy(GameState gameState, Player player) { this.gameState = gameState; this.player = player; }
+    
+    public void setDepth(int newDepth) { depth = newDepth; }
     
     @Override
     public int makeMove() {

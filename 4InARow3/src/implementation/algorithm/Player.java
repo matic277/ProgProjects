@@ -59,6 +59,10 @@ public class Player implements IPlayer {
         this.movingStrategy = movStrat;
     }
     
+    public IMovingStrategy getMovingStrat() {
+        return this.movingStrategy;
+    }
+    
     public int getNumberOfMovesMade() { return movesMade; }
     
     public void incrementNumberOfMoves() { this.movesMade++; };

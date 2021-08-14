@@ -1,6 +1,7 @@
 package implementation.graphics;
 
 import enums.TokenType;
+import implementation.algorithm.MiniMaxMovingStrategy;
 import implementation.algorithm.PlayerType;
 import implementation.core.GameState;
 
@@ -56,13 +57,21 @@ public class ControlPanel extends JPanel{
         depthSlider.setMaximumSize(new Dimension(150, 50));
         depthSlider.setMinimumSize(new Dimension(150, 50));
         //depth.setEnabled(false);
-        depthSlider.addChangeListener(c -> { /* TODO */ });
+        depthSlider.addChangeListener(c -> setNewDepth());
     
         this.add(new JLabel(" ")); // spacing
         this.add(sliderInfo2);
         this.add(new JLabel(" "));
         this.add(depthSlider);
         this.add(new JLabel(" "));
+    }
+    
+    private void setNewDepth() {
+        var players = gameState.getCurrentPlayers().getBothPlayers();
+        if (players.getA().getMovingStrat() instanceof MiniMaxMovingStrategy miniMax)
+            miniMax.setDepth(depthSlider.getValue());
+        if (players.getB().getMovingStrat() instanceof MiniMaxMovingStrategy miniMax)
+            miniMax.setDepth(depthSlider.getValue());
     }
     
     private void initPlayerPickers() {

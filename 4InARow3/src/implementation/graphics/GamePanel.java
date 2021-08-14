@@ -73,11 +73,18 @@ public class GamePanel extends JPanel {
         for (int i = 0, y = boardBounds.y+space; i<rows; i++, y+=unit)
         for (int j = 0, x = boardBounds.x+space; j<cols; j++, x+=unit) {
             Token t = new Token() {
+                final Color ringColor = new Color(248, 248, 248);
                 @Override public void draw(Graphics2D g) {
                     g.setColor(bgColor);
                     g.fillOval(
                             (int)this.getDrawingPosition().get().getX(),
                             (int)this.getDrawingPosition().get().getY(), Token.rad*2, Token.rad*2);
+                    g.setColor(ringColor);
+                    g.setStroke(new BasicStroke(2));
+                    g.drawOval(
+                            (int)this.getDrawingPosition().get().getX() + 1,
+                            (int)this.getDrawingPosition().get().getY() + 1,
+                            Token.rad*2-3, Token.rad*2-3) ;
                 }
             };
             t.setDrawingPosition(new Point(x, y));
