@@ -9,7 +9,7 @@ import java.awt.*;
 public class Main {
     
     public static final String world = "./world2.txt";
-    public static final int sleep = 0; // ms
+    public static final int sleep = 150; // ms
     
     public static void main(String[] args) {
         WorldReader reader = new WorldReader();
