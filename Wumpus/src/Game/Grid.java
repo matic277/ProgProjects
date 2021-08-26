@@ -35,7 +35,7 @@ public class Grid implements IDrawable {
                 truthGrid[i][j] = new TileRect(truthTiles, new Pair<>(i, j));
             }
         }
-    
+        
         Utils.init(grid, truthGrid);
         
         // set smell and wind
@@ -91,10 +91,10 @@ public class Grid implements IDrawable {
         addWumpus(5, 4);
         addGold(6, 6);
         addPit(1, 1);
-    
+        
         // goal
         grid[0][m-1].addTileType(Tile.GOAL);
-    
+        
         Utils.init(grid, truthGrid);
     }
     
@@ -140,7 +140,7 @@ public class Grid implements IDrawable {
     }
     
     public void setTilePositionsAndSize(Point gridStartPosition, Dimension tileSize, int truthGridOffset) {
-        for (int i=0, y=gridStartPosition.y; i<grid.length; i++, y+=tileSize.height)
+        for (int i=0, y=gridStartPosition.y; i<grid.length;    i++, y+=tileSize.height)
         for (int j=0, x=gridStartPosition.x; j<grid[i].length; j++, x+=tileSize.width) {
             grid[i][j].setBounds(x, y, tileSize.width, tileSize.height);
             truthGrid[i][j].setBounds(x+truthGridOffset, y, tileSize.width, tileSize.height);

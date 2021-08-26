@@ -5,11 +5,12 @@ import Game.TileRect;
 import Main.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class KnowledgeBase {
     
     TileRect[][] grid;
-    TileRect[][] truthGrid;
+    //TileRect[][] truthGrid;
     
     private Set<Pair<Integer, Integer>> visited;
     private Queue<Pair<Integer, Integer>> toExplore;
@@ -57,6 +58,14 @@ public class KnowledgeBase {
                     }
                 }
             }
+    }
+    
+    public List<Pair<Integer, Integer>> getPositionsOfWumpuses() {
+        return Arrays.stream(grid)
+                .flatMap(Arrays::stream)
+                .filter(g -> g.getTileTypes().contains(Tile.WUMPUS))
+                .map(TileRect::getIndex)
+                .collect(Collectors.toList());
     }
     
     public Queue<Pair<Integer, Integer>> getTilesToExplore() {

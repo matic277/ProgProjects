@@ -1,18 +1,13 @@
 package Graphics;
 
 import Agent.Algorithm;
-import Agent.KnowledgeBase;
 import Game.Grid;
-import Game.Tile;
-import Game.TileRect;
 import Listeners.MousepadListener;
 import interfaces.IObserver;
-import interfaces.IShape;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -101,9 +96,9 @@ public class Painter extends JPanel implements IObserver {
     
     @Override
     public void notifyMouseClicked(Point location) {
-        synchronized (Algorithm.lock) {
+        synchronized (Algorithm.LOCK) {
             Algorithm.makeNextMove = true;
-            Algorithm.lock.notify();
+            Algorithm.LOCK.notify();
         }
     }
     

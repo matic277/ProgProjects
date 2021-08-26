@@ -1,16 +1,12 @@
 package Main;
 
-import Agent.Utils;
 import Game.Tile;
-import Game.TileRect;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class WorldReader {
@@ -49,9 +45,11 @@ public class WorldReader {
 //        System.out.println();
         
         world = new Tile[n][m];
+        
         pits    .forEach(t -> world[t.getA()][t.getB()] = Tile.PIT);
         gold    .forEach(t -> world[t.getA()][t.getB()] = Tile.GOLD);
         wumpuses.forEach(t -> world[t.getA()][t.getB()] = Tile.WUMPUS);
+        
         world[player.getA()][player.getB()] = Tile.PLAYER;
         world[goal.getA()  ][goal.getB()  ] = Tile.GOAL;
     }
@@ -89,25 +87,23 @@ public class WorldReader {
         String pos = line.substring(line.length() - 2);
         
         switch (info) {
-            case "A": player = getLocation(pos); break;
-            case "G": gold.add(getLocation(pos)); break;
-            case "GO": goal = getLocation(pos); break;
-            case "P": pits.add(getLocation(pos)); break;
-            case "W": wumpuses.add(getLocation(pos)); break;
+            case "A":  player = getLocation(pos);      break;
+            case "G":  gold.add(getLocation(pos));     break;
+            case "GO": goal = getLocation(pos);        break;
+            case "P":  pits.add(getLocation(pos));     break;
+            case "W":  wumpuses.add(getLocation(pos)); break;
+            
             // ignore smell and wind
             case "B": break;
             case "S": break;
+            
             default: System.out.println("Can't parse '"+info+"'."); break;
         }
     }
     
     private Pair<Integer, Integer> getLocation(String s) {
-        return new Pair<>(Integer.parseInt(""+ s.charAt(1))-1, Integer.parseInt(""+ s.charAt(0))-1);
+        return new Pair<>(
+                Integer.parseInt(""+ s.charAt(1))-1,
+                Integer.parseInt(""+ s.charAt(0))-1);
     }
-    
-//    static class TileInfo {
-//        Tile tile;
-//        Pair<Integer, Integer> location;
-//        public TileInfo(Tile t, Pair<Integer, Integer> loc) { tile = t; location = loc; }
-//    }
 }

@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class Main {
     
-    public static final String world = "./world1.txt";
+    public static final String world = "./world2.txt";
     public static final int sleep = 0; // ms
     
     public static void main(String[] args) {

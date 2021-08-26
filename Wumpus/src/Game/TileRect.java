@@ -39,4 +39,6 @@ public class TileRect extends Rectangle implements IDrawable {
     public void removeTileType(Tile type) {
         this.types.remove(type);
     }
+    
+    public Pair<Integer, Integer> getIndex() { return this.index; }
 }

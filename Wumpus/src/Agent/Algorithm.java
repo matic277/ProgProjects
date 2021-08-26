@@ -5,7 +5,6 @@ import Game.TileRect;
 import Main.Main;
 import Main.Pair;
 
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class Algorithm implements Runnable {
@@ -19,7 +18,9 @@ public class Algorithm implements Runnable {
     Pair<Integer, Integer> playerPos;
     
     public static boolean makeNextMove = false;
-    public static final Object lock = new Object();
+    public static final Object LOCK = new Object();
+    
+    int bulletsNum = 1;
     
     public Algorithm(TileRect[][] grid, TileRect[][] trueGrid, Pair<Integer, Integer> playerPos) {
         this.db = new KnowledgeBase(grid);
@@ -76,15 +77,16 @@ public class Algorithm implements Runnable {
         while (!toExplore.isEmpty()) {
             Pair<Integer, Integer> goal = toExplore.poll();
             if (goal.equals(playerPos)) continue;
+            
             System.out.println("To visit: "+goal);
             bfs(playerPos, goal);
             List<Pair<Integer, Integer>> path = preparePath(goal);
             path.forEach(x -> { grid[x.getA()][x.getB()].addTileType(Tile.PATH); });
             
             // wait for mouse click
-            synchronized (lock) {
+            synchronized (LOCK) {
                 while(!makeNextMove) {
-                    try { lock.wait(); }
+                    try { LOCK.wait(); }
                     catch (Exception e) { e.printStackTrace(); }
                 }
                 makeNextMove = false;
@@ -93,19 +95,26 @@ public class Algorithm implements Runnable {
             walkToGoal(path);
             
             // Crucial step! Removing parents and children from bfs
-            playerPos = new Pair(goal.getA(), goal.getB());
+            playerPos = new Pair<>(goal.getA(), goal.getB());
             
             // we are now at goal
             db.addKnowledge(goal, getTilesInPosition(goal));
             
             // wait for mouse click
-            synchronized (lock) {
+            synchronized (LOCK) {
                 while(!makeNextMove) {
-                    try { lock.wait(); }
+                    try { LOCK.wait(); }
                     catch (Exception e) { e.printStackTrace(); }
                 }
                 makeNextMove = false;
             }
+            
+            // Shoot wumpus?
+            if (toExplore.isEmpty() && bulletsNum > 0) {
+                bulletsNum--;
+                shootWumpus();
+            }
+            
         }
         
         System.out.println("Noting to explore anymore!");
@@ -121,6 +130,20 @@ public class Algorithm implements Runnable {
         List<Pair<Integer, Integer>> pathToGoal = preparePath(this.goal);
         walkToGoal(pathToGoal);
         System.out.println("Goal found. GAMEOVER!");
+    }
+    
+    private void shootWumpus() {
+        var wumpuses = db.getPositionsOfWumpuses();
+        System.out.println("Wumpuses: " + Arrays.deepToString(wumpuses.toArray()));
+        
+        if (wumpuses.isEmpty()) return;
+        
+        // Shoot the first wumpus?
+        var wumpusCoords = wumpuses.get(0);
+    
+        System.out.println("Shooting wupus at " + wumpusCoords);
+        System.out.println("! NOT IMPLEMENTED !");
+        System.out.println("->returning");
     }
     
     public Set<Tile> getTilesInPosition(Pair<Integer, Integer> position) {
