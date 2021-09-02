@@ -13,7 +13,7 @@ public class Token implements IDrawable {
     AtomicReference<Point> drawingPos;
     AtomicReference<Point> pos;
     Pair<Integer, Integer> gridIndex;
-    public static int rad;
+    public static int rad = Main.INITIAL_RADIUS;
     
     TokenType type;
     Pair<Color, Color> colors;

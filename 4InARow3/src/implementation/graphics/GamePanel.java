@@ -33,14 +33,14 @@ public class GamePanel extends JPanel {
     
     Token[][] drawingGrid; // blank grid only for drawing white token holes in board
     
-    public GamePanel(MainPanel parent,GameState gameState) {
+    public GamePanel(MainPanel parent, GameState gameState) {
         this.mainPanel = parent;
         this.gameState = gameState;
         initGrid();
         
         this.setPreferredSize(new Dimension(
-                boardBounds.width  + 2 * Main.borderSize,
-                boardBounds.height + 2 * Main.borderSize));
+                boardBounds.width  + 2 * Main.BORDER_SIZE,
+                boardBounds.height + 2 * Main.BORDER_SIZE));
     }
     
     /*   This is a single *unit* that makes up the 6x7 board
@@ -53,18 +53,16 @@ public class GamePanel extends JPanel {
         |________________|
      */
     public void initGrid() {
-        int rad = Main.rad;
-        int space = Main.space;
+        int rad = Token.rad;
+        int space = (int)(rad * 0.175);
         
         unit = 2 * (space + rad);
         boardBorderThickness = space;
         
-        Token.rad = rad;
-        
         Rectangle parentConstraints = mainPanel.getBounds();
         this.boardBounds = new Rectangle(
-                parentConstraints.x + Main.borderSize,
-                parentConstraints.y + Main.borderSize,
+                parentConstraints.x + Main.BORDER_SIZE,
+                parentConstraints.y + Main.BORDER_SIZE,
                 unit * cols,
                 unit * rows);
         
@@ -90,17 +88,32 @@ public class GamePanel extends JPanel {
             t.setDrawingPosition(new Point(x, y));
             drawingGrid[i][j] = t;
         }
-    
+        
         this.mouseIndicatorSpace = new Rectangle(
                 (int)(boardBounds.getX()), (int)(boardBounds.getY() + boardBounds.getHeight() - 10),
                 boardBounds.width, 10);
         
-        inputHandler = new InputHandler();
+        this.removeMouseMotionListener(inputHandler);
+        this.removeMouseListener(inputHandler);
+        
+        inputHandler = null;
+        
+        inputHandler = new InputHandler("again"+again++);
         inputHandler.init(this);
         inputHandler.setGameState(mainPanel.getGameState());
         
         this.addMouseListener(inputHandler);
         this.addMouseMotionListener(inputHandler);
+        
+        System.out.println("mouseL = " + this.getMouseListeners().length);
+        System.out.println("mouseM = " + this.getMouseMotionListeners().length);
+    }
+    
+    private static int again = 0;
+    
+    public void setResizeBoard(int newRadius) {
+        Token.rad = newRadius;
+        this.initGrid();
     }
     
     @Override
@@ -135,6 +148,13 @@ public class GamePanel extends JPanel {
                     activeColumnIndicator.width, boardBorderThickness,
                     15, 15);
         }
+        
+        // DEBUG draw active-column indicator rectangles
+        //gr.setColor(Color.pink);
+        //gr.setStroke(new BasicStroke(2));
+        //for (Rectangle columnIndicator : inputHandler.getColumnIndicators()) {
+        //    gr.draw(columnIndicator);
+        //}
     }
     
     public void setActiveColumnIndicator(Rectangle activeColumnIndicator) {
@@ -151,5 +171,4 @@ public class GamePanel extends JPanel {
     public Rectangle getBoardBounds() { return this.boardBounds; }
     
     public InputHandler getInputHandler() { return this.inputHandler; }
-    
 }

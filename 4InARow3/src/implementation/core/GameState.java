@@ -75,9 +75,11 @@ public class GameState implements IGameState {
     public void addToken(Token token, int inRow, int inColumn) {
         tokens.add(token);
         grid[inRow][inColumn] = token.getType();
-        System.out.println("   -> Token added: (row:" + inRow + ", col:" + inColumn + ")");
+        
+        //System.out.println("   -> Token added: (row:" + inRow + ", col:" + inColumn + ")");
+        //printState();
+        
         new Thread(getTokenDropper(token)).start();
-        printState();
         checkIfGameOver();
         moveCounter++;
     }

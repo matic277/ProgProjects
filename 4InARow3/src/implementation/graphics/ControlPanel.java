@@ -15,6 +15,7 @@ public class ControlPanel extends JPanel{
     GameState gameState;
     
     JSlider depthSlider;
+    JSlider radSlider;
     
     JComboBox<PlayerType> redPlayerDropdown;
     JComboBox<PlayerType> yellowPlayerDropdown;
@@ -25,14 +26,61 @@ public class ControlPanel extends JPanel{
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         
         initDepthSlider();
+        initRadSlider();
         initPlayerPickers();
     }
     
+    private void initRadSlider() {
+        JLabel infoLbl = new JLabel("Change board size: ");
+        infoLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        infoLbl.setSize(new Dimension(30, 120));
+        infoLbl.setPreferredSize(new Dimension(30, 120));
+    
+        int initial = 40;
+        int min = 5, max = 100;
+    
+        radSlider = new JSlider(min, max, initial);
+        //radSlider.setSnapToTicks(true);
+        radSlider.setValue(initial);
+        radSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Hashtable<Integer, JLabel> sliderMap2 = new Hashtable<>();
+        JLabel minLbl2 = new JLabel(min+"");
+        JLabel maxLbl2 = new JLabel(max+"");
+        JLabel maxLblMiddle = new JLabel((((max + min)-1)/2)+"");
+        sliderMap2.put(min, minLbl2);
+        sliderMap2.put(max, maxLbl2);
+        sliderMap2.put((((max + min)-1)/2), maxLblMiddle);
+        radSlider.setLabelTable(sliderMap2);
+        radSlider.setMajorTickSpacing(20);
+        radSlider.setMinorTickSpacing(5);
+        radSlider.setPaintTicks(true);
+        radSlider.setPaintLabels(true);
+        radSlider.setPreferredSize(new Dimension(150, 50));
+        radSlider.setMaximumSize(new Dimension(150, 50));
+        radSlider.setMinimumSize(new Dimension(150, 50));
+        //radSlider.setEnabled(false);
+        radSlider.addChangeListener(c -> setNewRadius());
+        
+        // changing board size breaks a lot of stuff
+        // im too lazy to enable this feature
+        radSlider.setEnabled(false);
+    
+        this.add(new JLabel(" ")); // spacing
+        this.add(infoLbl);
+        this.add(new JLabel(" "));
+        this.add(radSlider);
+        this.add(new JLabel(" "));
+    }
+    
+    private void setNewRadius() {
+        mainPanel.getGamePanel().setResizeBoard(radSlider.getValue());
+    }
+    
     private void initDepthSlider() {
-        JLabel sliderInfo2 = new JLabel("Change minimax depth: ");
-        sliderInfo2.setAlignmentX(Component.CENTER_ALIGNMENT);
-        sliderInfo2.setSize(new Dimension(30, 120));
-        sliderInfo2.setPreferredSize(new Dimension(30, 120));
+        JLabel intoLbl = new JLabel("Change minimax depth: ");
+        intoLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        intoLbl.setSize(new Dimension(30, 120));
+        intoLbl.setPreferredSize(new Dimension(30, 120));
         
         int initialMinMaxDepth = 3;
         int minDepth = 1, maxDepth = 10;
@@ -60,7 +108,7 @@ public class ControlPanel extends JPanel{
         depthSlider.addChangeListener(c -> setNewDepth());
     
         this.add(new JLabel(" ")); // spacing
-        this.add(sliderInfo2);
+        this.add(intoLbl);
         this.add(new JLabel(" "));
         this.add(depthSlider);
         this.add(new JLabel(" "));

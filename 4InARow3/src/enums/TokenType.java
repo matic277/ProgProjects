@@ -6,9 +6,9 @@ import implementation.core.CurrentPlayers;
 import java.util.function.BiConsumer;
 
 public enum TokenType {
+    NONE(  (short) 0, null),
     RED(   (short) 1, CurrentPlayers::setNewRedPlayer),
-    YELLOW((short) 2, CurrentPlayers::setNewYellowPlayer),
-    NONE(  (short) 0, null);
+    YELLOW((short) 2, CurrentPlayers::setNewYellowPlayer);
     
     short val;
     private final BiConsumer<CurrentPlayers, Player> playerRewireFunctionRef;

@@ -11,9 +11,9 @@ public class Main {
     // it is preferable that:
     // (unit - 2*space) / 2 => integer
     // So first define radius of circle and spacing!
-    public static final int rad = 40;  // radius of token
-    public static final int space = 5; // spacing between tokens
-    public static final int borderSize = 75; // spacing around game board
+    public static final int INITIAL_RADIUS = 40;  // radius of token
+    //public static final int space = 5; // spacing between tokens
+    public static final int BORDER_SIZE = 75; // spacing around game board
     
     public static void main(String[] args) {
         GameState gameState = new GameState();

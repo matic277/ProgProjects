@@ -26,7 +26,9 @@ public class InputHandler implements MouseMotionListener, MouseListener, IMoving
     
     Point mouse = new Point(0, 0);
     
-    public InputHandler() { }
+    private final String x;
+    
+    public InputHandler(String x) { this.x=x; }
     
     public void init(GamePanel gamePanel) {
         this.activeColumnIndex = -1;
@@ -52,8 +54,7 @@ public class InputHandler implements MouseMotionListener, MouseListener, IMoving
     
     public void processMove(int inColumn) {
         gameState.isLegalMoveOrThrowException(inColumn);
-        if (inColumn == -1 ||
-            gameState.isGameOver() ||
+        if (gameState.isGameOver() ||
             gameState.isColumnFull(inColumn))
             return;
         
@@ -75,14 +76,14 @@ public class InputHandler implements MouseMotionListener, MouseListener, IMoving
         gameState.nextPlayer();
     }
     
+    public Rectangle[] getColumnIndicators() { return this.columnIndicators; }
     public int getActiveColumnIndex() { return activeColumnIndex; }
     
     @Override
-    public int makeMove() {  return getActiveColumnIndex(); }
+    public int makeMove() {  return activeColumnIndex; }
     
     @Override
     public void mouseMoved(MouseEvent e) {
-        activeColumnIndex = -1;
         for (int i = 0; i < columnIndicators.length; i++) {
             if (columnIndicators[i].contains(e.getPoint())) {
                 activeIndicator.x = columnIndicators[i].x;
@@ -93,20 +94,29 @@ public class InputHandler implements MouseMotionListener, MouseListener, IMoving
             }
         }
         gamePanel.setActiveColumnIndicator(null);
+        //activeColumnIndex = -1;
     }
     
     @Override
     public void mouseClicked(MouseEvent e) {
         this.mouse = e.getPoint();
         if (gameState.isGameOver()) return;
-    
+        
+        System.out.println("CLICKED: " + x);
+        
         CompletableFuture
                 // make a move and process it
                 .runAsync(() -> {
+                    System.out.println("Running async");
                     int move = gameState
                             .getCurrentPlayer()
                             .makeMove(gameState.getGrid());
+                    System.out.println("MOVE: " + move);
                     processMove(move);
+                })
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    return null;
                 })
                 // if next move is computers turn, then call this function again
                 .thenRun(() -> {
@@ -122,6 +132,4 @@ public class InputHandler implements MouseMotionListener, MouseListener, IMoving
     @Override public void mouseReleased(MouseEvent e) { }
     @Override public void mouseEntered(MouseEvent e) { }
     @Override public void mouseExited(MouseEvent e) { }
-    
-
 }
